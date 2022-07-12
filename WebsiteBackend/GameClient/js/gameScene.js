@@ -4,7 +4,10 @@ class GameScene extends Phaser.Scene {
     }
     preload() {
         this.networkManager = new NetworkManager(this);
-        this.clientProtagonist = new ClientProtagonist(this);
+        this.keyManager = new KeyManager(this);
+        this.players = new Map();
+        this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
+        this.players.set(this.networkManager.clientId, this.clientProtagonist);
 
         console.log("Sending register request add player...");
         this.networkManager.sendRequestAddPlayer();
@@ -52,6 +55,9 @@ class GameScene extends Phaser.Scene {
 
     }
 
+
+    // Start: Executing incoming commands from network manager
+
     /**
      * 
      * @param {Object} data
@@ -61,8 +67,51 @@ class GameScene extends Phaser.Scene {
      */
     addPlayer(data) {
         if(data.id == this.networkManager.clientId) {
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y);
+            this.clientProtagonist.generateSprite(data.hitBox.pos.x, data.hitBox.pos.y, data.hitBox.width, data.hitBox.height);
+            console.log('Added local protagonist with server data.');
+        } else {
+            var newPlayer = new ClientPlayer(this, data.id, false);
+            newPlayer.generateSprite(data.hitBox.pos.x, data.hitBox.pos.y, data.hitBox.width, data.hitBox.height)
+            this.players.set(data.id, newPlayer);
+            console.log('Added new player with id: '+ data.id);
         }
+
     }
+
+    setupWorld(data) {
+        console.log('Setting up world...');
+
+        this.world = new ClientWorld(data, this);
+
+        console.log('World setup complete.')
+    }
+
+    updatePlayers(data) {
+        var instance = this;
+        data.forEach((currData)=>{
+            instance.players.get(currData.id).update(currData);
+        });
+    }
+
+    showOldPlayers(data) {
+        console.log('Adding old players to the game with data: ' + JSON.stringify(data));
+        var instance = this;
+        data.forEach((currData)=>{
+            var newPlayer = new ClientPlayer(instance, currData.id, false);
+            newPlayer.generateSprite(currData.hitBox.pos.x, currData.hitBox.pos.y, currData.hitBox.width, currData.hitBox.height);
+            instance.players.set(currData.id, newPlayer);
+        });
+        console.log('Added ' + data.length + ' old players to the game.');
+    }
+
+    disconnectPlayer(id) {
+        console.log("Disconnecting player: " + id + " ...");
+        var toRemove = this.players.get(id);
+        toRemove.remove();
+        this.players.delete(id);
+        console.log("Player disconnected!");
+    }
+
+    // End: Executing incoming commands from network manager
 
 }

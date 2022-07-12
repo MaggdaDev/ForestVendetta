@@ -1,0 +1,15 @@
+class WorldObject {
+
+    /**
+     * 
+     * @param {HitBox} hitBox 
+     * @param {boolean} isSolid 
+     */
+    constructor(hitBox, isSolid, type) {
+        this.isSolid = isSolid;
+        this.hitBox = hitBox;
+        this.type = type;
+    }
+}
+
+module.exports = WorldObject;

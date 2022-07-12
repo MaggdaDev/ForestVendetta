@@ -1,5 +1,6 @@
-const Protagonist = require('./protagonist');
+const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
+const World = require('./world/world');
 class MainLoop {
 
     constructor(playerList) {
@@ -8,7 +9,10 @@ class MainLoop {
         this.lastLog = 0;
         this.timeElapsed = 0;
         this.players = playerList;
-        this.intersectables = [new Platform(300, 500, 500, 40)];
+        this.playerUpdateData = new Map();
+
+        this.world = new World();
+        this.world.buildWorld();
     }
 
     /**
@@ -22,13 +26,29 @@ class MainLoop {
     @param {number} timeElapsed - Elapsed time in milliseconds
     */
     update(timeElapsed) {
-        var instance = this;
-        this.players.forEach(function(player){
-            player.update(timeElapsed, instance.intersectables);
-        });
-
-
+        this.updateAllPlayers(timeElapsed);
+        this.allPlayersSendUpdate(this.playerUpdateData);
     }
+
+    /**
+     * 
+     * @param {Object[]} playerUpdateData 
+     */
+    allPlayersSendUpdate(playerUpdateData) {
+        var instance = this;
+        this.players.forEach(function (player) {
+            player.sendUpdate(instance.playerUpdateData);
+        });
+    }
+
+    updateAllPlayers(timeElapsed) {
+        var instance = this;
+        this.players.forEach(function (player, id, map) {
+            player.update(timeElapsed, instance.players);
+        });
+    }
+
+    
 
     /*
     @param {Object} instance - this instance
@@ -46,14 +66,28 @@ class MainLoop {
 
     start() {
         var self = this
-        setInterval(function() {
-            self.loop(self);   
+        setInterval(function () {
+            self.loop(self);
         }, 30);
     }
 
-   
-    
+    addPlayer(socket, data) {
+        console.log("Register: " + data);
+        var newPlayer = new Protagonist(data.id, socket, this.world, this);
+        newPlayer.showOldPlayers(this.players);
+        this.players.set(data.id, newPlayer);
+        this.playerUpdateData.set(data.id, newPlayer.data);     // IMPORTANT ON EVERY ADD!!!
+        return newPlayer.data;
+    }
 
-   
+    handleDisconnect(clientId) {
+        this.players.delete(clientId);
+        this.playerUpdateData.delete(clientId);            /// IMPORTANT!
+    }
+
+
+
+
+
 }
 module.exports = MainLoop;

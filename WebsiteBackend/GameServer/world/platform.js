@@ -1,15 +1,10 @@
 const HitBox = require("../physics/hitbox");
+const WorldObject = require("./worldObject");
 
-class Platform {
+class Platform extends WorldObject{
 
     constructor(x,y,w,h) {
-        this.hitBox = new HitBox(x,y,w,h);
-        this.data = {
-            x: x,
-            y: y,
-            w: w,
-            h: h
-        }
+        super(new HitBox(x,y,w,h), true, 'platform');
     }
 }
 

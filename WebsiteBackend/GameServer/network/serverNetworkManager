@@ -1,6 +1,6 @@
 const { Server } = require("socket.io");
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
-const Protagonist = require("../protagonist");
+const Protagonist = require("../player/protagonist");
 
 class ServerNetworkManager {
 
@@ -8,9 +8,10 @@ class ServerNetworkManager {
      * 
      * @param {Protagonist[]} players 
      */
-    constructor(io, players) {
+    constructor(io, players, mainLoop) {
         this.io = io;
         this.playerArray = players;
+        this.mainLoop = mainLoop;
 
         var instance = this;
 
@@ -22,17 +23,25 @@ class ServerNetworkManager {
              * @param {Object} data 
              * @param {number} data.id -  Player id
              */
-            socket.on(NetworkCommands.REQUEST_ADD_PLAYER, (data) => {
-                console.log("Register: " + data);
-                var newPlayer = new Protagonist(data.id, socket);
-                instance.playerArray.push(newPlayer);
-        
-                instance.broadcastToAllPlayers(NetworkCommands.ADD_PLAYER, newPlayer.data);
+            socket.on(NetworkCommands.REQUEST_ADD_PLAYER, (data) => {       // handling organisation commands here; gameplay commands in socketUser
+                var newPlayerData = instance.mainLoop.addPlayer(socket, data);
+                instance.broadcastToAllPlayers(NetworkCommands.ADD_PLAYER, newPlayerData);
+                socket.clientId = data.id;
+            });
+            socket.on('disconnect', ()=>{
+                console.log(this.clientId + ' disconnected!');
+                instance.handleDisconnect(socket.clientId);
             });
 
         });
     }
 
+
+
+    handleDisconnect(clientId) {
+        this.mainLoop.handleDisconnect(clientId);
+        this.broadcastToAllPlayers(NetworkCommands.DISCONNECT_PLAYER, clientId);
+    }
 
     /**
      * 

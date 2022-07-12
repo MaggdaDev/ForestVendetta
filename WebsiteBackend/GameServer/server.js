@@ -15,9 +15,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
 });
 
-var playerList = []
-var networkManager = new ServerNetworkManager(io, playerList);
+var playerList = new Map();
 var mainLoop = new MainLoop(playerList);
+var networkManager = new ServerNetworkManager(io, playerList, mainLoop);
+
 mainLoop.start();
 
 

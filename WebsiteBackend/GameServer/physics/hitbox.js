@@ -2,20 +2,20 @@ const Vector = require("./vector");
 
 class HitBox {
     constructor(x, y, w, h) {  //x,y: center cords; w,h: width/height
-        this.xPos = x;          //center x 
-        this.yPos = y;          //center y
         this.width = w;
         this.height = h;
         this.pos = new Vector(x, y);
-        this.corners = [
-            new Vector(x - w / 2, y - h / h),
-            new Vector(x - w / 2, y + h / 2),
-            new Vector(x + w / 2, y + h / 2),
-            new Vector(x + w / 2, y - h / 2)
-        ];
         this.type = 'rect';
     }
 
+    get corners() {
+        return [
+            new Vector(this.pos.x - this.width / 2, this.pos.y - this.height / 2),
+            new Vector(this.pos.x - this.width / 2, this.pos.y + this.height / 2),
+            new Vector(this.pos.x + this.width / 2, this.pos.y + this.height / 2),
+            new Vector(this.pos.x + this.width / 2, this.pos.y - this.height / 2)
+        ];
+    }
 
     /**
      * @param {HitBox} otherBox
