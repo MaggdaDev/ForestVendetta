@@ -3,8 +3,8 @@ const WorldObject = require("./worldObject");
 
 class Platform extends WorldObject{
 
-    constructor(x,y,w,h) {
-        super(new HitBox(x,y,w,h), true, 'platform');
+    constructor(x,y,w,h,id, withRubber) {
+        super(new HitBox(x,y,w,h), true, 'platform',id, withRubber);
     }
 }
 

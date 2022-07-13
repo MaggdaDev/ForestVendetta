@@ -12,6 +12,7 @@ class ServerNetworkManager {
         this.io = io;
         this.playerArray = players;
         this.mainLoop = mainLoop;
+        this.mainLoop.networkManager = this;
 
         var instance = this;
 
@@ -43,13 +44,14 @@ class ServerNetworkManager {
         this.broadcastToAllPlayers(NetworkCommands.DISCONNECT_PLAYER, clientId);
     }
 
+
     /**
      * 
      * @param {string} command 
      * @param {Object} data 
      */
     broadcastToAllPlayers(command, data) {
-        console.log('Broadcasting to all players: ' + command + "    with data   " + JSON.stringify(data));
+        //console.log('Broadcasting to all players: ' + command + "    with data   " + JSON.stringify(data));
         this.playerArray.forEach(curr => {
             curr.sendCommand(command, data);
         });

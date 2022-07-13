@@ -9,10 +9,14 @@ class MainLoop {
         this.lastLog = 0;
         this.timeElapsed = 0;
         this.players = playerList;
-        this.playerUpdateData = new Map();
+        this.playerUpdateDataMap = new Map();
 
         this.world = new World();
         this.world.buildWorld();
+
+        this.networkManager = undefined;
+        this.updateData = this.collectUpdateData();
+        console.log(JSON.stringify(this.updateData));
     }
 
     /**
@@ -26,18 +30,28 @@ class MainLoop {
     @param {number} timeElapsed - Elapsed time in milliseconds
     */
     update(timeElapsed) {
+        this.updateWorld(timeElapsed);
         this.updateAllPlayers(timeElapsed);
-        this.allPlayersSendUpdate(this.playerUpdateData);
+        this.updateUpdateData();
+        this.allPlayersSendUpdate(this.updateData);
+        
+    }
+
+    updateWorld(timeElapsed) {
+        this.world.update(timeElapsed);
+    }
+
+    updateUpdateData() {
+        this.updateData
     }
 
     /**
      * 
-     * @param {Object[]} playerUpdateData 
+     * @param {Object[]} data - all update data, see networkCommands#UPDATE for more info 
      */
-    allPlayersSendUpdate(playerUpdateData) {
-        var instance = this;
+    allPlayersSendUpdate(data) {
         this.players.forEach(function (player) {
-            player.sendUpdate(instance.playerUpdateData);
+            player.sendUpdate(data);
         });
     }
 
@@ -48,6 +62,21 @@ class MainLoop {
         });
     }
 
+    collectUpdateData() {
+        var instance = this;
+        return {
+            toJSON() {
+                return {
+                    players: instance.sendablePlayerUpdateData,
+                    world: instance.world.clientWorldUpdateData
+                }
+            }
+        }
+    }
+
+    get sendablePlayerUpdateData() {
+        return Array.from(this.playerUpdateDataMap.values());
+    }
     
 
     /*
@@ -56,6 +85,10 @@ class MainLoop {
     loop(instance) {
         instance.timeElapsed = (Date.now() - instance.oldTime) / 1000.0;
         instance.oldTime = Date.now();
+        if(instance.timeElapsed > 0.1) {
+            console.log("More than 100ms in server loop. Cropping time elapsed.");
+            instance.timeElapsed = 0.1;
+        }
         if (instance.oldTime - instance.lastLog > 3000) {
             instance.lastLog = instance.oldTime;
             console.log("Mainloop running");
@@ -76,13 +109,13 @@ class MainLoop {
         var newPlayer = new Protagonist(data.id, socket, this.world, this);
         newPlayer.showOldPlayers(this.players);
         this.players.set(data.id, newPlayer);
-        this.playerUpdateData.set(data.id, newPlayer.data);     // IMPORTANT ON EVERY ADD!!!
+        this.playerUpdateDataMap.set(data.id, newPlayer.data);     // IMPORTANT ON EVERY ADD!!!
         return newPlayer.data;
     }
 
     handleDisconnect(clientId) {
         this.players.delete(clientId);
-        this.playerUpdateData.delete(clientId);            /// IMPORTANT!
+        this.playerUpdateDataMap.delete(clientId);            /// IMPORTANT!
     }
 
 

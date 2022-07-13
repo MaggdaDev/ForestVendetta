@@ -6,4 +6,12 @@ class ClientPlatform {
         this.phaserRect.setStrokeStyle(2, 0x000000)
         this.hitBox = data.hitBox;
     }
+
+    update(data) {
+        if(Object.hasOwn(data, 'pos')) {
+            console.log('Pos updated!')
+            this.phaserRect.x = data.pos.x;
+            this.phaserRect.y = data.pos.y;
+        }
+    }
 }

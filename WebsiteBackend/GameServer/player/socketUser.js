@@ -38,10 +38,10 @@ class SocketUser {
 
     /**
      * 
-     * @param {Protagonist[]} players - all the players in the game 
+     * @param {Object[]} updateData - all update data, see networkCommands#UPDATE for more 
      */
-    sendUpdate(playerUpdateData) {
-        this.sendCommand(NetworkCommands.UPDATE_PLAYERS, Array.from(playerUpdateData.values()));
+    sendUpdate(updateData) {
+        this.sendCommand(NetworkCommands.UPDATE, updateData);
     }
 
     /**

@@ -21,6 +21,8 @@ class NetworkManager {
         this.socket.on(NetworkCommands.UPDATE_PLAYERS, (data)=>this.updatePlayers(data));
         this.socket.on(NetworkCommands.SHOW_OLD_PLAYERS, (data)=>this.showOldPlayers(data));
         this.socket.on(NetworkCommands.DISCONNECT_PLAYER, (data)=>this.disconnectPlayer(data));
+        this.socket.on(NetworkCommands.UPDATE_WORLD, (data)=>this.updateWorld(data));
+        this.socket.on(NetworkCommands.UPDATE, (data)=>this.update(data));
         // End: registering command handling
 
         console.log("NetworkManager created.")
@@ -51,14 +53,6 @@ class NetworkManager {
 
     /**
      * 
-     * @param {Object[]} data - list of playerdatas 
-     */
-    updatePlayers(data) {
-        this.mainScene.updatePlayers(data);
-    }
-
-    /**
-     * 
      * @param {Object} data - data object to add old players
      */
     showOldPlayers(data) {
@@ -71,6 +65,17 @@ class NetworkManager {
      */
     disconnectPlayer(id) {
         this.mainScene.disconnectPlayer(id);
+    }
+
+
+    /**
+     * 
+     * @param {Object[]} data - all update objects, [{update:'PLAYERS',data:}, {update:'WORLD', data:}]
+     */
+    update(data) {
+        console.log('Update: ' + JSON.stringify(data));
+        this.mainScene.updateWorld(data.world);
+        this.mainScene.updatePlayers(data.players);
     }
 
     // End: Handling commands

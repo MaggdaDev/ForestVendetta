@@ -1,6 +1,7 @@
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
 const PlayerControls = require("../../GameStatic/js/playerControls");
 const HitBox = require("../physics/hitbox");
+const MovableBody = require("../physics/movableBody");
 const Vector = require("../physics/vector");
 const SocketUser = require("./socketUser");
 
@@ -11,8 +12,6 @@ class Protagonist {
 
     constructor (id, socket, world, mainLoop) {
         this.id = id;
-        this.spd = new Vector(0,0);
-        this.acc = new Vector(0,10);
         this.startPos = new Vector(Math.random() * 500,100);
         
         this.world = world;
@@ -22,8 +21,13 @@ class Protagonist {
         this.data = {hitBox: this.hitBox, id: this.id};
         this.mainLoop = mainLoop;
 
+        this.movableBody = new MovableBody(this.hitBox,false,100);
+        this.movableBody.addGravity();
+        //this.movableBody.addFriction();
+        this.walkAcc = null;
         //send world data
         this.socketUser.sendWorldData(world);
+        
     }
 
     /**
@@ -44,48 +48,64 @@ class Protagonist {
      * @param {Object[]} intersectables - objects to intersect with
      */
     update(timeElapsed, players) {
-        this.spd.addMultipliedVector(this.acc, timeElapsed);
-
-        this.hitBox.pos.x += timeElapsed * this.spd.x;
-        if(this.intersecting()) {
-            //jconsole.log('Intersecting!');
-            this.hitBox.pos.x -= timeElapsed * this.spd.x;
-            this.spd.x = 0;
-        }
-
-        this.hitBox.pos.y += timeElapsed * this.spd.y;
-        if(this.intersecting()) {
-            //jconsole.log('Intersecting!');
-            this.hitBox.pos.y -= timeElapsed * this.spd.y;
-            this.spd.y = 0;
-        }
-
-        
+        this.movableBody.update(timeElapsed, this.intersectables);   
     }
 
-    sendUpdate(playerUpdateData) {
-        this.socketUser.sendUpdate(playerUpdateData);
+    get intersectables() {
+        return this.world.intersectables;
+    }
+
+    sendUpdate(updateData) {
+        this.socketUser.sendUpdate(updateData);
     }
 
     playerControl(control) {
         switch(control) {
             case PlayerControls.START_WALK_RIGHT:
-                this.spd.x = 50;
+                this.startWalk('RIGHT');
                 break;
             case PlayerControls.STOP_WALK_RIGHT:
-                this.spd.x = 0;
+                this.clearCurrAccImpulse();
                 break;
             case PlayerControls.START_WALK_LEFT:
-                this.spd.x = -50;
+                this.startWalk('LEFT');
                 break;
             case PlayerControls.STOP_WALK_LEFT:
-                this.spd.x = 0;
+                this.clearCurrAccImpulse();
                 break;
             case PlayerControls.JUMP:
-                this.spd.y -= 100;
+                this.jump();
                 break;
         }
         console.log("Handled player control: " + control);
+    }
+
+    /**
+     * 
+     * @param {string} dir - 'LEFT' or 'RIGHT' 
+     */
+    startWalk(dir) {
+        this.clearCurrAccImpulse();
+        var dirVec;
+        if(dir === 'RIGHT') {
+            dirVec = new Vector(1,0);
+        } else if(dir === 'LEFT') {
+            dirVec = new Vector(-1,0);
+        } else {
+            throw new Error('dir must be either LEFT or RIGHT');
+        }
+        this.walkAcc = this.movableBody.generateAccelerateImpulse(dirVec, 50, 100);
+    }
+
+    jump() {
+
+    }
+
+    clearCurrAccImpulse() {
+        if(this.walkAcc) {
+            this.movableBody.removeAcceleration(this.walkAcc);
+            this.walkAcc = null;
+        }
     }
 
 
@@ -101,19 +121,6 @@ class Protagonist {
         this.socketUser.sendCommand(command, data);
     }
 
-    /**
-     * 
-     * @param {Object[]} intersectables 
-     */
-    intersecting() {
-        var intersecting = false;
-        this.world.worldObjects.forEach(element => {
-            if(element != this && element.isSolid && element.hitBox.intersects(this.hitBox)) {
-                intersecting = true;
-            }
-        });
-        return intersecting;
-    }
 
     /**
     * 

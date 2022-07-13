@@ -112,6 +112,10 @@ class GameScene extends Phaser.Scene {
         console.log("Player disconnected!");
     }
 
+    updateWorld(data) {
+        this.world.update(data);
+    }
+
     // End: Executing incoming commands from network manager
 
 }
