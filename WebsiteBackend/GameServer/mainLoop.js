@@ -1,6 +1,7 @@
 const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
 const World = require('./world/world');
+const WorldLoader = require('./world/worldLoader');
 class MainLoop {
 
     constructor(playerList) {
@@ -11,12 +12,13 @@ class MainLoop {
         this.players = playerList;
         this.playerUpdateDataMap = new Map();
 
-        this.world = new World();
-        this.world.buildWorld();
+        this.worldLoader = new WorldLoader();
+        this.world = this.worldLoader.loadWorld();
 
         this.networkManager = undefined;
         this.updateData = this.collectUpdateData();
         console.log(JSON.stringify(this.updateData));
+
     }
 
     /**

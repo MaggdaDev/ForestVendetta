@@ -1,10 +1,22 @@
 const Platform = require("./platform");
+const PolygonObject = require("./polygonObject");
+const WorldObjectGenerator = require("./worldObjectGenerator");
 
 class World {
-    constructor() {
-        this.worldObjects = [];
+    /**
+     * 
+     * @param {string} json - stringified json
+     */
+    constructor(json) {
         this.currentId = 0;
-        
+        var jsonObject = JSON.parse(json);
+        this.worldObjects = [];
+        jsonObject.worldObjects.forEach((currObj)=>{
+            this.worldObjects.push(WorldObjectGenerator.loadWorldObject(currObj, this.nextId));
+        });
+        var testPol = new PolygonObject({"points":[{"x":80,"y":80},{"x":400,"y":300},{"x":400,"y":350},{"x":250,"y":350}],"type":"POLYGON"} ,this.nextId, false);
+    
+        this.worldObjects.push(testPol);
     }
 
     update(timeElapsed) {
@@ -24,20 +36,11 @@ class World {
         return intersectables;
     }
 
-    buildWorld() {
-        console.log("Building world...")
-
-        this.addNewPlatform(500, 500, 500, 50, true);
-        this.addNewPlatform(500, 300, 980, 40, false);
-
-        this.clientWorldUpdateData = this.createClientWorldUpdateData();
-        console.log("World built.")
-    }
 
     /**
      * @returns {Object[]} update data
      */
-    createClientWorldUpdateData() {
+    get clientWorldUpdateData() {
         var ret = [];
         this.worldObjects.forEach((currObj)=>{
             ret.push(currObj.clientUpdateData);

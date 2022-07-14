@@ -7,9 +7,17 @@ class ClientWorld {
         var instance = this;
         console.log('World object: ' + JSON.stringify(data));
         data.worldObjects.forEach((currObj)=> {
-            if(currObj.type == 'platform') {
-                instance.worldObjects.set(currObj.id, new ClientPlatform(instance.mainScene, currObj));
+            switch(currObj.type) {
+                case 'platform':
+                    instance.worldObjects.set(currObj.id, new ClientPlatform(instance.mainScene, currObj));
+                break;
+                case 'POLYGON':
+                    instance.worldObjects.set(currObj.id, new ClientPolygonObject(instance.mainScene, currObj));
+                break;
+                default:
+                    console.log("Error at world loading: Unknown object type received: " + JSON.stringify(currObj));
             }
+          
         });
     }
 

@@ -1,5 +1,5 @@
 class Vector {
-    constructor (x, y) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }
@@ -18,6 +18,7 @@ class Vector {
     incrementBy(vec) {
         this.x += vec.x;
         this.y += vec.y;
+        return this;
     }
 
     get abs() {
@@ -25,7 +26,24 @@ class Vector {
     }
 
     get dirVec() {
-        return Vector.multiply(this, 1.0/this.abs);
+        return Vector.multiply(this, 1.0 / this.abs);
+    }
+
+    get normalDir() {
+        return this.normal.dirVec;
+    }
+
+    get normal() {
+        return new Vector(this.y, -1 * this.x);
+    }
+
+    /**
+     * 
+     * @param {Vector} other
+     * @returns {number} 
+     */
+    dot(other) {
+        return this.x * other.x + this.y * other.y;
     }
 
     clone() {
@@ -42,7 +60,46 @@ class Vector {
 
     static addWeighted(vec1, weight1, vec2, weight2) {
         var totWeight = weight1 + weight2;
-        return Vector.add(Vector.multiply(vec1, weight1/totWeight), Vector.multiply(vec2, weight2/totWeight));
+        return Vector.add(Vector.multiply(vec1, weight1 / totWeight), Vector.multiply(vec2, weight2 / totWeight));
+    }
+
+    /**
+     * 
+     * @param {Vector[]} vecs 
+     */
+    static areClockwise(vecs) {
+        return Vector.calcAr(vecs) < 0;
+    }
+
+    static calcAr(vecs) {
+        if (vecs.length < 2) {
+            return 0;
+        }
+        var ar = 0;
+        for (var i = 0; i < vecs.length - 1; i++) {
+            ar += (vecs[i + 1].x - vecs[i].x) * (vecs[i + 1].y + vecs[i].y);
+        }
+        ar += (vecs[0].x - vecs[vecs.length - 1].x) * (vecs[0].y + vecs[vecs.length - 1].y);
+        return ar;
+    }
+
+    static subtractFrom(from, sub) {
+        var ret = from.clone();
+        ret.x -= sub.x;
+        ret.y -= sub.y;
+        return ret;
+    }
+
+    /**
+     * 
+     * @param {Vector[]} vectors 
+     */
+    static getCenter(vectors) {
+        var ret = new Vector(0, 0);
+        vectors.forEach(element => {
+            ret.incrementBy(element);
+        });
+        return Vector.multiply(ret, 1.0 / vectors.length);
     }
 
 

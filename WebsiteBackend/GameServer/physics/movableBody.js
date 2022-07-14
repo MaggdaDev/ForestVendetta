@@ -1,5 +1,7 @@
 const ComputingVector = require("./computingVector");
+const HitBox = require("./hitbox");
 const MultiBodySystem = require("./multiBodySystem");
+const PhysicalContact = require("./physicalContact");
 const Vector = require("./vector");
 const VectorSum = require("./vectorSum");
 
@@ -17,17 +19,17 @@ class MovableBody {
         this.intersections = new Set();
         this.isElastic = isElastic;
         this.mass = mass;
-        this.currSystem = new MultiBodySystem(this, new Vector(0,0));
+        this.currSystem = new MultiBodySystem(this, new Vector(0, 0));
     }
 
     addGravity() {
-        this.gravity = new Vector(0, 20);
+        this.gravity = new Vector(0, 40);
         this.acc.addVector(this.gravity);
     }
 
     addRubberPoint(rubberPoint) {
         var instance = this;
-        this.acc.addVector(new ComputingVector(0, 0, () => { return rubberPoint.x - instance.hitBox.pos.x }, () => { return rubberPoint.y - instance.hitBox.pos.y }));
+        this.acc.addVector(new ComputingVector(0, 0, () => { return rubberPoint.x - instance.hitBox.pos.x }, () => { return (rubberPoint.y - instance.hitBox.pos.y)*2 }));
     }
 
     addFriction() {
@@ -80,46 +82,59 @@ class MovableBody {
     update(timeElapsed, intersectables) {
         this.checkIntersections(intersectables);
         this.currSystem.addWeightedSpd(Vector.multiply(this.acc, timeElapsed), this.mass);
-        this.hitBox.pos.incrementBy(Vector.multiply(this.currSystem.sharedSpd, timeElapsed));
+        this.hitBox.pos = this.hitBox.pos.incrementBy(Vector.multiply(this.currSystem.sharedSpd, timeElapsed));
 
     }
 
     checkIntersections(intersectables) {
         intersectables.forEach(element => {
-            if (element != this && element.hitBox.intersects(this.hitBox)) {
-                if (!this.intersections.has(element)) {
+            if (element != this ) {
+                var newIntersections = HitBox.getIntersections(element.hitBox, this.hitBox);
+                if (newIntersections != null && (!this.intersections.has(element))) {
                     this.intersections.add(element);
                     element.intersections.add(this);
-                    this.notifyNewIntersection(element);
+                    this.notifyNewIntersection(element, newIntersections);
+                } else if(newIntersections != null && this.intersections.has(element)) {
+                    console.log("moving out didnt work!");
                 }
-            } else {
-                if (this.intersections.has(element)) {
-                    this.intersections.delete(element);
-                    element.intersections.delete(this);
-                    this.notifyEndIntersection(element);
+                else {
+                    if (this.intersections.has(element)) {
+                        this.intersections.delete(element);
+                        element.intersections.delete(this);
+                        this.notifyEndIntersection(element);
+                    }
                 }
+
+
             }
+
         });
     }
 
-    notifyNewIntersection(object) {
+    notifyNewIntersection(object, newIntersections) {
+        var contact = new PhysicalContact(this, object, newIntersections[0], newIntersections[1]);
         if (this.isElastic && object.isElastic) {
             console.log("Both elastic!");
             var thisSpd = this.currSystem.sharedSpd.clone();
+            var thisNormalComp = contact.getNormalPart(thisSpd);
             var otherSpd = object.currSystem.sharedSpd.clone();
-            this.currSystem.sharedSpd.x = otherSpd.x;
-            this.currSystem.sharedSpd.y = otherSpd.y;
-            object.currSystem.sharedSpd.x = thisSpd.x;
-            object.currSystem.sharedSpd.y = thisSpd.y;
+            var otherNormalComp = contact.getNormalPart(otherSpd);
+            var newThisSpd = Vector.add(Vector.subtractFrom(thisSpd, thisNormalComp), otherNormalComp);
+            var newOtherSpd = Vector.add(Vector.subtractFrom(otherSpd, otherNormalComp), thisNormalComp);
+            this.currSystem.sharedSpd.x = newThisSpd.x;
+            this.currSystem.sharedSpd.y = newThisSpd.y;
+            object.currSystem.sharedSpd.x = newOtherSpd.x;
+            object.currSystem.sharedSpd.y = newOtherSpd.y;
         } else {
             this.currSystem.addBody(object);
             console.log("Body added!");
         }
+        contact.moveBodyOut();
     }
 
     notifyEndIntersection(object) {
-        if(this.currSystem.bodys.has(object)) {
-            object.currSystem = new MultiBodySystem(object, new Vector(0,30));
+        if (this.currSystem.bodys.has(object)) {
+            object.currSystem = new MultiBodySystem(object, new Vector(0, 30));
             this.currSystem.removeBody(object);
             console.log("Body removed!");
         }

@@ -1,0 +1,61 @@
+const Segment = require("./segment");
+const Vector = require("./vector");
+
+class PolygonHitBox {
+    /**
+     * 
+     * @param {Object[]} points - points
+     *  
+     */
+    constructor(points) {
+        this.points = points;
+        this.type = "POLYGON";
+    }
+
+    /**
+     * 
+     * @param {Vector} point 
+     */
+    isPointInside(point) {
+        var segs = this.segments;
+        for(var i = 0; i < segs.length; i++) {
+            if(!Vector.areClockwise([segs[i].from, segs[i].to, point])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    moveOutOfHitBox(wayOut) {
+        this.pos = Vector.add(this.pos, wayOut);
+    }
+
+    set pos(newPos) {   // ALWAYS set pos NEVER set pos.x
+        var curr = this.pos;
+        var diff = Vector.subtractFrom(newPos, curr);
+        this.points.forEach((element)=>{
+            element.x += diff.x;
+            element.y += diff.y;
+        });
+    }
+
+    get pos() {
+        return this.center;
+    }
+
+    get center() {
+        return Vector.getCenter(this.points);
+    }
+
+    get segments() {
+        var ret = [];
+        for(var i = 0; i < this.points.length-1; i++) {
+            ret.push(new Segment(this.points[i], this.points[i+1]));
+        }
+        ret.push(new Segment(this.points[this.points.length-1], this.points[0]));
+        return ret;
+    }
+
+}
+
+module.exports = PolygonHitBox;
