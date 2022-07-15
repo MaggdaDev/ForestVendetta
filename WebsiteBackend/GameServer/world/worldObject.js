@@ -17,6 +17,7 @@ class WorldObject {
             this.movableBody.addRubberPoint(hitBox.pos.clone());
         }
         this.movableBody.addGravity();
+        
     }
 
     update(timeElapsed, intersectables) {
@@ -24,7 +25,7 @@ class WorldObject {
     }
 
     get clientUpdateData() {
-        return { id: this.id, pos: this.hitBox.pos };
+        return { id: this.id, pos: this.hitBox.pos, rot: this.movableBody.rot};
     }
 }
 

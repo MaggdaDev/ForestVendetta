@@ -14,7 +14,7 @@ class World {
         jsonObject.worldObjects.forEach((currObj)=>{
             this.worldObjects.push(WorldObjectGenerator.loadWorldObject(currObj, this.nextId));
         });
-        var testPol = new PolygonObject({"points":[{"x":80,"y":80},{"x":400,"y":300},{"x":400,"y":350},{"x":250,"y":350}],"type":"POLYGON"} ,this.nextId, false);
+        var testPol = new PolygonObject({"points":[{"x":30,"y":80},{"x":300,"y":80},{"x":300,"y":150},{"x":30,"y":150}],"type":"POLYGON"} ,this.nextId, false);
     
         this.worldObjects.push(testPol);
     }

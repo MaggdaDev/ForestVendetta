@@ -20,13 +20,21 @@ class PhysicalContact {
         this.normalDir = this.intersectionLine.normalDir;
         this.dir = this.intersectionLine.dirVec;
         this.pointInside;
+        this.overlapForce = 10000;
 
+    }
+
+    get overlapTime() {
+        var zaehler = Vector.subtractFrom(this.body2.spd, this.body1.spd).abs;
+        var nenner = (this.overlapForce/2.0) * (1.0/this.body1.mass + 1.0/this.body2.mass);
+        return zaehler/nenner;
     }
 
     moveBodyOut() {
         var info = this.pointInsideAndBodyToMove;
         var wayOut = this.getRouteToSlightlyOut(info.pointInside);
         info.bodyToMove.hitBox.moveOutOfHitBox(wayOut);
+        console.log("Overlap time: " + this.overlapTime);
     }
 
     get pointInsideAndBodyToMove() {

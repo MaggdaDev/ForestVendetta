@@ -50,6 +50,11 @@ class Vector {
         return new Vector(this.x, this.y);
     }
 
+    clear() {
+        this.x = 0.0;
+        this.y = 0.0;
+    }
+
     static add(vec1, vec2) {
         return new Vector(vec1.x + vec2.x, vec1.y + vec2.y);
     }
@@ -58,9 +63,21 @@ class Vector {
         return new Vector(vec.x * mult, vec.y * mult);
     }
 
+    static getMoreOtherDirTo(to, vec) {
+        if(to.dot(vec) < 0) {
+            return vec;
+        } else {
+            return Vector.multiply(vec,-1);
+        }
+    }
+
     static addWeighted(vec1, weight1, vec2, weight2) {
         var totWeight = weight1 + weight2;
         return Vector.add(Vector.multiply(vec1, weight1 / totWeight), Vector.multiply(vec2, weight2 / totWeight));
+    }
+
+    static center(vec1, vec2) {
+        return new Vector((vec1.x + vec2.x) / 2, (vec1.y + vec2.y) /2);
     }
 
     /**
@@ -80,7 +97,7 @@ class Vector {
             ar += (vecs[i + 1].x - vecs[i].x) * (vecs[i + 1].y + vecs[i].y);
         }
         ar += (vecs[0].x - vecs[vecs.length - 1].x) * (vecs[0].y + vecs[vecs.length - 1].y);
-        return ar;
+        return ar/2.0;
     }
 
     static subtractFrom(from, sub) {

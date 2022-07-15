@@ -48,7 +48,7 @@ class Protagonist {
      * @param {Object[]} intersectables - objects to intersect with
      */
     update(timeElapsed, players) {
-        this.movableBody.update(timeElapsed, this.intersectables);   
+        //this.movableBody.update(timeElapsed, this.intersectables);   
     }
 
     get intersectables() {
