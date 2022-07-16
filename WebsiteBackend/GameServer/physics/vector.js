@@ -63,11 +63,11 @@ class Vector {
         return new Vector(vec.x * mult, vec.y * mult);
     }
 
-    static getMoreOtherDirTo(to, vec) {
-        if(to.dot(vec) < 0) {
+    static getMoreSimilarTo(to, vec) {
+        if(to.dot(vec) > 0) {
             return vec;
         } else {
-            return Vector.multiply(vec,-1);
+            return Vector.multiply(vec,-1.0);
         }
     }
 
@@ -78,6 +78,14 @@ class Vector {
 
     static center(vec1, vec2) {
         return new Vector((vec1.x + vec2.x) / 2, (vec1.y + vec2.y) /2);
+    }
+
+    static zOfCross(vec1, vec2) {
+        return vec1.x * vec2.y - vec1.y * vec2.x;
+    }
+
+    static crossWithOnlyZ(vec, z) {
+        return new Vector(vec.y * z, (-1.0) * vec.x * z);
     }
 
     /**

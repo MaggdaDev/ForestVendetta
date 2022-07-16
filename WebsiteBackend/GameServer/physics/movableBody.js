@@ -20,19 +20,21 @@ class MovableBody {
         this.spd = new Vector(0, 0);
         this.rot = 0;
         this.rotSpd = 0;
+        this.rotAcc = 0;
 
 
         this.isGravity = false;
-        this.gravity = new Vector(0, 30);
+        this.gravity = new Vector(0, 80);
 
         this.isRubberPoint = false;
         this.rubberPoint = null;
         this.rubberMult = 2000;
+        this.rubberData = {f: 1, zeta: 0.05};
 
         this.isFriction = false;
         this.frictionMult = 0.2;
 
-        this.inertiaMoment = this.mass * 0.5;
+        this.inertiaMoment = this.mass * 20000;
     }
 
     addGravity() {
@@ -48,7 +50,7 @@ class MovableBody {
         this.isFriction = true;
     }
 
-    refreshResultingForce() {
+    refreshResultingForce(timeElapsed) {
         this.resultingForce.clear();
 
         if (this.isGravity) {
@@ -56,7 +58,20 @@ class MovableBody {
         }
 
         if (this.isRubberPoint) {
-            this.resultingForce.incrementBy(Vector.multiply(Vector.subtractFrom(this.rubberPoint, this.hitBox.pos), this.rubberMult));
+            var abstand = Vector.subtractFrom(this.rubberPoint, this.hitBox.pos).abs;
+
+            //this.rubberData.zeta = 1/Math.max(0.5,abstand);
+            //this.rubberData.f = 17/Math.max(10,abstand);
+            var res = Vector.subtractFrom(Vector.subtractFrom(this.rubberPoint, this.hitBox.pos), Vector.multiply(this.spd, this.rubberData.zeta/(this.rubberData.f*Math.PI)));
+            res = Vector.multiply(res, 2.0 * this.mass * Math.pow(Math.PI * this.rubberData.f, 2.0));
+            this.resultingForce.incrementBy(res);
+            var leftCtrl = Math.pow(Math.PI * this.rubberData.f,2.0);
+            var rightCtrl = timeElapsed * this.rubberData.zeta/(2 * Math.PI * this.rubberData.f);
+            if(rightCtrl > leftCtrl) {
+                console.log("EIGENVALUES");
+            }
+
+            this.rotAcc = -10 * this.rot - 0.2 * this.rotSpd;
         }
 
         if (this.isFriction) {
@@ -112,11 +127,12 @@ class MovableBody {
      */
     update(timeElapsed, intersectables) {
         this.checkIntersections(intersectables);
-        this.refreshResultingForce();
+        this.refreshResultingForce(timeElapsed);
         this.acc = Vector.multiply(this.resultingForce, 1 / this.mass);
         this.spd.incrementBy(Vector.multiply(this.acc, timeElapsed));
         this.hitBox.pos = this.hitBox.pos.incrementBy(Vector.multiply(this.spd, timeElapsed));
 
+        this.rotSpd += this.rotAcc * timeElapsed;
         this.rot += this.rotSpd * timeElapsed;
         this.hitBox.updateRot(this.rot);
 
@@ -153,11 +169,18 @@ class MovableBody {
         if (this.isElastic && object.isElastic) {
             console.log("Both elastic!");
             var overLapTime = contact.overlapTime;
-            this.workForceOverTime(Vector.multiply(Vector.getMoreOtherDirTo(this.spd, contact.normalDir), contact.overlapForce), overLapTime);
-            object.workForceOverTime(Vector.multiply(Vector.getMoreOtherDirTo(object.spd, contact.normalDir), contact.overlapForce), overLapTime);
+            var thisForce = Vector.multiply(Vector.getMoreSimilarTo(this.hitBox.getDistToGravCenter(contact.intersectionCenter), contact.normalDir), contact.overlapForce);
+            var otherForce = Vector.multiply(Vector.getMoreSimilarTo(object.hitBox.getDistToGravCenter(contact.intersectionCenter), contact.normalDir), contact.overlapForce);
+            this.workForceOverTime(thisForce, overLapTime);
+            object.workForceOverTime(otherForce, overLapTime);
 
-            this.workRotMomentOverTime(10, 10);
-            object.workRotMomentOverTime(-10, 10);
+            //var isThisClockwise = Vector.areClockwise(this.hitBox.pos, contact.intersectionCenter, Vector.add(contact.intersectionCenter, thisForceDir));
+            //var isOtherClockwise = Vector.areClockwise(other.hitBox.pos, contact.intersectionCenter, Vector.add(contact.intersectionCenter, otherForceDir));
+
+            var thisRotMoment = Vector.zOfCross(this.hitBox.getDistToGravCenter(contact.intersectionCenter),thisForce);
+            var otherRotMoment = Vector.zOfCross(object.hitBox.getDistToGravCenter(contact.intersectionCenter),otherForce);
+            this.workRotMomentOverTime(-thisRotMoment, overLapTime);
+            object.workRotMomentOverTime(-otherRotMoment, overLapTime);
         }
         contact.moveBodyOut();
     }
