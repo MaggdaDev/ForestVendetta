@@ -4,30 +4,35 @@ const HitBox = require("../physics/hitbox");
 const MovableBody = require("../physics/movableBody");
 const Vector = require("../physics/vector");
 const SocketUser = require("./socketUser");
+const PolygonHitBox = require("../physics/polygonHitBox");
 
 const PLAYER_HITBOX_WIDTH = 20;
 const PLAYER_HITBOX_HEIGHT = 80;
 
 class Protagonist {
+    
 
-    constructor (id, socket, world, mainLoop) {
+    constructor(id, socket, world, mainLoop) {
         this.id = id;
-        this.startPos = new Vector(Math.random() * 500,100);
-        
+        this.startPos = new Vector(Math.random() * 500, 100);
+
         this.world = world;
-        this.hitBox = new HitBox(this.startPos.x,this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
+        this.hitBox = new PolygonHitBox([new Vector(-0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, -0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
+        new Vector(0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, -0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
+        new Vector(0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, 0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
+        new Vector(-0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, 0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y)]);
         this.socketUser = new SocketUser(socket, this);
 
-        this.data = {hitBox: this.hitBox, id: this.id};
         this.mainLoop = mainLoop;
 
-        this.movableBody = new MovableBody(this.hitBox,false,100);
+        this.movableBody = new MovableBody(this.hitBox, true, 100);
         this.movableBody.addGravity();
+        this.movableBody.disableRotation();
+        this.movableBody.setFrictive();
         //this.movableBody.addFriction();
-        this.walkAcc = null;
         //send world data
         this.socketUser.sendWorldData(world);
-        
+
     }
 
     /**
@@ -36,8 +41,8 @@ class Protagonist {
      */
     showOldPlayers(players) {
         var data = [];
-        players.forEach((currPlayer)=>{
-            data.push(currPlayer.data);
+        players.forEach((currPlayer) => {
+            data.push(currPlayer);
         })
         this.socketUser.showOldPlayers(data);
     }
@@ -48,7 +53,20 @@ class Protagonist {
      * @param {Object[]} intersectables - objects to intersect with
      */
     update(timeElapsed, players) {
-        //this.movableBody.update(timeElapsed, this.intersectables);   
+        this.movableBody.update(timeElapsed, this.intersectables);
+    }
+
+    /**
+     * OVERRIDE
+     */
+    toJSON() {
+        var instance = this;
+        return {
+            pos: this.hitBox.pos,
+            height: PLAYER_HITBOX_HEIGHT,
+            width: PLAYER_HITBOX_WIDTH,
+            id: this.id
+        }
     }
 
     get intersectables() {
@@ -60,7 +78,7 @@ class Protagonist {
     }
 
     playerControl(control) {
-        switch(control) {
+        switch (control) {
             case PlayerControls.START_WALK_RIGHT:
                 this.startWalk('RIGHT');
                 break;
@@ -87,25 +105,24 @@ class Protagonist {
     startWalk(dir) {
         this.clearCurrAccImpulse();
         var dirVec;
-        if(dir === 'RIGHT') {
-            dirVec = new Vector(1,0);
-        } else if(dir === 'LEFT') {
-            dirVec = new Vector(-1,0);
+        if (dir === 'RIGHT') {
+            dirVec = new Vector(1, 0);
+        } else if (dir === 'LEFT') {
+            dirVec = new Vector(-1, 0);
         } else {
             throw new Error('dir must be either LEFT or RIGHT');
         }
-        this.walkAcc = this.movableBody.generateAccelerateImpulse(dirVec, 50, 100);
+        this.movableBody.generateAccelerateImpulse(dirVec, 100, 300);
     }
 
     jump() {
-
+        if (this.movableBody.isContact) {
+            this.movableBody.wantToJump = true;
+        }
     }
 
     clearCurrAccImpulse() {
-        if(this.walkAcc) {
-            this.movableBody.removeAcceleration(this.walkAcc);
-            this.walkAcc = null;
-        }
+        this.movableBody.stopAccelerateImpulse();
     }
 
 
@@ -127,14 +144,14 @@ class Protagonist {
     * @param {Object} event - keyup_right, ...
     */
     keyEvent(event) {
-        switch(event) {
+        switch (event) {
             case 'keydown_right':
                 this.spd.x = 250;
                 break;
             case 'keydown_left':
                 this.spd.x = -250;
                 break;
-            case 'keyup_right':  case 'keyup_left':
+            case 'keyup_right': case 'keyup_left':
                 this.spd.x = 0;
                 break;
         }

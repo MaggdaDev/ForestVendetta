@@ -35,8 +35,8 @@ class PolygonHitBox {
         this.pos = Vector.add(this.pos, wayOut);
     }
 
-    getDistToGravCenter(pos) {
-        return Vector.subtractFrom(this.gravCenter, pos);
+    getPosRelToGravCenter(pos) {
+        return Vector.subtractFrom(pos, this.gravCenter);
     }
 
     updateRot(newRot) {

@@ -8,6 +8,7 @@ const NetworkCommands = {
     UPDATE_WORLD: 'UPDATE_WORLD',               // data: [{id, propsToModify}]
     SHOW_OLD_PLAYERS: 'SHOW_OLD_PLAYERS',       // data: SAME AS ADD_PLAYER! curr: same as update
     DISCONNECT_PLAYER: 'DISCONNECT_PLAYER',     // data: id
+    CONTROL_DATA: 'CONTROL_DATA',               // data: energy etc
 
 
     // TO SERVER

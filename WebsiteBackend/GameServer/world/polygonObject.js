@@ -19,7 +19,7 @@ class PolygonObject extends WorldObject {
         return {
             id: instance.id,
             type: instance.type,
-            points: instance.hitBox.points,
+            points: instance.hitBox.initialPoints,
             isSolid: instance.isSolid,
             pos: instance.hitBox.pos
         }

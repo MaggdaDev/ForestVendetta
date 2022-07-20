@@ -21,37 +21,9 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        
-
         this.tasten = this.input.keyboard.createCursorKeys();
-
-        
-
         var scene = this;
-
-        /**
-         * @param {Object} data
-         * @param {number} data.x - new x pos
-         * @param {number} data.y - new y pos
-         */
-        /*this.registry.socket.on('update', function (data) {
-        //    console.log('update: ' + data);
-            woman.x = data.x;
-            woman.y = data.y;
-        });
-        this.registry.socket.on('updateEnv', function (data) {
-            if (!scene.platform) {
-                scene.platform = new ClientPlatform(data);
-                console.log('Platform created!');
-            }
-            console.log('updateEnv: ' + JSON.stringify(data));
-        });
-        */
-
-
-        
-       
-
+        this.physicsInfo = new PhysicsControlInfo(this);
 
     }
 
@@ -67,11 +39,11 @@ class GameScene extends Phaser.Scene {
      */
     addPlayer(data) {
         if(data.id == this.networkManager.clientId) {
-            this.clientProtagonist.generateSprite(data.hitBox.pos.x, data.hitBox.pos.y, data.hitBox.width, data.hitBox.height);
+            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height);
             console.log('Added local protagonist with server data.');
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
-            newPlayer.generateSprite(data.hitBox.pos.x, data.hitBox.pos.y, data.hitBox.width, data.hitBox.height)
+            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height)
             this.players.set(data.id, newPlayer);
             console.log('Added new player with id: '+ data.id);
         }
@@ -84,6 +56,7 @@ class GameScene extends Phaser.Scene {
         this.world = new ClientWorld(data, this);
 
         console.log('World setup complete.')
+        
     }
 
     updatePlayers(data) {
@@ -98,7 +71,7 @@ class GameScene extends Phaser.Scene {
         var instance = this;
         data.forEach((currData)=>{
             var newPlayer = new ClientPlayer(instance, currData.id, false);
-            newPlayer.generateSprite(currData.hitBox.pos.x, currData.hitBox.pos.y, currData.hitBox.width, currData.hitBox.height);
+            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height);
             instance.players.set(currData.id, newPlayer);
         });
         console.log('Added ' + data.length + ' old players to the game.');

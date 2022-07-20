@@ -1,3 +1,4 @@
+const NetworkCommands = require('../GameStatic/js/network/networkCommands');
 const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
 const World = require('./world/world');
@@ -10,7 +11,6 @@ class MainLoop {
         this.lastLog = 0;
         this.timeElapsed = 0;
         this.players = playerList;
-        this.playerUpdateDataMap = new Map();
 
         this.worldLoader = new WorldLoader();
         this.world = this.worldLoader.loadWorld();
@@ -34,18 +34,14 @@ class MainLoop {
     update(timeElapsed) {
         this.updateWorld(timeElapsed);
         this.updateAllPlayers(timeElapsed);
-        this.updateUpdateData();
         this.allPlayersSendUpdate(this.updateData);
         
     }
 
     updateWorld(timeElapsed) {
-        this.world.update(timeElapsed);
+        this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed)));
     }
 
-    updateUpdateData() {
-        this.updateData
-    }
 
     /**
      * 
@@ -77,7 +73,11 @@ class MainLoop {
     }
 
     get sendablePlayerUpdateData() {
-        return Array.from(this.playerUpdateDataMap.values());
+        var ret = [];
+        this.players.forEach((curr)=>{
+            ret.push(curr);
+        });
+        return ret;
     }
     
 
@@ -107,17 +107,15 @@ class MainLoop {
     }
 
     addPlayer(socket, data) {
-        console.log("Register: " + data);
+        console.log("Register: " + JSON.stringify(data));
         var newPlayer = new Protagonist(data.id, socket, this.world, this);
         newPlayer.showOldPlayers(this.players);
         this.players.set(data.id, newPlayer);
-        this.playerUpdateDataMap.set(data.id, newPlayer.data);     // IMPORTANT ON EVERY ADD!!!
-        return newPlayer.data;
+        return newPlayer;
     }
 
     handleDisconnect(clientId) {
         this.players.delete(clientId);
-        this.playerUpdateDataMap.delete(clientId);            /// IMPORTANT!
     }
 
 

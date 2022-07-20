@@ -9,7 +9,7 @@ class ClientPlatform {
 
     update(data) {
         if(Object.hasOwn(data, 'pos')) {
-            console.log('Pos updated!')
+            //console.log('Pos updated!')
             this.phaserRect.x = data.pos.x;
             this.phaserRect.y = data.pos.y;
         }

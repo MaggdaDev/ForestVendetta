@@ -55,6 +55,11 @@ class Vector {
         this.y = 0.0;
     }
 
+    setTo(vec) {
+        this.x = vec.x;
+        this.y = vec.y;
+    }
+
     static add(vec1, vec2) {
         return new Vector(vec1.x + vec2.x, vec1.y + vec2.y);
     }
@@ -70,6 +75,32 @@ class Vector {
             return Vector.multiply(vec,-1.0);
         }
     }
+
+    static isSimilarDir(vec1, vec2) {
+        if(vec1.dot(vec2) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static getLessSimilarTo(to, vec) {
+        if(to.dot(vec) < 0) {
+            return vec;
+        } else {
+            return Vector.multiply(vec,-1.0);
+        }
+    }
+
+    static quasiSame(vec1, vec2) {
+        var epsi = 0.01;
+        return Math.abs(vec1.x - vec2.x) < epsi && Math.abs(vec1.y - vec2.y) < epsi;
+    }
+
+    static sameSign(vec1, vec2) {
+        return Math.sign(vec1.x) === Math.sign(vec2.x) && Math.sign(vec1.y) === Math.sign(vec2.y);
+    }
+
 
     static addWeighted(vec1, weight1, vec2, weight2) {
         var totWeight = weight1 + weight2;

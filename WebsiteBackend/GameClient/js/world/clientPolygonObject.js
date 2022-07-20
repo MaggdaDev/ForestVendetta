@@ -20,12 +20,12 @@ class ClientPolygonObject {
 
     update(data) {
         if(Object.hasOwn(data, 'pos')) {
-            console.log('Pos updated!')
+            //console.log('Pos updated!')
             this.phaserPolygon.x = data.pos.x;
             this.phaserPolygon.y = data.pos.y;
         }
         if(Object.hasOwn(data, 'rot')) {
-            console.log('Rot updated!')
+           // console.log('Rot updated!')
             this.phaserPolygon.rotation = data.rot;
         }
     }

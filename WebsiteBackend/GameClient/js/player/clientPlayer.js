@@ -14,12 +14,12 @@ class ClientPlayer {
     }
     
     update(data) {
-        this.sprite.x = data.hitBox.pos.x;
-        this.sprite.y = data.hitBox.pos.y;
+        this.sprite.x = data.pos.x;
+        this.sprite.y = data.pos.y;
 
         if (this.displayMode == 'hitbox') {
-            this.sprite.displayWidth = data.hitBox.width;
-            this.sprite.displayHeight = data.hitBox.height;
+            this.sprite.displayWidth = data.width;
+            this.sprite.displayHeight = data.height;
         }
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
