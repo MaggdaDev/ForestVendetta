@@ -21,7 +21,42 @@
 
 <body>
     <canvas id="canvas" width="800" height="800"></canvas>
-    <script src="script/main.js"></script>
+    
+
+    <dialog id="addPolygonDialog">
+        <form id="addPolygonForm" method="dialog">
+            
+            <button id="addRubberPointBtn" onclick="searchRubberPoint()">Add rubberpoint</button>
+            <p id="currRubberPointsLbl">No rubber points</p>
+          <menu>
+            <button id="cancelAddPolygonBtn" type="reset" onclick="cancelAddPolygonClicked()" >Cancel</button>
+            <button id="submitAddPolygonBtn" type="reset" onclick="addPolygonClicked()">Confirm</button>
+          </menu>
+        </form>
+      </dialog>
+
+      <dialog id="addRubberPointDialog">
+        <form id="addRubberPointForm" method="dialog">
+            <div class="inputBox">
+                <label>zeta: </label>
+                <input type="number" step="0.01" lang="en" id="zetaInput" value="0.5"></input>
+            </div>
+            <div class="inputBox">
+                <label>f: </label>
+                <input type="number" step="0.01" lang="en" id="fInput" value="0.5"></input>
+            </div>
+            <div class="inputBox">
+                <label>Position: </label>
+                <label id="rubberPointPositionLabel"></label>
+            </div>
+          <menu>
+            <button id="cancelAddRubberPointBtn" type="reset" onclick="cancelAddRubberPointClicked()" >Cancel</button>
+            <button id="submitAddRubberPointBtn" type="reset" onclick="addRubberPointConfirmed()">Confirm</button>
+          </menu>
+        </form>
+      </dialog>
+
+      <script src="script/main.js"></script>
 </body>
 
 </html>

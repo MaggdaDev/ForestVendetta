@@ -114,23 +114,35 @@ class PhysicalContact {
     }
 
     get pointInsideAndBodyToMove() {
+        var pointsInside = [];
         if (this.body2.hitBox.isPointInside(this.intersection1.segment2.from)) {
-            return { pointInside: this.intersection1.segment2.from, bodyToMove: this.body1 };
-        } else if (this.body2.hitBox.isPointInside(this.intersection1.segment2.to)) {
-            return { pointInside: this.intersection1.segment2.to, bodyToMove: this.body1 };
-        } else if (this.body1.hitBox.isPointInside(this.intersection1.segment1.from)) {
-            return { pointInside: this.intersection1.segment1.from, bodyToMove: this.body2 };
-        } else if (this.body1.hitBox.isPointInside(this.intersection1.segment1.to)) {
-            return { pointInside: this.intersection1.segment1.to, bodyToMove: this.body2 };
-        } else if (this.body2.hitBox.isPointInside(this.intersection2.segment2.from)) {
-            return { pointInside: this.intersection2.segment2.from, bodyToMove: this.body1 };
-        } else if (this.body2.hitBox.isPointInside(this.intersection2.segment2.to)) {
-            return { pointInside: this.intersection2.segment2.to, bodyToMove: this.body1 };
-        } else if (this.body1.hitBox.isPointInside(this.intersection2.segment1.from)) {
-            return { pointInside: this.intersection2.segment1.from, bodyToMove: this.body2 };
-        } else if (this.body1.hitBox.isPointInside(this.intersection2.segment1.to)) {
-            return { pointInside: this.intersection2.segment1.to, bodyToMove: this.body2 };
+            pointsInside.push({ pointInside: this.intersection1.segment2.from, bodyToMove: this.body1 });
+        } if (this.body2.hitBox.isPointInside(this.intersection1.segment2.to)) {
+            pointsInside.push({ pointInside: this.intersection1.segment2.to, bodyToMove: this.body1 });
+        } if (this.body1.hitBox.isPointInside(this.intersection1.segment1.from)) {
+            pointsInside.push({ pointInside: this.intersection1.segment1.from, bodyToMove: this.body2 });
+        } if (this.body1.hitBox.isPointInside(this.intersection1.segment1.to)) {
+            pointsInside.push({ pointInside: this.intersection1.segment1.to, bodyToMove: this.body2 });
+        } if (this.body2.hitBox.isPointInside(this.intersection2.segment2.from)) {
+            pointsInside.push({ pointInside: this.intersection2.segment2.from, bodyToMove: this.body1});
+        } if (this.body2.hitBox.isPointInside(this.intersection2.segment2.to)) {
+            pointsInside.push({ pointInside: this.intersection2.segment2.to, bodyToMove: this.body1 });
+        } if (this.body1.hitBox.isPointInside(this.intersection2.segment1.from)) {
+            pointsInside.push({ pointInside: this.intersection2.segment1.from, bodyToMove: this.body2 });
+        } if (this.body1.hitBox.isPointInside(this.intersection2.segment1.to)) {
+            pointsInside.push({ pointInside: this.intersection2.segment1.to, bodyToMove: this.body2 });
         }
+        var currMaxDist = 0;
+        var curr = 0;
+        var currBest = null;
+        pointsInside.forEach((element)=>{
+            curr = this.getRouteToSlightlyOut(element.pointInside).abs;
+            if(curr >= currMaxDist) {
+                currMaxDist = curr;
+                currBest = element;
+            }
+        });
+        return currBest;
         console.log("NO POINT INSIDE!");
     }
 

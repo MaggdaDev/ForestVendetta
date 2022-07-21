@@ -16,7 +16,7 @@ class WorldObject {
         if (withRubber) {
             this.movableBody.addRubberPoint(hitBox.pos.clone());
         }
-        //this.movableBody.addGravity();
+        this.movableBody.addGravity();
         
     }
 

@@ -1,3 +1,4 @@
+const Vector = require("../physics/vector");
 const Platform = require("./platform");
 const PolygonObject = require("./polygonObject");
 const WorldObjectGenerator = require("./worldObjectGenerator");
@@ -12,22 +13,25 @@ class World {
         var jsonObject = JSON.parse(json);
         this.worldObjects = [];
         
-        /*
+        
         jsonObject.worldObjects.forEach((currObj)=>{
             this.worldObjects.push(WorldObjectGenerator.loadWorldObject(currObj, this.nextId));
         });
-        */
         
+        /*
         var xAdd = -110;
         var yAdd = 400;
         var testPol = new PolygonObject({"points":[{"x":200+xAdd,"y":80+yAdd},{"x":700+xAdd,"y":80+yAdd},{"x":500+xAdd,"y":150+yAdd},{"x":400+xAdd,"y":150+yAdd}],"type":"POLYGON", isSolid:"true"} ,this.nextId, false);
         testPol.movableBody.rotSpd = 0;
         testPol.movableBody.mass = 300;
-        testPol.movableBody.addRubberPoint(testPol.hitBox.pos);
-        testPol.movableBody.addRotRubber(10);
+        testPol.movableBody.addRubberPoint(Vector.add(testPol.hitBox.pos, new Vector(200,-400)));
+        testPol.movableBody.addRubberPoint(Vector.add(testPol.hitBox.pos, new Vector(-200,-400)));
+        testPol.movableBody.addGravity();
+        //testPol.movableBody.addRotRubber(10);
         //testPol.movableBody.addRotRubber(100);
     
         this.worldObjects.push(testPol);
+        */
 /*
         xAdd = -120;
         var yAdd = 400;

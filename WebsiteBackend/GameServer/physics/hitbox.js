@@ -69,6 +69,7 @@ class HitBox {
         }
         if(intersections.length > 2) {
             console.log("MORE THAN 2 INTERSECTIONS!");
+            return intersections;
         }
         if(intersections.length === 2) {
             return intersections;

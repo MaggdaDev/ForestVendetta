@@ -30,3 +30,13 @@
     outline:black 3px solid;
     margin-top: 20px;
   }
+
+  .inputBox {
+    display: block;
+  }
+
+  textarea {
+    display: block;
+    height: auto;
+    width: auto;
+  }

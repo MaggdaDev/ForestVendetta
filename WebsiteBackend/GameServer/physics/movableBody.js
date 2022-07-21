@@ -1,6 +1,7 @@
 const Protagonist = require("../player/protagonist");
 const HitBox = require("./hitbox");
 const PhysicalContact = require("./physicalContact");
+const RubberPoint = require("./rubberPoint");
 const { isSimilarDir } = require("./vector");
 const Vector = require("./vector");
 
@@ -20,6 +21,7 @@ class MovableBody {
         this.hitBox = hitBox;
         this.acc = new Vector(0, 0);
         this.resultingForce = new Vector(0, 0);
+        this.resultingRotMoment = 0;
         this.isElastic = isElastic;
         this.mass = mass;
         this.spd = new Vector(0, 0);
@@ -30,10 +32,7 @@ class MovableBody {
         this.isGravity = false;
         this.gravity = new Vector(0, MovableBody.GRAVITY);
 
-        this.isRubberPoint = false;
-        this.rubberPoint = null;
-        this.rubberMult = 2000;
-        this.rubberData = { f: 0.5, zeta: 0.5 };
+        this.rubberPoints = [];
 
         this.isRotRubber = false;
         this.rotRubberStrength = 0;
@@ -68,11 +67,22 @@ class MovableBody {
         this.acc = Vector.multiply(this.resultingForce, 1 / this.mass);
         this.spd.incrementBy(Vector.multiply(this.acc, timeElapsed));
         this.hitBox.pos = this.hitBox.pos.incrementBy(Vector.multiply(this.spd, timeElapsed));
-        this.rotSpd += (this.rotAcc) * timeElapsed;
-        this.rot += this.rotSpd * timeElapsed;
-        this.checkIntersections(intersectables);
-        this.refreshContact();
 
+        this.rotAcc = this.resultingRotMoment / this.inertiaMoment;
+        this.rotSpd +=  this.rotAcc * timeElapsed;
+        this.rot += this.rotSpd * timeElapsed;
+
+        //undo update
+        if(this.checkIntersections(intersectables)) {
+            this.spd.incrementBy(Vector.multiply(this.acc, -timeElapsed));
+            this.hitBox.pos = this.hitBox.pos.incrementBy(Vector.multiply(this.spd, -timeElapsed));
+            this.rotSpd -=  this.rotAcc * timeElapsed;
+            this.rot -= this.rotSpd * timeElapsed;
+            this.update(timeElapsed/2, intersectables);
+            this.update(timeElapsed/2, intersectables);
+        }
+        
+        this.refreshContact();
         this.hitBox.updateRot(this.rot);
     }
 
@@ -107,9 +117,8 @@ class MovableBody {
         this.isGravity = true;
     }
 
-    addRubberPoint(rubberPoint) {
-        this.isRubberPoint = true;
-        this.rubberPoint = rubberPoint;
+    addRubberPoint(rubberPos, zeta, f) {
+        this.rubberPoints.push(new RubberPoint(rubberPos, this.hitBox.pos, zeta, f));
     }
 
     addRotRubber(strength) {
@@ -119,16 +128,25 @@ class MovableBody {
 
     refreshResultingForce(timeElapsed) {
         this.resultingForce.clear();
+        this.resultingRotMoment = 0;
 
         if (this.isGravity) {
             this.resultingForce.incrementBy(Vector.multiply(this.gravity, this.mass));
         }
 
+        this.rubberPoints.forEach((currRubberPoint)=>{
+            var force = currRubberPoint.getForce(this.hitBox.pos, this.rot, this.mass, this.spd, timeElapsed);
+            this.resultingForce.incrementBy(force);
+            this.resultingRotMoment += this.calcRotMoment(currRubberPoint.getAttackPoint(this.hitBox.pos, this.rot), force);
+
+        });
+
+        /*
         if (this.isRubberPoint) {
-            var abstand = Vector.subtractFrom(this.rubberPoint, this.hitBox.pos).abs;
+            var abstand = Vector.subtractFrom(this.rubberPointDestination, this.hitBox.pos).abs;
             //this.rubberData.zeta = 1/Math.max(0.5,abstand);
             //this.rubberData.f = 17/Math.max(10,abstand);
-            var res = Vector.subtractFrom(Vector.subtractFrom(this.rubberPoint, this.hitBox.pos), Vector.multiply(this.spd, this.rubberData.zeta / (this.rubberData.f * Math.PI)));
+            var res = Vector.subtractFrom(Vector.subtractFrom(this.rubberPointDestination, this.hitBox.pos), Vector.multiply(this.spd, this.rubberData.zeta / (this.rubberData.f * Math.PI)));
             res = Vector.multiply(res, 2.0 * this.mass * Math.pow(Math.PI * this.rubberData.f, 2.0));
 
             var leftCtrl = Math.pow(Math.PI * this.rubberData.f, 2.0);
@@ -139,9 +157,10 @@ class MovableBody {
             //res = Vector.multiply(Vector.subtractFrom(this.rubberPoint, this.hitBox.pos), 20000);
             this.resultingForce.incrementBy(res);
         }
+        */
 
         if (this.isRotRubber) {
-            this.rotAcc = -1 * this.rotRubberStrength * this.rot - 0.2 * this.rotSpd * this.rotRubberStrength;
+            this.resultingRotMoment += (-1.0 * this.rotRubberStrength * this.rot - 0.2 * this.rotSpd * this.rotRubberStrength) * this.inertiaMoment;
         }
 
         if (this.isAccImpulse) {
@@ -168,6 +187,10 @@ class MovableBody {
             }
             this.resultingForce.incrementBy(Vector.multiply(new Vector(calcAccImpX(), calcAccImpY()), this.mass));
         }
+    }
+
+    get pos() {
+        return this.hitBox.pos;
     }
 
     refreshContact() {
@@ -215,18 +238,19 @@ class MovableBody {
     }
 
     checkIntersections(intersectables) {
-        var intersecting = false;
+        var shouldUndo = false;
         intersectables.forEach(element => {
             if (element !== this) {
                 var newIntersections = HitBox.getIntersections(element.hitBox, this.hitBox);
+                if(newIntersections !== null && newIntersections.length > 2) {
+                    shouldUndo = true;
+                }
                 if (newIntersections != null) {
-                    //console.log("INTERSECTION!");
                     this.notifyNewIntersection(element, newIntersections);
-                    intersecting = true;
                 }
             }
         });
-        return intersecting;
+        return shouldUndo;
     }
 
     notifyNewIntersection(object, newIntersections) {

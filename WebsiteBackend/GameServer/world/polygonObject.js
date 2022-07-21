@@ -1,13 +1,15 @@
 const PolygonHitBox = require("../physics/polygonHitBox");
+const Vector = require("../physics/vector");
 const WorldObject = require("./worldObject");
 
 class PolygonObject extends WorldObject {
-    constructor(jsonObj, id, isRubber) {
-        if (isRubber === undefined) {
-            super(new PolygonHitBox(jsonObj.points), jsonObj.isSolid, jsonObj.type, id, true);
-        } else {
-            super(new PolygonHitBox(jsonObj.points), jsonObj.isSolid, jsonObj.type, id, isRubber);
-        }
+    constructor(jsonObj, id) {
+        super(new PolygonHitBox(jsonObj.points), jsonObj.isSolid, jsonObj.type, id);
+        var rubberPoints = jsonObj.rubberPoints;
+        rubberPoints.forEach(element => {
+            this.movableBody.addRubberPoint(Vector.from(element.pos), element.zeta, element.f);
+
+        });
     }
 
 

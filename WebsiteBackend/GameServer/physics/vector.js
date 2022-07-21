@@ -4,6 +4,10 @@ class Vector {
         this.y = y;
     }
 
+    static from(json) {
+        return new Vector(json.x, json.y);
+    }
+
     /**
      * OVERRIDE
      */
