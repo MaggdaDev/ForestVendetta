@@ -15,7 +15,7 @@ class GameScene extends Phaser.Scene {
         this.load.setBaseURL('GameClient');
 
         // load ressources
-        this.load.spritesheet('woman', 'images/woman.png', { frameWidth: 100, frameHeight: 100 });
+        this.load.spritesheet('hotzenplotz', 'images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
 
 
     }

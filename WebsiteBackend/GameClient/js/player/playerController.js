@@ -16,28 +16,36 @@ class PlayerController {
         this.owner.mainScene.keyManager.jump = ()=> this.jump(instance);
     }
 
+    get clientProtagonist() {
+        return this.owner.mainScene.clientProtagonist;
+    }
+    
     startWalkLeft(instance) {
         if(!instance.isLeftDown) {
             instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.START_WALK_LEFT);
             instance.isLeftDown = true;
+            instance.clientProtagonist.onStartWalkLeft(instance.clientProtagonist);
         }
     }
 
     stopWalkLeft(instance) {
         instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.STOP_WALK_LEFT);
         instance.isLeftDown = false;
+        instance.clientProtagonist.onStopWalkLeft(instance.clientProtagonist);
     }
 
     startWalkRight(instance) {
         if(!instance.isRightDown) {
             instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.START_WALK_RIGHT);
             instance.isRightDown = true;
+            instance.clientProtagonist.onStartWalkRight(instance.clientProtagonist);
         }
     }
 
     stopWalkRight(instance) {
         instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.STOP_WALK_RIGHT);
         instance.isRightDown = false;
+        instance.clientProtagonist.onStopWalkRight(instance.clientProtagonist);
     }
 
     jump(instance) {
