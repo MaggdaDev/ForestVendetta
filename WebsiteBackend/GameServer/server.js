@@ -9,7 +9,7 @@ const NetworkCommands = require('../GameStatic/js/network/networkCommands.js');
 const ServerNetworkManager = require('./network/serverNetworkManager');
 const io = new Server(server);
 
-app.use(express.static('D:/David/JavaScript/ForestVendetta/ForestVendetta/WebsiteBackend/'));
+app.use(express.static('.'));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
