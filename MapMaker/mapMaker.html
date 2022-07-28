@@ -2,61 +2,65 @@
 <html>
 
 <head>
-    <title>Our Funky HTML Page</title>
-    <meta name="description" content="Map Maker for ForestVendetta">
-    <meta name="keywords" content="joe mama">
-    <link rel="stylesheet" href="style.css">
-    <script src="script/mouseHandler.js"></script>
-    <script src="script/polygonBuilder.js"></script>
-    <script src="script/world.js"></script>
-    <script src="script/polygon.js"></script>
-    <script src="script/drawer.js"></script>
-    <script src="script/fileManager.js"></script>
+  <title>Our Funky HTML Page</title>
+  <meta name="description" content="Map Maker for ForestVendetta">
+  <meta name="keywords" content="joe mama">
+  <link rel="stylesheet" href="style.css">
+  <script src="script/mouseHandler.js"></script>
+  <script src="script/polygonBuilder.js"></script>
+  <script src="script/world.js"></script>
+  <script src="script/polygon.js"></script>
+  <script src="script/drawer.js"></script>
+  <script src="script/fileManager.js"></script>
 
-    <div class="topnav">
-        <a id="saveBtn">Save</a>
-    </div>
-    
+  <div class="topnav">
+    <a id="saveBtn">Save</a>
+  </div>
+
 </head>
 
 <body>
-    <canvas id="canvas" width="800" height="800"></canvas>
-    
+  <canvas id="canvas" width="800" height="800"></canvas>
 
-    <dialog id="addPolygonDialog">
-        <form id="addPolygonForm" method="dialog">
-            
-            <button id="addRubberPointBtn" onclick="searchRubberPoint()">Add rubberpoint</button>
-            <p id="currRubberPointsLbl">No rubber points</p>
-          <menu>
-            <button id="cancelAddPolygonBtn" type="reset" onclick="cancelAddPolygonClicked()" >Cancel</button>
-            <button id="submitAddPolygonBtn" type="reset" onclick="addPolygonClicked()">Confirm</button>
-          </menu>
-        </form>
-      </dialog>
 
-      <dialog id="addRubberPointDialog">
-        <form id="addRubberPointForm" method="dialog">
-            <div class="inputBox">
-                <label>zeta: </label>
-                <input type="number" step="0.01" lang="en" id="zetaInput" value="0.5"></input>
-            </div>
-            <div class="inputBox">
-                <label>f: </label>
-                <input type="number" step="0.01" lang="en" id="fInput" value="0.5"></input>
-            </div>
-            <div class="inputBox">
-                <label>Position: </label>
-                <label id="rubberPointPositionLabel"></label>
-            </div>
-          <menu>
-            <button id="cancelAddRubberPointBtn" type="reset" onclick="cancelAddRubberPointClicked()" >Cancel</button>
-            <button id="submitAddRubberPointBtn" type="reset" onclick="addRubberPointConfirmed()">Confirm</button>
-          </menu>
-        </form>
-      </dialog>
+  <dialog id="addPolygonDialog">
+    <form id="addPolygonForm" method="dialog">
+      <div class="inputBox">
+        <label>mass: </label>
+        <input type="number" step="1" lang="en" id="massInput" value="300"></input>
+      </div>
+      <br>
+      <button id="addRubberPointBtn" onclick="searchRubberPoint()">Add rubberpoint</button>
+      <p id="currRubberPointsLbl">No rubber points</p>
+      <menu>
+        <button id="cancelAddPolygonBtn" type="reset" onclick="cancelAddPolygonClicked()">Cancel</button>
+        <button id="submitAddPolygonBtn" type="reset" onclick="addPolygonClicked()">Confirm</button>
+      </menu>
+    </form>
+  </dialog>
 
-      <script src="script/main.js"></script>
+  <dialog id="addRubberPointDialog">
+    <form id="addRubberPointForm" method="dialog">
+      <div class="inputBox">
+        <label>zeta: </label>
+        <input type="number" step="0.01" lang="en" id="zetaInput" value="0.5"></input>
+      </div>
+      <div class="inputBox">
+        <label>f: </label>
+        <input type="number" step="0.01" lang="en" id="fInput" value="0.5"></input>
+      </div>
+      <div class="inputBox">
+        <label>Position: </label>
+        <label id="rubberPointPositionLabel"></label>
+      </div>
+      <menu>
+        <button id="cancelAddRubberPointBtn" type="reset" onclick="cancelAddRubberPointClicked()">Cancel</button>
+        <button id="submitAddRubberPointBtn" type="reset" onclick="addRubberPointConfirmed()">Confirm</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="script/main.js"></script>
 </body>
 
 </html>

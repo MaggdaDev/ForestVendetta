@@ -7,15 +7,12 @@ class WorldObject {
      * @param {HitBox} hitBox 
      * @param {boolean} isSolid 
      */
-    constructor(hitBox, isSolid, type, id, withRubber) {
+    constructor(hitBox, isSolid, type, mass, id) {
         this.isSolid = isSolid;
         this.hitBox = hitBox;
         this.type = type;
         this.id = id;
-        this.movableBody = new MovableBody(this.hitBox, true, 300);
-        if (withRubber) {
-            this.movableBody.addRubberPoint(hitBox.pos.clone());
-        }
+        this.movableBody = new MovableBody(this.hitBox, true, mass);
         this.movableBody.addGravity();
         
     }

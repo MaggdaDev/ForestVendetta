@@ -4,7 +4,7 @@ const WorldObject = require("./worldObject");
 
 class PolygonObject extends WorldObject {
     constructor(jsonObj, id) {
-        super(new PolygonHitBox(jsonObj.points), jsonObj.isSolid, jsonObj.type, id);
+        super(new PolygonHitBox(jsonObj.points), jsonObj.isSolid, jsonObj.type, jsonObj.mass, id);
         var rubberPoints = jsonObj.rubberPoints;
         rubberPoints.forEach(element => {
             this.movableBody.addRubberPoint(Vector.from(element.pos), element.zeta, element.f);

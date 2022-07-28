@@ -134,7 +134,7 @@ class PhysicalContact {
         }
         var currMaxDist = 0;
         var curr = 0;
-        var currBest = null;
+        var currBest = undefined;
         pointsInside.forEach((element)=>{
             curr = this.getRouteToSlightlyOut(element.pointInside).abs;
             if(curr >= currMaxDist) {

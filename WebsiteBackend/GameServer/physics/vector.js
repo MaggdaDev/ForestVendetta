@@ -54,6 +54,10 @@ class Vector {
         return new Vector(this.x, this.y);
     }
 
+    static clone(vec) {
+        return new Vector(vec.x, vec.y);
+    }
+
     clear() {
         this.x = 0.0;
         this.y = 0.0;
@@ -144,7 +148,7 @@ class Vector {
     }
 
     static subtractFrom(from, sub) {
-        var ret = from.clone();
+        var ret = Vector.clone(from);
         ret.x -= sub.x;
         ret.y -= sub.y;
         return ret;

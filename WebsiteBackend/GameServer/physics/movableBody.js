@@ -13,8 +13,9 @@ class MovableBody {
      * @param {Vector} hitBox.pos - the position to change
      * @param {number} mass
      */
-    static GRAVITY = 180;
+    static GRAVITY = 270;
     static FRICTION_STRENGTH = 10000;
+    static ROT_FRICTION_FACT = 0.1;
     static MAX_TIMEDIST_FOR_FRICT = 0.2;
     static JUMP_FORCE = 20000;
     constructor(hitBox, isElastic, mass) {
@@ -37,7 +38,8 @@ class MovableBody {
         this.isRotRubber = false;
         this.rotRubberStrength = 0;
 
-        this.inertiaMoment = this.mass * this.hitBox.ar;
+        //this.inertiaMoment = this.mass * this.hitBox.ar;
+        this.inertiaMoment = this.calcInertiaMoment();
 
         this.isAccImpulse = false;
         this.accImpulseData = null;
@@ -52,6 +54,10 @@ class MovableBody {
         this.isCompressable = false;
 
         this.wantToJump = false;
+
+        this.onNewContact = [];
+
+        this.playerBodyContacts = new Set();
     }
 
     /**
@@ -60,7 +66,7 @@ class MovableBody {
      * @param {Set[MovableBody]} intersectables 
      */
     update(timeElapsed, intersectables) {
-
+        var oldIsContact = this.isContact;
 
         this.refreshResultingForce(timeElapsed);
 
@@ -68,7 +74,7 @@ class MovableBody {
         this.spd.incrementBy(Vector.multiply(this.acc, timeElapsed));
         this.hitBox.pos = this.hitBox.pos.incrementBy(Vector.multiply(this.spd, timeElapsed));
 
-        this.rotAcc = this.resultingRotMoment / this.inertiaMoment;
+        this.rotAcc = this.resultingRotMoment / this.inertiaMoment - Math.sign(this.rotSpd) * this.rotSpd * this.rotSpd * MovableBody.ROT_FRICTION_FACT;
         this.rotSpd +=  this.rotAcc * timeElapsed;
         this.rot += this.rotSpd * timeElapsed;
 
@@ -84,6 +90,53 @@ class MovableBody {
         
         this.refreshContact();
         this.hitBox.updateRot(this.rot);
+
+        if((!oldIsContact) && this.isContact) {
+            this.notifyNewContact();
+        }
+    }
+
+    notifyNewContact() {
+        this.onNewContact.forEach((element)=>{
+            element();
+        });
+    }
+    
+    addOnNewContact(handler) {
+        this.onNewContact.push(handler);
+    }
+
+    calcInertiaMoment() {   // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
+        var movedPoints = []
+        var gravCenter = this.pos;
+        this.hitBox.points.forEach((element)=>{
+            movedPoints.push(Vector.subtractFrom(element, gravCenter));
+        });
+
+        var pointAmount = movedPoints.length;
+        var zaehlerSum = 0;
+        var currAdd = 0;
+        var pN, pN1;
+        var dotSum = 0;
+        for(var i = 0; i < pointAmount; i++) {
+            pN = movedPoints[i];
+            pN1 = movedPoints[(i+1)%pointAmount]
+            currAdd = Vector.zOfCross(pN1, pN);
+            dotSum = pN.dot(pN);
+            dotSum += pN.dot(pN1);
+            dotSum += pN1.dot(pN1);
+            currAdd *= dotSum;
+            zaehlerSum += currAdd;
+        }
+        var nennerSum = 0;
+        for(var i = 0; i < pointAmount; i++) {
+            pN = movedPoints[i];
+            pN1 = movedPoints[(i+1)%pointAmount]
+            nennerSum += Vector.zOfCross(pN1, pN);
+        }
+        nennerSum *= 6;
+
+        return this.mass * zaehlerSum / nennerSum;
     }
 
     get controlData() {
@@ -163,30 +216,33 @@ class MovableBody {
             this.resultingRotMoment += (-1.0 * this.rotRubberStrength * this.rot - 0.2 * this.rotSpd * this.rotRubberStrength) * this.inertiaMoment;
         }
 
+        /*
         if (this.isAccImpulse) {
-            var instance = this;
-
-
-
-            function calcAccImpX() {
-                var directedDesiredSpdX = instance.accImpulseData.direction.x * instance.accImpulseData.desiredSpeed;
-                
-                if (Math.sign(directedDesiredSpdX - instance.spd.x) != Math.sign(directedDesiredSpdX)) {
-                    return 0;
-                }
-                var spdDiff = Math.abs((directedDesiredSpdX - instance.spd.x) / directedDesiredSpdX);
-                return spdDiff * instance.accImpulseData.acceleration * instance.accImpulseData.direction.x;
-            }
-            function calcAccImpY() {
-                var directedDesiredSpdY = instance.accImpulseData.direction.y * instance.accImpulseData.desiredSpeed;
-                if (Math.sign(directedDesiredSpdY - instance.spd.y) != Math.sign(directedDesiredSpdY)) {
-                    return 0;
-                }
-                var spdDiff = Math.abs((directedDesiredSpdY - instance.spd.y) / directedDesiredSpdY);
-                return spdDiff * instance.accImpulseData.acceleration * instance.accImpulseData.direction.y;
-            }
-            this.resultingForce.incrementBy(Vector.multiply(new Vector(calcAccImpX(), calcAccImpY()), this.mass));
+            this.resultingForce.incrementBy(this.currControlAccForce);   
         }
+        */
+    }
+
+    get currControlAccForce() {
+        var instance = this;
+        function calcAccImpX() {
+            var directedDesiredSpdX = instance.accImpulseData.direction.x * instance.accImpulseData.desiredSpeed;
+            
+            if (Math.sign(directedDesiredSpdX - instance.spd.x) != Math.sign(directedDesiredSpdX)) {
+                return 0;
+            }
+            var spdDiff = Math.abs((directedDesiredSpdX - instance.spd.x) / directedDesiredSpdX);
+            return spdDiff * instance.accImpulseData.acceleration * instance.accImpulseData.direction.x;
+        }
+        function calcAccImpY() {
+            var directedDesiredSpdY = instance.accImpulseData.direction.y * instance.accImpulseData.desiredSpeed;
+            if (Math.sign(directedDesiredSpdY - instance.spd.y) != Math.sign(directedDesiredSpdY)) {
+                return 0;
+            }
+            var spdDiff = Math.abs((directedDesiredSpdY - instance.spd.y) / directedDesiredSpdY);
+            return spdDiff * instance.accImpulseData.acceleration * instance.accImpulseData.direction.y;
+        }
+        return Vector.multiply(new Vector(calcAccImpX(), calcAccImpY()), this.mass);
     }
 
     get pos() {
@@ -199,6 +255,15 @@ class MovableBody {
                 this.isContact = false;
             }
         }
+        var toRemove = [];
+        this.playerBodyContacts.forEach((element)=>{
+            if(!element.isContact) {
+                toRemove.push(element);
+            }
+        });
+        toRemove.forEach((element)=>{
+            this.playerBodyContacts.delete(element);
+        });
     }
 
     /**
@@ -219,6 +284,11 @@ class MovableBody {
         if (!this.rotationDisabled) {
             this.rotSpd += time * moment / this.inertiaMoment;
         }
+    }
+
+    applyForceAndRot(force, point, time) {
+        this.workForceOverTime(force, time);
+        this.workRotMomentOverTime(this.calcRotMoment(point, force),time);
     }
 
     /**
@@ -261,12 +331,16 @@ class MovableBody {
             var overLapTime = contact.overlapTime;
             var thisForce = Vector.multiply(Vector.getLessSimilarTo(this.hitBox.getPosRelToGravCenter(contact.intersectionCenter), contact.normalDir), contact.overlapForce);
             var otherForce = Vector.multiply(Vector.getLessSimilarTo(object.hitBox.getPosRelToGravCenter(contact.intersectionCenter), contact.normalDir), contact.overlapForce);
+            /*
             this.workForceOverTime(thisForce, overLapTime);
             object.workForceOverTime(otherForce, overLapTime);
             var thisRotMoment = Vector.zOfCross(this.hitBox.getPosRelToGravCenter(contact.intersectionCenter), thisForce);
             var otherRotMoment = Vector.zOfCross(object.hitBox.getPosRelToGravCenter(contact.intersectionCenter), otherForce);
             this.workRotMomentOverTime(thisRotMoment, overLapTime);
             object.workRotMomentOverTime(otherRotMoment, overLapTime);
+            */
+           this.applyForceAndRot(thisForce, contact.intersectionCenter, overLapTime);
+           object.applyForceAndRot(otherForce,contact.intersectionCenter, overLapTime);
             contact.moveBodyOut();
 
             // apply friction
@@ -281,15 +355,23 @@ class MovableBody {
                     if (rel1to2ParrSpd.abs != 0) {
                         var fricForce = Vector.multiply(rel1to2ParrSpd.dirVec, MovableBody.FRICTION_STRENGTH);
                         var time;
+                        var accForce = new Vector(0,0);
                         if(this.isFrictive) {
                             time = this.newFrictiveIntersectionTime - this.lastFrictiveIntersectionTime;
                             this.isContact = true;
+                            if(this.isAccImpulse) {
+                                accForce = Vector.multiply(this.currControlAccForce, -1.0);
+                            }
                         } else {
                             time = object.newFrictiveIntersectionTime - object.lastFrictiveIntersectionTime;
                             object.isContact = true;
+                            this.playerBodyContacts.add(this);
+                            if(object.isAccImpulse) {
+                                accForce = object.currControlAccForce;
+                            }
                         }
-                        this.workForceOverTime(Vector.multiply(fricForce, -1.0), time);
-                        object.workForceOverTime(fricForce, time);
+                        this.applyForceAndRot(Vector.multiply(Vector.add(fricForce, accForce), -1.0), contact.intersectionCenter,time); // apply acc and fric!
+                        object.applyForceAndRot(Vector.add(fricForce, accForce), contact.intersectionCenter, time);     // apply acc and fric reactio!
                     }
                 }
                 this.lastFrictiveIntersectionTime = now;
@@ -299,10 +381,14 @@ class MovableBody {
                     this.wantToJump = false;
                     this.isContact = false;
                     var jumpForce = Vector.multiply(contact.normalDir, MovableBody.JUMP_FORCE);
+                    /*
                     this.workForceOverTime(Vector.getLessSimilarTo(this.hitBox.getPosRelToGravCenter(contact.intersectionCenter), jumpForce), 1);
                     var otherForce = Vector.getLessSimilarTo(object.hitBox.getPosRelToGravCenter(contact.intersectionCenter), jumpForce);
                     object.workForceOverTime(otherForce, 1);
                     object.workRotMomentOverTime(this.calcRotMoment(contact.intersectionCenter, otherForce),1);
+                    */
+                   this.applyForceAndRot(Vector.getLessSimilarTo(this.hitBox.getPosRelToGravCenter(contact.intersectionCenter), jumpForce),contact.intersectionCenter,1);
+                   object.applyForceAndRot(Vector.getLessSimilarTo(object.hitBox.getPosRelToGravCenter(contact.intersectionCenter), jumpForce),contact.intersectionCenter,1);
                 }
             }
 

@@ -9,6 +9,7 @@ class Polygon {
         this.type = "POLYGON";
         this.isSolid = true;
         this.rubberPoints = [];
+        this.mass = 300;
     }
 
     draw(canvas) {

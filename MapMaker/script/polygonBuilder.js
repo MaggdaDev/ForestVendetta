@@ -34,6 +34,8 @@ class PolygonBuilder {
     addPolygonClicked() {
 
         if (this.currPolygonToAdd !== null) {
+            var mass = document.getElementById("massInput").value;
+            this.currPolygonToAdd.mass = mass;
             console.log("Adding polygon now!");
             this.world.addWorldObject(this.currPolygonToAdd);
             this.currPolygonToAdd = null;

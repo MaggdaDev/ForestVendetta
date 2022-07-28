@@ -10,7 +10,7 @@ const PLAYER_HITBOX_WIDTH = 20;
 const PLAYER_HITBOX_HEIGHT = 80;
 
 class Protagonist {
-    
+
 
     constructor(id, socket, world, mainLoop) {
         this.id = id;
@@ -33,6 +33,13 @@ class Protagonist {
         //send world data
         this.socketUser.sendWorldData(world);
 
+        this.wantGo = "NONE";
+        var instance = this;
+        this.movableBody.addOnNewContact(()=>{
+            if(instance.wantGo !== "NONE") {
+                instance.startWalk(instance.wantGo);
+            }
+        });
     }
 
     /**
@@ -65,7 +72,8 @@ class Protagonist {
             pos: this.hitBox.pos,
             height: PLAYER_HITBOX_HEIGHT,
             width: PLAYER_HITBOX_WIDTH,
-            id: this.id
+            id: this.id,
+            isContact: this.movableBody.isContact
         }
     }
 
@@ -80,16 +88,28 @@ class Protagonist {
     playerControl(control) {
         switch (control) {
             case PlayerControls.START_WALK_RIGHT:
+                this.wantGo = "RIGHT";
                 this.startWalk('RIGHT');
+
                 break;
             case PlayerControls.STOP_WALK_RIGHT:
+                if (this.wantGo === "RIGHT") {
+                    this.wantGo = "NONE";
+                }
                 this.clearCurrAccImpulse();
+
                 break;
             case PlayerControls.START_WALK_LEFT:
+                this.wantGo = "LEFT";
                 this.startWalk('LEFT');
+
                 break;
             case PlayerControls.STOP_WALK_LEFT:
+                if (this.wantGo === "LEFT") {
+                    this.wantGo = "NONE";
+                }
                 this.clearCurrAccImpulse();
+
                 break;
             case PlayerControls.JUMP:
                 this.jump();
@@ -98,21 +118,25 @@ class Protagonist {
         console.log("Handled player control: " + control);
     }
 
+    
+
     /**
      * 
      * @param {string} dir - 'LEFT' or 'RIGHT' 
      */
     startWalk(dir) {
-        this.clearCurrAccImpulse();
-        var dirVec;
-        if (dir === 'RIGHT') {
-            dirVec = new Vector(1, 0);
-        } else if (dir === 'LEFT') {
-            dirVec = new Vector(-1, 0);
-        } else {
-            throw new Error('dir must be either LEFT or RIGHT');
+        if (this.movableBody.isContact) {
+            this.clearCurrAccImpulse();
+            var dirVec;
+            if (dir === 'RIGHT') {
+                dirVec = new Vector(1, 0);
+            } else if (dir === 'LEFT') {
+                dirVec = new Vector(-1, 0);
+            } else {
+                throw new Error('dir must be either LEFT or RIGHT');
+            }
+            this.movableBody.generateAccelerateImpulse(dirVec, 100, 300);
         }
-        this.movableBody.generateAccelerateImpulse(dirVec, 100, 300);
     }
 
     jump() {

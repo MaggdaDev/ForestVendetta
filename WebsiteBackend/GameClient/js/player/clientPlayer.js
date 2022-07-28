@@ -10,9 +10,11 @@ class ClientPlayer {
         this.displayMode = 'sprite';
         this.id = id;
         this.isProtagonist = isProtagonist;
-
+        this.isContact = false;
+        this.isWalkingRight = false;
+        this.isWalkingLeft = false;
     }
-    
+
     update(data) {
         this.sprite.x = data.pos.x;
         this.sprite.y = data.pos.y;
@@ -21,6 +23,19 @@ class ClientPlayer {
             this.sprite.displayWidth = data.width;
             this.sprite.displayHeight = data.height;
         }
+        if (data.isContact && (!this.isContact)) {
+            this.isContact = true;
+            if (this instanceof ClientProtagonist) {
+                if (this.isWalkingLeft) {
+                    this.onStartWalkLeft(this);
+                } else if (this.isWalkingRight) {
+                    this.onStartWalkRight(this);
+                }
+            }
+        } else if ((!data.isContact) && this.isContact) {
+            this.isContact = false;
+            this.stopAnimation();
+        }
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 
@@ -28,7 +43,7 @@ class ClientPlayer {
         this.sprite.destroy(true);
     }
 
-    
+
 
     generateSprite(x, y, w, h) {
         console.log("Generating protagonist sprite...");
@@ -46,14 +61,21 @@ class ClientPlayer {
             this.sprite.displayHeight = h;
             const walk = {
                 key: 'walk',
-                frames: this.mainScene.anims.generateFrameNumbers('hotzenplotz', { frames: [3,4,5,6,7,8,9,10] }),
+                frames: this.mainScene.anims.generateFrameNumbers('hotzenplotz', { frames: [2, 3, 4, 5, 6, 7, 8, 9] }),
                 frameRate: 8,
                 repeat: -1
             };
+            const startWalk = {
+                key: 'startWalk',
+                frames: this.mainScene.anims.generateFrameNumbers('hotzenplotz', { frames: [0, 1] }),
+                frameRate: 8,
+                repeat: 0
+            }
             this.mainScene.anims.create(walk);
+            this.mainScene.anims.create(startWalk);
 
             var instance = this;
-            
+
         }
     }
 }

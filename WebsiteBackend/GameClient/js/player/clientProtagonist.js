@@ -1,9 +1,10 @@
 
 class ClientProtagonist extends ClientPlayer {
 
-    constructor(scene,id) {
+    constructor(scene, id) {
         super(scene, id, true);
         this.playerController = new PlayerController(this);
+        
     }
 
     /**
@@ -11,10 +12,15 @@ class ClientProtagonist extends ClientPlayer {
      * @param {ClientProtagonist} instance 
      */
     onStartWalkRight(instance) {
-        instance.sprite.scaleX = Math.abs(instance.sprite.scaleX);
-        instance.sprite.scakeY = Math.abs(instance.sprite.scaleY);
-        instance.sprite.play('walk');
-        console.log(this);
+        super.isWalkingRight = true;
+        if (this.isContact) {
+            instance.sprite.scaleX = Math.abs(instance.sprite.scaleX);
+            instance.sprite.scakeY = Math.abs(instance.sprite.scaleY);
+            instance.sprite.play('startWalk');
+            instance.sprite.on('animationcomplete', () => {
+                instance.sprite.play('walk');
+            });
+        }
 
     }
 
@@ -23,8 +29,8 @@ class ClientProtagonist extends ClientPlayer {
      * @param {ClientProtagonist} instance 
      */
     onStopWalkRight(instance) {
-        instance.sprite.stop();
-        instance.sprite.setFrame(0);
+        super.isWalkingRight = false;
+        instance.stopAnimation();
     }
 
     /**
@@ -32,10 +38,17 @@ class ClientProtagonist extends ClientPlayer {
      * @param {ClientProtagonist} instance 
      */
     onStartWalkLeft(instance) {
-        instance.sprite.scaleX = -1 * Math.abs(instance.sprite.scaleX);
-        instance.sprite.scakeY = -1 * Math.abs(instance.sprite.scaleY);
-        
-        instance.sprite.play('walk');
+        super.isWalkingLeft = true;
+        if (this.isContact) {
+            instance.sprite.scaleX = -1 * Math.abs(instance.sprite.scaleX);
+            instance.sprite.scakeY = -1 * Math.abs(instance.sprite.scaleY);
+
+            instance.sprite.play('startWalk');
+            instance.sprite.on('animationcomplete', () => {
+                instance.sprite.play('walk');
+            });
+        }
+
     }
 
     /**
@@ -43,7 +56,12 @@ class ClientProtagonist extends ClientPlayer {
      * @param {ClientProtagonist} instance 
      */
     onStopWalkLeft(instance) {
-        instance.sprite.stop();
-        instance.sprite.setFrame(0);
+        super.isWalkingLeft = false;
+        instance.stopAnimation();
+    }
+
+    stopAnimation() {
+        this.sprite.stop();
+        this.sprite.setFrame(0);
     }
 }
