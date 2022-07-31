@@ -4,7 +4,7 @@ class NetworkManager {
      * 
      * @param {Phaser.Scene} scene 
      */
-    constructor(scene) {
+    constructor(scene, mobManager) {
         console.log("Creating Network manager...");
         this.mainScene = scene;
 
@@ -14,16 +14,21 @@ class NetworkManager {
         this.clientId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
         console.log("ClientId created: " + this.clientId);
 
+        this.mobManager = mobManager;
+
         
         // Start: registering command handling
         this.socket.on(NetworkCommands.ADD_PLAYER, (data)=>this.addPlayer(data));
         this.socket.on(NetworkCommands.SETUP_WORLD, (data)=>this.setupWorld(data));
         this.socket.on(NetworkCommands.UPDATE_PLAYERS, (data)=>this.updatePlayers(data));
         this.socket.on(NetworkCommands.SHOW_OLD_PLAYERS, (data)=>this.showOldPlayers(data));
+        this.socket.on(NetworkCommands.SHOW_OLD_MOBS, (data)=>this.showOldMobs(data));
         this.socket.on(NetworkCommands.DISCONNECT_PLAYER, (data)=>this.disconnectPlayer(data));
         this.socket.on(NetworkCommands.UPDATE_WORLD, (data)=>this.updateWorld(data));
         this.socket.on(NetworkCommands.UPDATE, (data)=>this.update(data));
         this.socket.on(NetworkCommands.CONTROL_DATA, (data)=>this.controlData(data));
+        this.socket.on(NetworkCommands.SPAWN_MOB, (data)=>this.spawnMob(data));
+        
         // End: registering command handling
 
         console.log("NetworkManager created.")
@@ -63,6 +68,14 @@ class NetworkManager {
 
     /**
      * 
+     * @param {Mob[]} data - all old mobs 
+     */
+    showOldMobs(data) {
+        this.mobManager.showOldMobs(data);
+    }
+
+    /**
+     * 
      * @param {number} id - unique player clientId 
      */
     disconnectPlayer(id) {
@@ -77,12 +90,25 @@ class NetworkManager {
 
     /**
      * 
+     * @param {Object} data
+     * @param {number} data.id
+     * @param {string} data.type 
+     * @param {Object} data.pos
+     */
+    spawnMob(data) {
+        this.mobManager.spawnMob(data);
+    }
+
+
+    /**
+     * 
      * @param {Object[]} data - all update objects, [{update:'PLAYERS',data:}, {update:'WORLD', data:}]
      */
     update(data) {
         console.log('Update: ' + JSON.stringify(data));
         this.mainScene.updateWorld(data.world);
         this.mainScene.updatePlayers(data.players);
+        this.mobManager.updateMobs(data.mobs);
     }
 
     // End: Handling commands

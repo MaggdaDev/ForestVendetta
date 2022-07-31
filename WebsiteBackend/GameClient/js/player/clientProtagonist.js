@@ -16,10 +16,7 @@ class ClientProtagonist extends ClientPlayer {
         if (this.isContact) {
             instance.sprite.scaleX = Math.abs(instance.sprite.scaleX);
             instance.sprite.scakeY = Math.abs(instance.sprite.scaleY);
-            instance.sprite.play('startWalk');
-            instance.sprite.on('animationcomplete', () => {
-                instance.sprite.play('walk');
-            });
+            instance.sprite.playStartWalk();
         }
 
     }
@@ -43,10 +40,7 @@ class ClientProtagonist extends ClientPlayer {
             instance.sprite.scaleX = -1 * Math.abs(instance.sprite.scaleX);
             instance.sprite.scakeY = -1 * Math.abs(instance.sprite.scaleY);
 
-            instance.sprite.play('startWalk');
-            instance.sprite.on('animationcomplete', () => {
-                instance.sprite.play('walk');
-            });
+            instance.sprite.playStartWalk();
         }
 
     }
@@ -61,7 +55,6 @@ class ClientProtagonist extends ClientPlayer {
     }
 
     stopAnimation() {
-        this.sprite.stop();
-        this.sprite.setFrame(0);
+        this.sprite.stopWalk();
     }
 }

@@ -1,4 +1,5 @@
 const NetworkCommands = require('../GameStatic/js/network/networkCommands');
+const MobManager = require('./mobs/mobManager');
 const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
 const World = require('./world/world');
@@ -16,9 +17,14 @@ class MainLoop {
         this.world = this.worldLoader.loadWorld();
 
         this.networkManager = undefined;
-        this.updateData = this.collectUpdateData();
-        console.log(JSON.stringify(this.updateData));
+              
 
+    }
+
+    init() {        // after constructor before start; after network manager is created
+        this.mobManager = new MobManager(this.networkManager, this.players, this.world);  // after network manager is created
+        this.updateData = this.collectUpdateData();     // after mob manager is created
+        this.mobManager.spawnFrog(200,200);
     }
 
     /**
@@ -34,6 +40,7 @@ class MainLoop {
     update(timeElapsed) {
         this.updateWorld(timeElapsed);
         this.updateAllPlayers(timeElapsed);
+        this.mobManager.updateMobs(timeElapsed, this.world.intersectables);
         this.allPlayersSendUpdate(this.updateData);
         
     }
@@ -56,7 +63,7 @@ class MainLoop {
     updateAllPlayers(timeElapsed) {
         var instance = this;
         this.players.forEach(function (player, id, map) {
-            player.update(timeElapsed, instance.players);
+            player.update(timeElapsed);
         });
     }
 
@@ -66,7 +73,8 @@ class MainLoop {
             toJSON() {
                 return {
                     players: instance.sendablePlayerUpdateData,
-                    world: instance.world.clientWorldUpdateData
+                    world: instance.world.clientWorldUpdateData,
+                    mobs: instance.mobManager.mobUpdateData
                 }
             }
         }
@@ -110,6 +118,7 @@ class MainLoop {
         console.log("Register: " + JSON.stringify(data));
         var newPlayer = new Protagonist(data.id, socket, this.world, this);
         newPlayer.showOldPlayers(this.players);
+        newPlayer.showOldMobs(this.mobManager);
         this.players.set(data.id, newPlayer);
         return newPlayer;
     }

@@ -3,7 +3,8 @@ class GameScene extends Phaser.Scene {
         super(data);
     }
     preload() {
-        this.networkManager = new NetworkManager(this);
+        this.mobManager = new ClientMobManager(this);
+        this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
@@ -16,6 +17,9 @@ class GameScene extends Phaser.Scene {
 
         // load ressources
         this.load.spritesheet('hotzenplotz', 'images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('hotzenplotzUpper', 'images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('hotzenplotzLegs', 'images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
+
 
 
     }

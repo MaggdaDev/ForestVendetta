@@ -7,8 +7,10 @@ const NetworkCommands = {
     UPDATE_PLAYERS: 'UPDATE_PLAYERS',           // data: [data1, data2, data3] with playerdatas
     UPDATE_WORLD: 'UPDATE_WORLD',               // data: [{id, propsToModify}]
     SHOW_OLD_PLAYERS: 'SHOW_OLD_PLAYERS',       // data: SAME AS ADD_PLAYER! curr: same as update
+    SHOW_OLD_MOBS: 'SHOW_OLD_MOBS',             // data: [mob1, mob2,...]
     DISCONNECT_PLAYER: 'DISCONNECT_PLAYER',     // data: id
     CONTROL_DATA: 'CONTROL_DATA',               // data: energy etc
+    SPAWN_MOB: 'SPAWN_MOB',                     // data: mob object (with id,type,pos,...)
 
 
     // TO SERVER

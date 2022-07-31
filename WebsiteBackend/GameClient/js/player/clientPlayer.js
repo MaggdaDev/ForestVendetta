@@ -56,25 +56,8 @@ class ClientPlayer {
                 this.sprite.setStrokeStyle(2, 0xff0000)
             }
         } else if (this.displayMode === 'sprite') {
-            this.sprite = this.mainScene.add.sprite(x, y, 'hotzenplotz');
-            this.sprite.displayWidth = h;
-            this.sprite.displayHeight = h;
-            const walk = {
-                key: 'walk',
-                frames: this.mainScene.anims.generateFrameNumbers('hotzenplotz', { frames: [2, 3, 4, 5, 6, 7, 8, 9] }),
-                frameRate: 8,
-                repeat: -1
-            };
-            const startWalk = {
-                key: 'startWalk',
-                frames: this.mainScene.anims.generateFrameNumbers('hotzenplotz', { frames: [0, 1] }),
-                frameRate: 8,
-                repeat: 0
-            }
-            this.mainScene.anims.create(walk);
-            this.mainScene.anims.create(startWalk);
-
-            var instance = this;
+            this.sprite = new PlayerSprite(this.mainScene, x, y, w, h);
+            this.mainScene.add.existing(this.sprite);
 
         }
     }

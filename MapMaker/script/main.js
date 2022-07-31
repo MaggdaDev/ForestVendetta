@@ -1,8 +1,5 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-ctx.moveTo(0, 0);
-ctx.lineTo(200, 100);
-ctx.stroke();
 var world = new World();
 var polygonBuilder = new PolygonBuilder(canvas, world);
 var fileManager = new FileManager(world);

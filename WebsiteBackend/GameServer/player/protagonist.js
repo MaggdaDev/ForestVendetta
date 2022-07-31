@@ -5,31 +5,30 @@ const MovableBody = require("../physics/movableBody");
 const Vector = require("../physics/vector");
 const SocketUser = require("./socketUser");
 const PolygonHitBox = require("../physics/polygonHitBox");
+const FightingObject = require("../fighting/fightingObject");
 
-const PLAYER_HITBOX_WIDTH = 20;
-const PLAYER_HITBOX_HEIGHT = 80;
+const PLAYER_HITBOX_WIDTH = 25;
+const PLAYER_HITBOX_HEIGHT = 100;
 
 class Protagonist {
-
-
+    static JUMP_FORCE = 50000;
+    static DAMAGE = 5;
+    static HP = 25;
     constructor(id, socket, world, mainLoop) {
         this.id = id;
         this.startPos = new Vector(Math.random() * 500, 100);
 
         this.world = world;
-        this.hitBox = new PolygonHitBox([new Vector(-0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, -0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
-        new Vector(0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, -0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
-        new Vector(0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, 0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y),
-        new Vector(-0.5 * PLAYER_HITBOX_WIDTH + this.startPos.x, 0.5 * PLAYER_HITBOX_HEIGHT + this.startPos.y)]);
+        this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
         this.socketUser = new SocketUser(socket, this);
 
         this.mainLoop = mainLoop;
 
-        this.movableBody = new MovableBody(this.hitBox, true, 100);
+        //physics
+        this.movableBody = new MovableBody(this.hitBox, 100, this, "P" + id);
         this.movableBody.addGravity();
         this.movableBody.disableRotation();
-        this.movableBody.setFrictive();
-        //this.movableBody.addFriction();
+
         //send world data
         this.socketUser.sendWorldData(world);
 
@@ -40,6 +39,12 @@ class Protagonist {
                 instance.startWalk(instance.wantGo);
             }
         });
+        this.movableBody.wayOutPriority = 100;
+        this.movableBody.adjustJumpData({jumpForce: Protagonist.JUMP_FORCE});
+        this.movableBody.setProtagonist();
+
+        //Fighting
+        this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP);
     }
 
     /**
@@ -56,10 +61,17 @@ class Protagonist {
 
     /**
      * 
-     * @param {number} timeElapsed - timeElapsed since last update 
-     * @param {Object[]} intersectables - objects to intersect with
+     * @param {MobManager} mobManager 
      */
-    update(timeElapsed, players) {
+    showOldMobs(mobManager) {
+        this.socketUser.showOldMobs(mobManager.mobUpdateData);
+    }
+
+    /**
+     * 
+     * @param {number} timeElapsed - timeElapsed since last update 
+     */
+    update(timeElapsed) {
         this.movableBody.update(timeElapsed, this.intersectables);
     }
 
@@ -79,6 +91,10 @@ class Protagonist {
 
     get intersectables() {
         return this.world.intersectables;
+    }
+
+    get pos() {
+        return this.hitBox.pos;
     }
 
     sendUpdate(updateData) {

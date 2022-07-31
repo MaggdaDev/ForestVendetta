@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
 const Protagonist = require("../player/protagonist");
+const MovableBody = require("../physics/movableBody");
 
 class ServerNetworkManager {
 
@@ -42,6 +43,10 @@ class ServerNetworkManager {
     handleDisconnect(clientId) {
         this.mainLoop.handleDisconnect(clientId);
         this.broadcastToAllPlayers(NetworkCommands.DISCONNECT_PLAYER, clientId);
+    }
+
+    sendSpawnMobCommand(data) {
+        this.broadcastToAllPlayers(NetworkCommands.SPAWN_MOB,data);
     }
 
 

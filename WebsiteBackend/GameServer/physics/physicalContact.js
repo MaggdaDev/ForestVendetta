@@ -75,15 +75,24 @@ class PhysicalContact {
         return 0.55 * zaehler / nenner;
     }
 
-    moveBodyOut() {
+    get wayOut() {
+        var info = this.pointInsideAndBodyToMove;
+        if (info !== undefined) {
+            return this.getRouteToSlightlyOut(info.pointInside);
+        }
+        // may return undefined
+    }
+
+    moveBodyOut(wayOut) {
         var info = this.pointInsideAndBodyToMove;
         if (info !== undefined) {
             var wayOut = this.getRouteToSlightlyOut(info.pointInside);
-            info.bodyToMove.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, 0.5));
+            var frstPart = info.bodyToMove.wayOutPriority / (this.body1.wayOutPriority + this.body2.wayOutPriority);
+            info.bodyToMove.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, frstPart));
             if (info.bodyToMove === this.body1) {
-                this.body2.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -0.5));
+                this.body2.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0+frstPart));
             } else {
-                this.body1.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -0.5));
+                this.body1.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0+frstPart));
             }
         }
 

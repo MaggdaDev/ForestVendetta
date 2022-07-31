@@ -25,11 +25,21 @@ class Vector {
         return this;
     }
 
+    rotBy(ang) {
+        var oldX = this.x;
+        var oldY = this.y;
+        this.x = Math.cos(ang) * oldX - Math.sin(ang) * oldY;
+        this.y = Math.sin(ang) * oldX + Math.cos(ang) * oldY;
+    }
+
     get abs() {
         return Math.sqrt(Math.pow(this.x, 2.0) + Math.pow(this.y, 2.0));
     }
 
     get dirVec() {
+        if(this.abs === 0) {
+            return new Vector(0,0);
+        }
         return Vector.multiply(this, 1.0 / this.abs);
     }
 

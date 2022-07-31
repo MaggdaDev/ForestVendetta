@@ -52,6 +52,14 @@ class SocketUser {
         this.sendCommand(NetworkCommands.SHOW_OLD_PLAYERS, data);
     }
 
+    /**
+     * 
+     * @param {Object[]} data 
+     */
+    showOldMobs(data) {
+        this.sendCommand(NetworkCommands.SHOW_OLD_MOBS, data);
+    }
+
     sendCommand(command, data) {
         this.socket.emit(command, data);
     }

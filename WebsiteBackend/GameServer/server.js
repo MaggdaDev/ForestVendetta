@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 var playerList = new Map();
 var mainLoop = new MainLoop(playerList);
 var networkManager = new ServerNetworkManager(io, playerList, mainLoop);
-
+mainLoop.init();
 mainLoop.start();
 
 

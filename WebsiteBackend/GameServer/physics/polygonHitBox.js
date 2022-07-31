@@ -14,7 +14,14 @@ class PolygonHitBox {
 
         this.initialPoints = [points.length];
         var i = points.length;
-        while(i--) {this.initialPoints[i] = new Vector(points[i].x, points[i].y)};
+        while (i--) { this.initialPoints[i] = new Vector(points[i].x, points[i].y) };
+    }
+
+    static fromRect(x, y, w, h) {
+        return new PolygonHitBox([new Vector(x - w/2, y - h/2),
+        new Vector(x + w/2, y - h/2),
+        new Vector(x + w/2, y + h/2), 
+        new Vector(x - w/2, y + h/2)]);
     }
 
     /**
@@ -44,7 +51,7 @@ class PolygonHitBox {
         var c = Math.cos(newRot);
         var currPointToRotate;
         var center = this.pos;
-        for(var i = 0; i < this.initialPoints.length; i++) {
+        for (var i = 0; i < this.initialPoints.length; i++) {
             currPointToRotate = this.initialPoints[i];
             this.points[i].x = c * (currPointToRotate.x - center.x) - s * (currPointToRotate.y - center.y) + center.x;
             this.points[i].y = s * (currPointToRotate.x - center.x) + c * (currPointToRotate.y - center.y) + center.y;
@@ -77,8 +84,8 @@ class PolygonHitBox {
             gravCenter.x += addX;
             gravCenter.y += addY;
         }
-        addX = (this.initialPoints[this.initialPoints.length-1].x + this.initialPoints[0].x) * (this.initialPoints[this.initialPoints.length-1].x * this.initialPoints[0].y - this.initialPoints[0].x * this.initialPoints[this.initialPoints.length-1].y);
-        addY = (this.initialPoints[this.initialPoints.length-1].y + this.initialPoints[0].y) * (this.initialPoints[this.initialPoints.length-1].x * this.initialPoints[0].y - this.initialPoints[0].x * this.initialPoints[this.initialPoints.length-1].y);
+        addX = (this.initialPoints[this.initialPoints.length - 1].x + this.initialPoints[0].x) * (this.initialPoints[this.initialPoints.length - 1].x * this.initialPoints[0].y - this.initialPoints[0].x * this.initialPoints[this.initialPoints.length - 1].y);
+        addY = (this.initialPoints[this.initialPoints.length - 1].y + this.initialPoints[0].y) * (this.initialPoints[this.initialPoints.length - 1].x * this.initialPoints[0].y - this.initialPoints[0].x * this.initialPoints[this.initialPoints.length - 1].y);
         gravCenter.x += addX;
         gravCenter.y += addY;
         gravCenter = Vector.multiply(gravCenter, 1 / (6.0 * this.ar));
