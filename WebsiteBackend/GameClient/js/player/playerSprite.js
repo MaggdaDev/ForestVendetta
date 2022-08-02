@@ -15,6 +15,12 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.add(this.legSprite);
         this.add(this.upperSprite);
 
+        this.createAnimations();
+
+
+    }
+
+    createAnimations() {
         const legWalk = {
             key: 'legWalk',
             frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzLegs', { frames: [2, 3, 4, 5, 6, 7, 8, 9] }),
@@ -45,7 +51,17 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.mainScene.anims.create(upperWalk);
         this.mainScene.anims.create(startUpperWalk);
 
+        const heavySwordStrike = {
+            key: 'heavySwordStrike',
+            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzUpper', { frames: [10,11,12,10] }),
+            frameRate: 5,
+            repeat: 0
+        }
+        this.mainScene.anims.create(heavySwordStrike);
+    }
 
+    playHeavySwordStrike() {
+        this.upperSprite.play('heavySwordStrike');
     }
 
     playStartWalk() {

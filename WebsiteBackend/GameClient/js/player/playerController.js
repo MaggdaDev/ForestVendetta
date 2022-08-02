@@ -14,12 +14,19 @@ class PlayerController {
         this.owner.mainScene.keyManager.startWalkRight = ()=> this.startWalkRight(instance);
         this.owner.mainScene.keyManager.stopWalkRight = ()=> this.stopWalkRight(instance);
         this.owner.mainScene.keyManager.jump = ()=> this.jump(instance);
+
+        this.owner.mainScene.mouseManager.strike = ()=> this.strike(instance);
     }
 
     get clientProtagonist() {
         return this.owner.mainScene.clientProtagonist;
     }
     
+    strike(instance) {
+        console.log("Strike!");
+        instance.clientProtagonist.strike(instance.clientProtagonist);
+    }
+
     startWalkLeft(instance) {
         if(!instance.isLeftDown) {
             instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.START_WALK_LEFT);

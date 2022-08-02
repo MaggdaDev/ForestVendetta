@@ -39,6 +39,10 @@ class ClientPlayer {
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 
+    strike(instance) {
+        instance.sprite.playHeavySwordStrike();
+    }
+
     remove() {
         this.sprite.destroy(true);
     }

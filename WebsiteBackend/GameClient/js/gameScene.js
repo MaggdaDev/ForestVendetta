@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
         this.mobManager = new ClientMobManager(this);
         this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
+        this.mouseManager = new MouseManager(this);
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
