@@ -1,9 +1,14 @@
 class FightingObject {
 
-    constructor(dmg, hp) {
+    constructor(dmg, hp, gameUniqueId) {
         this.damage = dmg;
         this.hp = hp;
         this.maxHp = hp;
+        this.id = gameUniqueId;
+    }
+
+    canDamage(other) {
+        return true;
     }
 
     /**

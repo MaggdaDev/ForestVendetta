@@ -51,7 +51,7 @@ class PhysicalContact {
         var rotLinSpd1 = Vector.crossWithOnlyZ(r1, (-1.0) * this.body1.rotSpd);
         var rotLinSpd2 = Vector.crossWithOnlyZ(r2, (-1.0) * this.body2.rotSpd);
         var totSpd1 = Vector.add(this.body1.spd, rotLinSpd1);
-        var totSpd2 = Vector.add(this.body2.spd, rotLinSpd2);
+        var totSpd2 =Vector.add(this.body2.spd, rotLinSpd2);
         var zaehler = force1Vec.dot(totSpd2) - force1Vec.dot(totSpd1);
 
         var coeffs = (1.0 / this.body1.mass + 1.0 / this.body2.mass + r1.abs * r1.abs / this.body1.inertiaMoment + r2.abs * r2.abs / this.body2.inertiaMoment);

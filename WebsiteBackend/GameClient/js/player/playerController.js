@@ -23,6 +23,7 @@ class PlayerController {
     }
     
     strike(instance) {
+        instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.STRIKE);
         console.log("Strike!");
         instance.clientProtagonist.strike(instance.clientProtagonist);
     }

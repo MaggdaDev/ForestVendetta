@@ -1,7 +1,7 @@
 class PlayerSprite extends Phaser.GameObjects.Container {
     static PROT_DISPLAY_SIZE = 100;
     constructor(mainScene, x, y, w, h) {
-        super(mainScene,x,y);
+        super(mainScene, x, y);
         this.targetScene = mainScene;
         this.mainScene = mainScene;
         this.legSprite = mainScene.add.sprite(0, 0, 'hotzenplotzLegs');
@@ -9,15 +9,34 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         this.legSprite.displayWidth = PlayerSprite.PROT_DISPLAY_SIZE;
         this.legSprite.displayHeight = PlayerSprite.PROT_DISPLAY_SIZE;
-        this.upperSprite.displayHeight =  PlayerSprite.PROT_DISPLAY_SIZE;
-        this.upperSprite.displayWidth =  PlayerSprite.PROT_DISPLAY_SIZE;
+        this.upperSprite.displayHeight = PlayerSprite.PROT_DISPLAY_SIZE;
+        this.upperSprite.displayWidth = PlayerSprite.PROT_DISPLAY_SIZE;
+
+        this.legSprite.on('animationcomplete', () => this.onUpperAnimationFinished());
+
+        this.startingWalk = false;
 
         this.add(this.legSprite);
         this.add(this.upperSprite);
 
         this.createAnimations();
 
+        this.upperSprite.on('animationupdate', (anim, frame) => this.onUpperAnimationUpdate(anim, frame));
 
+
+
+    }
+
+    onUpperAnimationUpdate(anim, frame) {
+        this.weapon.update(frame.index);
+    }
+
+    setWeapon(weapon) { // weapon null for none equipped
+        this.weapon = weapon;
+        if (weapon !== null) {
+            this.add(weapon.sprite);
+            //this.add(weapon.debugPolygon);
+        }
     }
 
     createAnimations() {
@@ -53,34 +72,48 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         const heavySwordStrike = {
             key: 'heavySwordStrike',
-            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzUpper', { frames: [10,11,12,10] }),
+            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzUpper', { frames: [10, 11, 12, 10] }),
             frameRate: 5,
             repeat: 0
         }
         this.mainScene.anims.create(heavySwordStrike);
     }
 
+    onUpperAnimationFinished() {
+        if(this.weapon === null && this.startingWalk) {
+            this.upperSprite.play('upperWalk');
+            this.startingWalk = false;
+        } else if (this.weapon.isStriking) {
+            this.weapon.isStriking = false;
+        }
+    }
+
     playHeavySwordStrike() {
         this.upperSprite.play('heavySwordStrike');
+        this.weapon.startStrike();
     }
 
     playStartWalk() {
+        this.startingWalk = true;
         this.legSprite.play('startLegWalk');
         this.legSprite.on('animationcomplete', () => {
             this.legSprite.play('legWalk');
         });
 
-        this.upperSprite.play('startUpperWalk');
-        this.upperSprite.on('animationcomplete', () => {
-            this.upperSprite.play('upperWalk');
-        });
+        if (this.weapon === null) {
+            this.upperSprite.play('startUpperWalk');
+        }
     }
 
     stopWalk() {
         this.legSprite.stop();
-        this.upperSprite.stop();
+
         this.legSprite.setFrame(0);
-        this.upperSprite.setFrame(0);
+
+        if (this.weapon === null && (this.upperSprite.anims.getCurrentKey() === 'upperWalk' || this.upperSprite.anims.getCurrentKey() === 'startUpperWalk')) {
+            this.upperSprite.setFrame(0);
+            this.upperSprite.stop();
+        }
     }
 
 

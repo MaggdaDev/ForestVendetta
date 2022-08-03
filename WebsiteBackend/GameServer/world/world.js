@@ -15,41 +15,16 @@ class World {
         
         
         jsonObject.worldObjects.forEach((currObj)=>{
-            this.worldObjects.push(WorldObjectGenerator.loadWorldObject(currObj, this.nextId));
+            this.worldObjects.push(WorldObjectGenerator.loadWorldObject(currObj, this.nextWorldId));
         });
         
-        /*
-        var xAdd = -110;
-        var yAdd = 400;
-        var testPol = new PolygonObject({"points":[{"x":200+xAdd,"y":80+yAdd},{"x":700+xAdd,"y":80+yAdd},{"x":500+xAdd,"y":150+yAdd},{"x":400+xAdd,"y":150+yAdd}],"type":"POLYGON", isSolid:"true"} ,this.nextId, false);
-        testPol.movableBody.rotSpd = 0;
-        testPol.movableBody.mass = 300;
-        testPol.movableBody.addRubberPoint(Vector.add(testPol.hitBox.pos, new Vector(200,-400)));
-        testPol.movableBody.addRubberPoint(Vector.add(testPol.hitBox.pos, new Vector(-200,-400)));
-        testPol.movableBody.addGravity();
-        //testPol.movableBody.addRotRubber(10);
-        //testPol.movableBody.addRotRubber(100);
-    
-        this.worldObjects.push(testPol);
-        */
-/*
-        xAdd = -120;
-        var yAdd = 400;
-        testPol = new PolygonObject({"points":[{"x":200+xAdd,"y":80+yAdd},{"x":700+xAdd,"y":80+yAdd},{"x":500+xAdd,"y":150+yAdd},{"x":400+xAdd,"y":150+yAdd}],"type":"POLYGON", isSolid:"true"} ,this.nextId, false);
-        testPol.movableBody.rotSpd = 0;
-        testPol.movableBody.mass = 3000;
-        testPol.movableBody.addRubberPoint(testPol.hitBox.pos);
-        testPol.movableBody.addRotRubber(10);
-        this.worldObjects.push(testPol);
-        */
         
     }
 
-    update(timeElapsed) {
-        var intersectables = this.intersectables;
+    update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
         var controlData = [];
         this.worldObjects.forEach((currObj)=>{
-            currObj.update(timeElapsed, intersectables);
+            currObj.update(timeElapsed, worldIntersectables.concat(mobIntersectables).concat(playerIntersectables));
             controlData.push(currObj.movableBody.controlData);
         });
         return controlData;
@@ -59,7 +34,7 @@ class World {
         var intersectables = [];
         this.worldObjects.forEach((currObj)=>{
             if(currObj.isSolid) {
-                intersectables.push(currObj.movableBody);
+                intersectables.push(currObj);
             }
         });
         return intersectables;
@@ -78,13 +53,13 @@ class World {
     }
 
     addNewPlatform(x,y,w,h,rubber) {
-        this.addWorldObject(new Platform(x,y,w,h, this.nextId,rubber));
+        this.addWorldObject(new Platform(x,y,w,h, this.nextWorldId,rubber));
     }
 
-    get nextId() {
+    get nextWorldId() {
         var ret = this.currentId;
         this.currentId += 1;
-        return ret;
+        return "W" + String(ret);
     }
 
     /**

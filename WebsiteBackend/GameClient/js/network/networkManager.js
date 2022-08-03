@@ -11,7 +11,7 @@ class NetworkManager {
         console.log("Creating socket...")
         this.socket = io();
         
-        this.clientId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+        this.clientId = "P" + String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
         console.log("ClientId created: " + this.clientId);
 
         this.mobManager = mobManager;
@@ -83,7 +83,7 @@ class NetworkManager {
     }
 
     controlData(data) {
-        console.log(data);
+        //console.log(data);
         this.mainScene.physicsInfo.updateText(data);
     }
 
@@ -105,7 +105,7 @@ class NetworkManager {
      * @param {Object[]} data - all update objects, [{update:'PLAYERS',data:}, {update:'WORLD', data:}]
      */
     update(data) {
-        console.log('Update: ' + JSON.stringify(data));
+        //console.log('Update: ' + JSON.stringify(data));
         this.mainScene.updateWorld(data.world);
         this.mainScene.updatePlayers(data.players);
         this.mobManager.updateMobs(data.mobs);

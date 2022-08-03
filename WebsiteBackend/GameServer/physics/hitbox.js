@@ -31,6 +31,17 @@ class HitBox {
         }
     }
 
+    static intersects(h1, h2) {
+        var ints = HitBox.getIntersections(h1, h2);
+        if(ints === null || ints === undefined) {
+            return false;
+        }
+        if(ints.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
     static getIntersections(h1, h2) {
         switch (h1.type) {
             case "POLYGON":

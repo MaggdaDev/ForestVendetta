@@ -21,6 +21,8 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('hotzenplotzUpper', 'images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('hotzenplotzLegs', 'images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
 
+        this.load.image('rustySpade', 'images/weapons/rustySpade.png');
+
 
 
     }
@@ -44,11 +46,11 @@ class GameScene extends Phaser.Scene {
      */
     addPlayer(data) {
         if(data.id == this.networkManager.clientId) {
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height);
+            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon);
             console.log('Added local protagonist with server data.');
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
-            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height)
+            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon)
             this.players.set(data.id, newPlayer);
             console.log('Added new player with id: '+ data.id);
         }
@@ -76,7 +78,7 @@ class GameScene extends Phaser.Scene {
         var instance = this;
         data.forEach((currData)=>{
             var newPlayer = new ClientPlayer(instance, currData.id, false);
-            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height);
+            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height, currData);
             instance.players.set(currData.id, newPlayer);
         });
         console.log('Added ' + data.length + ' old players to the game.');

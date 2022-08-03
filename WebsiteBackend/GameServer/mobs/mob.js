@@ -7,7 +7,7 @@ class Mob {
     constructor(hitBox, mass, id, type, players,world, dmg, hp) {
         this.hitBox = hitBox;
         this.id = id;
-        this.movableBody = new MovableBody(hitBox, mass, this, "M" + id);
+        this.movableBody = new MovableBody(hitBox, mass, this, id);
         this.movableBody.wayOutPriority = 50;
         this.movableBody.disableRotation();
         
@@ -17,22 +17,14 @@ class Mob {
         this.onUpdateHandlers = [];
 
         // fighting
-        this.fightingObject = new FightingObject(dmg, hp);
+        this.fightingObject = new FightingObject(dmg, hp, this.id);
     }
 
-    update(timeElapsed, worldIntersectables) {
-        this.movableBody.update(timeElapsed, worldIntersectables.concat(this.playerIntersectables));
+    update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
+        this.movableBody.update(timeElapsed, worldIntersectables.concat(mobIntersectables).concat(playerIntersectables));
         this.onUpdateHandlers.forEach((element)=>{
             element(timeElapsed);
         });
-    }
-
-    get playerIntersectables() {
-        var ret = [];
-        this.players.forEach((p)=>{
-            ret.push(p.movableBody);
-        })
-        return ret;
     }
 
     addOnUpdate(handler) {

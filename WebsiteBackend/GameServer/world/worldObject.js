@@ -12,7 +12,7 @@ class WorldObject {
         this.hitBox = hitBox;
         this.type = type;
         this.id = id;
-        this.movableBody = new MovableBody(this.hitBox, mass, this, "W"+id);
+        this.movableBody = new MovableBody(this.hitBox, mass, this, id);
         this.movableBody.addGravity();
         
     }

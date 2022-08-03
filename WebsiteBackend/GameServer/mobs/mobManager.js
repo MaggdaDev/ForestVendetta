@@ -13,7 +13,7 @@ class MobManager {
     get nextID() {
         var temp = this.currId;
         this.currId++;
-        return temp;
+        return "M" + String(temp);
     }
     spawnFrog(x,y) {
         var frog = new Frog(x,y,this.nextID, this.players, this.world);
@@ -21,10 +21,14 @@ class MobManager {
         this.networkManager.sendSpawnMobCommand(frog);
     }
 
-    updateMobs(timeElapsed, intersectables) {
+    updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
         this.mobs.forEach((currMob)=>{
-            currMob.update(timeElapsed, intersectables);
+            currMob.update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         })
+    }
+
+    get mobArray() {
+        return Array.from(this.mobs.values());
     }
 
     get mobUpdateData() {

@@ -15,6 +15,12 @@ class PolygonHitBox {
         this.initialPoints = [points.length];
         var i = points.length;
         while (i--) { this.initialPoints[i] = new Vector(points[i].x, points[i].y) };
+
+        this.offSet = new Vector(0,0);
+    }
+
+    setOriginToZero() {
+        this.offSet = this.pos;
     }
 
     static fromRect(x, y, w, h) {
@@ -59,7 +65,7 @@ class PolygonHitBox {
     }
 
     set pos(newPos) {   // ALWAYS set pos NEVER set pos.x
-        var curr = this.pos;
+        var curr = Vector.subtractFrom(this.pos, this.offSet);
         var diff = Vector.subtractFrom(newPos, curr);
         this.points.forEach((element) => {
             element.x += diff.x;
@@ -100,6 +106,26 @@ class PolygonHitBox {
         }
         ret.push(new Segment(this.points[this.points.length - 1], this.points[0]));
         return ret;
+    }
+
+    getMirrored() {
+        var mirroredPoints = [];
+        for(var i = this.points.length-1; i>= 0; i--) {
+            var currPoint = this.points[i];
+            mirroredPoints.push(new Vector(currPoint.x * (-1.0), currPoint.y))
+        }
+        return new PolygonHitBox(mirroredPoints);
+    }
+
+    /**
+     * OVERRIDE
+     */
+     toJSON() {
+        var instance = this;
+        return {
+            pos: instance.pos,
+            points: instance.points
+        }
     }
 
 }

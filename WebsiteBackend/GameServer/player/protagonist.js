@@ -6,6 +6,7 @@ const Vector = require("../physics/vector");
 const SocketUser = require("./socketUser");
 const PolygonHitBox = require("../physics/polygonHitBox");
 const FightingObject = require("../fighting/fightingObject");
+const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -24,8 +25,10 @@ class Protagonist {
 
         this.mainLoop = mainLoop;
 
+        this.facingLeft = false;
+
         //physics
-        this.movableBody = new MovableBody(this.hitBox, 100, this, "P" + id);
+        this.movableBody = new MovableBody(this.hitBox, 100, this, id);
         this.movableBody.addGravity();
         this.movableBody.disableRotation();
 
@@ -34,17 +37,19 @@ class Protagonist {
 
         this.wantGo = "NONE";
         var instance = this;
-        this.movableBody.addOnNewContact(()=>{
-            if(instance.wantGo !== "NONE") {
+        this.movableBody.addOnNewContact(() => {
+            if (instance.wantGo !== "NONE") {
                 instance.startWalk(instance.wantGo);
             }
         });
         this.movableBody.wayOutPriority = 100;
-        this.movableBody.adjustJumpData({jumpForce: Protagonist.JUMP_FORCE});
+        this.movableBody.adjustJumpData({ jumpForce: Protagonist.JUMP_FORCE });
         this.movableBody.setProtagonist();
 
         //Fighting
-        this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP);
+        this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP, this.id);
+
+        this.equippedWeapon = new RustySpade(this.fightingObject);
     }
 
     /**
@@ -71,8 +76,9 @@ class Protagonist {
      * 
      * @param {number} timeElapsed - timeElapsed since last update 
      */
-    update(timeElapsed) {
-        this.movableBody.update(timeElapsed, this.intersectables);
+    update(timeElapsed, worldObjects, mobs) {
+        this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
+        this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
     }
 
     /**
@@ -85,12 +91,9 @@ class Protagonist {
             height: PLAYER_HITBOX_HEIGHT,
             width: PLAYER_HITBOX_WIDTH,
             id: this.id,
-            isContact: this.movableBody.isContact
+            isContact: this.movableBody.isContact,
+            equippedWeapon: this.equippedWeapon
         }
-    }
-
-    get intersectables() {
-        return this.world.intersectables;
     }
 
     get pos() {
@@ -106,6 +109,7 @@ class Protagonist {
             case PlayerControls.START_WALK_RIGHT:
                 this.wantGo = "RIGHT";
                 this.startWalk('RIGHT');
+                this.facingLeft = false;
 
                 break;
             case PlayerControls.STOP_WALK_RIGHT:
@@ -118,7 +122,7 @@ class Protagonist {
             case PlayerControls.START_WALK_LEFT:
                 this.wantGo = "LEFT";
                 this.startWalk('LEFT');
-
+                this.facingLeft = true;
                 break;
             case PlayerControls.STOP_WALK_LEFT:
                 if (this.wantGo === "LEFT") {
@@ -127,6 +131,9 @@ class Protagonist {
                 this.clearCurrAccImpulse();
 
                 break;
+            case PlayerControls.STRIKE:
+                this.equippedWeapon.strike();
+                break;
             case PlayerControls.JUMP:
                 this.jump();
                 break;
@@ -134,7 +141,7 @@ class Protagonist {
         console.log("Handled player control: " + control);
     }
 
-    
+
 
     /**
      * 

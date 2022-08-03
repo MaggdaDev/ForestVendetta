@@ -1,4 +1,3 @@
-
 class ClientPlayer {
 
     /**
@@ -13,12 +12,16 @@ class ClientPlayer {
         this.isContact = false;
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
+
     }
 
     update(data) {
         this.sprite.x = data.pos.x;
         this.sprite.y = data.pos.y;
 
+        if (this.sprite.weapon.debugPolygon.visible) {
+            this.sprite.weapon.recreateDebugPolygon(0, 0, data.equippedWeapon.hitBox.points);
+        }
         if (this.displayMode == 'hitbox') {
             this.sprite.displayWidth = data.width;
             this.sprite.displayHeight = data.height;
@@ -49,7 +52,7 @@ class ClientPlayer {
 
 
 
-    generateSprite(x, y, w, h) {
+    generateSprite(x, y, w, h, weapon) {
         console.log("Generating protagonist sprite...");
         console.log("Display mode: " + this.displayMode);
         if (this.displayMode === 'hitbox') {
@@ -61,6 +64,11 @@ class ClientPlayer {
             }
         } else if (this.displayMode === 'sprite') {
             this.sprite = new PlayerSprite(this.mainScene, x, y, w, h);
+
+            // weapon
+            this.weapon = ClientWeapon.fromData(this.mainScene, weapon);
+            this.sprite.setWeapon(this.weapon);
+            this.weapon.visible = true;
             this.mainScene.add.existing(this.sprite);
 
         }

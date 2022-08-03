@@ -74,7 +74,8 @@ class MovableBody {
     /**
      * 
      * @param {number} timeElapsed - in seconds 
-     * @param {Set[MovableBody]} intersectables 
+     * @param {Set[Object]} intersectables 
+     * @param {MovableBody} intersectables[0].movableBody
      */
     update(timeElapsed, intersectables) {
         var oldIsContact = this.isContact;
@@ -271,14 +272,16 @@ class MovableBody {
     }
 
     checkIntersections(intersectables) {
+        var currBody;
         intersectables.forEach(element => {
-            if (element !== this) {
-                var newIntersections = HitBox.getIntersections(element.hitBox, this.hitBox);
+            currBody = element.movableBody;
+            if (currBody !== this) {
+                var newIntersections = HitBox.getIntersections(currBody.hitBox, this.hitBox);
                 if (newIntersections !== null && newIntersections.length > 2) {
                     this.shouldUndoLastUpdate = true;
                 }
                 if (newIntersections != null) {
-                    this.notifyNewIntersection(element, newIntersections);
+                    this.notifyNewIntersection(currBody, newIntersections);
                 }
             }
         });
@@ -300,6 +303,11 @@ class MovableBody {
         object.applyForceAndRot(otherForce, contact.intersectionCenter, overLapTime);
         contact.moveBodyOut();
 
+        this.eachOnIntersection(object, contact);
+        object.eachOnIntersection(this, contact);
+    }
+
+    eachOnIntersection(object, contact) {
         var now = this.now;
         // handle high frequency contact = long contact
         if (!this.singleContactsMap.has(object.bodyId)) {   // first intersection this game? => no friction yet
@@ -307,7 +315,7 @@ class MovableBody {
             this.checkForNewPlayerIntersection(object);
         } else if (now - this.singleContactsMap.get(object.bodyId).lastIntersectionTime > MovableBody.MAX_TIMEDIST_FOR_FRICT) {  // last intersection with this object long ago?
             this.updateLastIntersectionTime(object, now, false);
-            this.checkForNewPlayerIntersection;
+            this.checkForNewPlayerIntersection(object);
         } else {        //else: high frequency contact with this object => apply friction
             var rel1to2ParrSpd = Vector.subtractFrom(contact.getParallelPart(this.spd), contact.getParallelPart(object.spd));
 
@@ -323,11 +331,12 @@ class MovableBody {
 
             // aply friction and accc
             this.applyForceAndRot(Vector.add(fricForce, accForce), contact.intersectionCenter, time); // apply acc and fric!
-            object.applyForceAndRot(Vector.multiply(Vector.add(fricForce, accForce), -1.0), contact.intersectionCenter, time);     // apply acc and fric reactio!
+            //object.applyForceAndRot(Vector.multiply(Vector.add(fricForce, accForce), -1.0), contact.intersectionCenter, time);     // apply acc and fric reactio!
 
             this.updateLastIntersectionTime(object, this.now, true);
 
         }
+
         // JUMP
         if (this.wantToJump) {
             this.wantToJump = false;
@@ -384,21 +393,19 @@ class MovableBody {
     checkForNewPlayerIntersection(object) {
         if (object.isProtagonist) {
             this.newIntersectionWithPlayer(object);
-        } else if (this.isProtagonist) {
-            object.newIntersectionWithPlayer(this);
-        }
+        } 
     }
 
     // for body contact management: 
     addNewSingleContact(object, now) {
         this.singleContactsMap.set(object.bodyId, { body: object, lastIntersectionTime: now , isContact: false});
-        object.singleContactsMap.set(this.bodyId, { body: this, lastIntersectionTime: now, isContact: false});
+        //object.singleContactsMap.set(this.bodyId, { body: this, lastIntersectionTime: now, isContact: false});
 
     }
     updateLastIntersectionTime(object, now, isContact) {
         this.singleContactsMap.get(object.bodyId).lastIntersectionTime = now;
         this.singleContactsMap.get(object.bodyId).isContact = isContact;
-        object.singleContactsMap.get(this.bodyId).lastIntersectionTime = now;
+        //object.singleContactsMap.get(this.bodyId).lastIntersectionTime = now;
         object.singleContactsMap.get(this.bodyId).isContact = isContact;
     }
 

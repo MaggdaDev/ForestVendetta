@@ -38,15 +38,18 @@ class MainLoop {
     @param {number} timeElapsed - Elapsed time in milliseconds
     */
     update(timeElapsed) {
-        this.updateWorld(timeElapsed);
-        this.updateAllPlayers(timeElapsed);
-        this.mobManager.updateMobs(timeElapsed, this.world.intersectables);
+        var worldIntersectables = this.world.intersectables;
+        var mobIntersectables = this.mobManager.mobArray;
+        var playerIntersectables = this.playerIntersectables;
+        this.updateWorld(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
+        this.updateAllPlayers(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
+        this.mobManager.updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.allPlayersSendUpdate(this.updateData);
         
     }
 
-    updateWorld(timeElapsed) {
-        this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed)));
+    updateWorld(timeElapsed, ws, ms, ps) {
+        this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed, ws, ms, ps)));
     }
 
 
@@ -60,10 +63,10 @@ class MainLoop {
         });
     }
 
-    updateAllPlayers(timeElapsed) {
+    updateAllPlayers(timeElapsed, ws, ms, ps) {
         var instance = this;
         this.players.forEach(function (player, id, map) {
-            player.update(timeElapsed);
+            player.update(timeElapsed, ws, ms, ps);
         });
     }
 
@@ -86,6 +89,10 @@ class MainLoop {
             ret.push(curr);
         });
         return ret;
+    }
+
+    get playerIntersectables() {
+        return Array.from(this.players.values());
     }
     
 
