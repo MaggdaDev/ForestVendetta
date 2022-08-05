@@ -8,6 +8,7 @@ class MobManager {
         this.networkManager = networkManager;
         this.players = players;
         this.world = world;
+        this.mobsToRemove = [];
     }
 
     get nextID() {
@@ -24,7 +25,24 @@ class MobManager {
     updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
         this.mobs.forEach((currMob)=>{
             currMob.update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
-        })
+        });
+        this.checkRemoveMobs();
+    }
+
+    checkRemoveMobs() {
+        this.mobsToRemove = [];
+        this.mobs.forEach((mob)=>{
+            if(mob.shouldRemove) {
+                this.mobsToRemove.push({id: mob.id, type: "MOB"});
+            }
+        });
+        
+        this.mobsToRemove.forEach((mob)=>{
+            this.mobs.delete(mob.id);
+        });
+        if(this.mobsToRemove.length > 0) {
+            this.networkManager.sendRemoveMobsCommand(this.mobsToRemove);
+        }
     }
 
     get mobArray() {

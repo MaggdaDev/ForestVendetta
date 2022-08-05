@@ -6,25 +6,18 @@ class ClientPlayer {
      */
     constructor(scene, id, isProtagonist) {
         this.mainScene = scene;
-        this.displayMode = 'sprite';
         this.id = id;
         this.isProtagonist = isProtagonist;
         this.isContact = false;
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
-
     }
 
     update(data) {
-        this.sprite.x = data.pos.x;
-        this.sprite.y = data.pos.y;
+        this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp);
 
         if (this.sprite.weapon.debugPolygon.visible) {
             this.sprite.weapon.recreateDebugPolygon(0, 0, data.equippedWeapon.hitBox.points);
-        }
-        if (this.displayMode == 'hitbox') {
-            this.sprite.displayWidth = data.width;
-            this.sprite.displayHeight = data.height;
         }
         if (data.isContact && (!this.isContact)) {
             this.isContact = true;
@@ -43,7 +36,10 @@ class ClientPlayer {
     }
 
     strike(instance) {
-        instance.sprite.playHeavySwordStrike();
+        if (instance.weapon.checkCooldown()) {
+            instance.mainScene.networkManager.sendPlayerControl(PlayerControls.STRIKE);
+            instance.sprite.playHeavySwordStrike();
+        }
     }
 
     remove() {
@@ -52,25 +48,16 @@ class ClientPlayer {
 
 
 
-    generateSprite(x, y, w, h, weapon) {
+    generateSprite(x, y, w, h, weapon, maxHp) {
         console.log("Generating protagonist sprite...");
-        console.log("Display mode: " + this.displayMode);
-        if (this.displayMode === 'hitbox') {
-            this.sprite = this.mainScene.add.rectangle(x, y, w, h);
-            if (this.isProtagonist) {
-                this.sprite.setStrokeStyle(2, 0x0000ff)
-            } else {
-                this.sprite.setStrokeStyle(2, 0xff0000)
-            }
-        } else if (this.displayMode === 'sprite') {
-            this.sprite = new PlayerSprite(this.mainScene, x, y, w, h);
+        this.sprite = new PlayerSprite(this.mainScene, x, y, w, h, maxHp);
 
-            // weapon
-            this.weapon = ClientWeapon.fromData(this.mainScene, weapon);
-            this.sprite.setWeapon(this.weapon);
-            this.weapon.visible = true;
-            this.mainScene.add.existing(this.sprite);
+        // weapon
+        this.weapon = ClientWeapon.fromData(this.mainScene, weapon);
+        this.sprite.setWeapon(this.weapon);
+        this.weapon.visible = true;
+        this.mainScene.add.existing(this.sprite);
 
-        }
+
     }
 }

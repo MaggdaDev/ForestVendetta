@@ -49,6 +49,15 @@ class ServerNetworkManager {
         this.broadcastToAllPlayers(NetworkCommands.SPAWN_MOB,data);
     }
 
+    /**
+     * 
+     * @param {Object[]} data
+     * @param {string} data[0].id 
+     */
+    sendRemoveMobsCommand(data) {
+        this.broadcastToAllPlayers(NetworkCommands.REMOVE_GAMEOBJECTS, data);
+    }
+
 
     /**
      * 

@@ -3,6 +3,9 @@ var config = {
     width: 2000,
     height: 1000,
     backgroundColor: '#ffffff',
+    physics: {
+        default: 'arcade'
+    },
     scene: new GameScene()
 };
 

@@ -1,10 +1,22 @@
 class ClientMob {
-    constructor(id, scene) {
+    /**
+     * 
+     * @param {string} id 
+     * @param {Scene} scene 
+     * @param {HealthBar} healthBar 
+     */
+    constructor(id, scene, healthBar) {
         this.id = id;
         this.mainScene = scene;
         
         //Init in subclass constructor:
         this.sprite = undefined;
+        this.healthBar = healthBar;
+    }
+
+    destroy() {
+        this.sprite.destroy();
+        this.healthBar.destroy();
     }
 
     get pos() {
@@ -18,12 +30,13 @@ class ClientMob {
 
     update(data) {
         this.pos = data.pos;
+        this.healthBar.update(data.pos.x, data.pos.y, data.fightingObject.hp);
     }
 
     static fromSpawnCommand(data, scene) {
         switch(data.type) {
             case "FROG":
-                var frog = new ClientFrog(data.id, data.pos, data.width, data.height, scene);
+                var frog = new ClientFrog(data.id, data.pos, data.width, data.height, scene, data.fightingObject.hp);
                 return frog;
             default:
                 console.error("Unknown mob type to spawn: " + data.type);

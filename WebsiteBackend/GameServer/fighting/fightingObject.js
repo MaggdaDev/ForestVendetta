@@ -19,6 +19,11 @@ class FightingObject {
     static aDamageB(a, b) {
         b.hp -= a.damage;
         console.log("Damage!");
+        return a.damage;
+    }
+
+    isAlive() {
+        return this.hp > 0;
     }
 }
 

@@ -38,6 +38,10 @@ class Weapon {
         console.error("UPDATE METHOD NOT OVERRIDDEN: " + JSON.stringify(this.typeData));
     }
 
+    getCooldown() {
+        console.error("GET COOLDOWN METHOD NOT OVERRIDDEN: " + JSON.stringify(this.typeData));
+    }
+
     get now() {
         return Date.now() / 1000.0;
     }

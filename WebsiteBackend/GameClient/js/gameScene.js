@@ -3,10 +3,13 @@ class GameScene extends Phaser.Scene {
         super(data);
     }
     preload() {
+        // scaling
+
         this.mobManager = new ClientMobManager(this);
         this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
         this.mouseManager = new MouseManager(this);
+        this.particleManager = new ParticleManager(this);
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
@@ -45,14 +48,14 @@ class GameScene extends Phaser.Scene {
      * @param {number} id
      */
     addPlayer(data) {
-        if(data.id == this.networkManager.clientId) {
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon);
+        if (data.id == this.networkManager.clientId) {
+            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp);
             console.log('Added local protagonist with server data.');
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
-            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon)
+            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp)
             this.players.set(data.id, newPlayer);
-            console.log('Added new player with id: '+ data.id);
+            console.log('Added new player with id: ' + data.id);
         }
 
     }
@@ -63,12 +66,12 @@ class GameScene extends Phaser.Scene {
         this.world = new ClientWorld(data, this);
 
         console.log('World setup complete.')
-        
+
     }
 
     updatePlayers(data) {
         var instance = this;
-        data.forEach((currData)=>{
+        data.forEach((currData) => {
             instance.players.get(currData.id).update(currData);
         });
     }
@@ -76,9 +79,9 @@ class GameScene extends Phaser.Scene {
     showOldPlayers(data) {
         console.log('Adding old players to the game with data: ' + JSON.stringify(data));
         var instance = this;
-        data.forEach((currData)=>{
+        data.forEach((currData) => {
             var newPlayer = new ClientPlayer(instance, currData.id, false);
-            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height, currData);
+            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height, currData.equippedWeapon, currData.fightingObject.hp);
             instance.players.set(currData.id, newPlayer);
         });
         console.log('Added ' + data.length + ' old players to the game.');
@@ -94,6 +97,27 @@ class GameScene extends Phaser.Scene {
 
     updateWorld(data) {
         this.world.update(data);
+    }
+
+    cooldown(data) {
+        this.clientProtagonist.cooldown(data);
+    }
+
+    damageAnimation(data) {
+        this.particleManager.damageParticle(data.pos, data.damage);
+    }
+
+    removeGameObjects(data) {
+        data.forEach((curr) => {
+            switch (curr.type) {
+                case "MOB":
+                    this.mobManager.removeMob(curr);
+                    break;
+                default:
+                    console.log("Unknown remove type: " + type);
+                    break;
+            }
+        });
     }
 
     // End: Executing incoming commands from network manager

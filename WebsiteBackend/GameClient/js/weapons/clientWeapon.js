@@ -1,7 +1,7 @@
 class ClientWeapon {
     constructor(scene, imageName, data) {
         this.mainScene = scene;
-        this.sprite = this.mainScene.add.image(0, 0, imageName);
+        this.sprite = this.mainScene.add.image(0, 0, imageName, 'Phaser 3 pixelArt: true');
         this.debugPolygon = this.mainScene.add.polygon(0, 0, data.hitBox.points, 0xFF33ff);
         this.debugPolygon.displayOriginX = 0.5;
         this.debugPolygon.displayOriginY = 0.5;
@@ -12,6 +12,37 @@ class ClientWeapon {
         this.isStriking = false;
 
         this.debugPolygon.setVisible(false);
+
+        // cooldown
+        this.onCooldown = false;
+        this.cooldownStart = 0;
+        this.cooldownTime = 0;
+    }
+
+    cooldown(time) {
+        console.log("Cooldown started!");
+        this.onCooldown = true;
+        this.cooldownStart = this.now;
+        this.cooldownTime = time;
+    }
+
+    checkCooldown() {
+        if(this.onCooldown) {
+            var timeElapsed = this.now - this.cooldownStart;
+            if(timeElapsed > this.cooldownTime) {
+                this.onCooldown = false;
+                console.log("Cooldown terminated!");
+                return true;
+            } else {
+                console.log("ON COOLDOWN!");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    get now() {
+        return Date.now() / 1000.0;
     }
 
     recreateDebugPolygon(x,y,points) {

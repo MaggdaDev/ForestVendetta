@@ -11,7 +11,7 @@ class HeavySword extends Sword {
      * @param {Object} typeData
      * @param {string} typeData.type 
      */
-    constructor(typeData, fighter) {
+    constructor(typeData, fighter, cooldown, onDamage) {
         typeData.subClass = "HEAVY_SWORD";
         super(typeData, fighter);
 
@@ -22,8 +22,11 @@ class HeavySword extends Sword {
         this.alreadyDamagedIds = new Set();
 
         //strike animation
-        this.strikeAnimation = new HeavyStrike(0.25, 0.2);
+        this.strikeAnimation = new HeavyStrike(0.3, 0.2);
         this.setupStrikeAnimation();
+        this.cooldown = cooldown;
+
+        this.onDamage = onDamage;
     }
 
     setupHitBoxes() {
@@ -48,6 +51,10 @@ class HeavySword extends Sword {
         };
     }
 
+    getCooldown() {
+        return this.cooldown;
+    }
+
     strike() {
         this.strikeAnimation.start();
     }
@@ -66,8 +73,9 @@ class HeavySword extends Sword {
             damagables.forEach(element => {
                 if (this.fighter.canDamage(element.fightingObject)) {
                     if (!this.alreadyDamagedIds.has(element.fightingObject.id)) {
-                        if (HitBox.intersects(this.hitBox, element.hitBox)) {
-                            this.damageDamagable(element.fightingObject);
+                        var ints = HitBox.getIntersections(this.hitBox, element.hitBox)
+                        if (ints !== null && ints !== undefined && ints.length > 0) {
+                            this.damageDamagable(element.fightingObject, ints[0]);
                         }
                     }
                 }
@@ -75,9 +83,10 @@ class HeavySword extends Sword {
         }
     }
 
-    damageDamagable(fightingObject) {
+    damageDamagable(fightingObject, intersection) {
         this.alreadyDamagedIds.add(fightingObject.id);
-        FightingObject.aDamageB(this.fighter, fightingObject);
+        var damageDone = FightingObject.aDamageB(this.fighter, fightingObject);
+        if(this.onDamage !== null) this.onDamage(damageDone, intersection)
     }
 
     /**

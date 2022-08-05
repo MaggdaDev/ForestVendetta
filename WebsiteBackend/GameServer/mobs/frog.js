@@ -32,6 +32,10 @@ class Frog extends Mob{
 
     onUpdate(timeElapsed) {
         this.updateTimers(timeElapsed);
+        if(this.movableBody.pos.abs > 10000) {
+            this.movableBody.hitBox.pos = new Vector(500, 0);
+            this.movableBody.spd = new Vector(0,0);
+        }
     }
 
     updateTimers(timeElapsed) {
@@ -66,7 +70,8 @@ class Frog extends Mob{
             isContact: instance.movableBody.isContact,
             type: instance.type,
             width: Frog.WIDTH,
-            height: Frog.HEIGHT
+            height: Frog.HEIGHT,
+            fightingObject: this.fightingObject
         }
     }
 }

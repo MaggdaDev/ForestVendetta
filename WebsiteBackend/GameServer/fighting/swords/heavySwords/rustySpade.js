@@ -1,8 +1,9 @@
 const HeavySword = require("./heavySword");
 
 class RustySpade extends HeavySword {
-    constructor(fighter) {
-        super({type: "RUSTY_SPADE"}, fighter);
+    static COOLDOWN = 0.8;
+    constructor(fighter, onDamage) {
+        super({type: "RUSTY_SPADE"}, fighter, RustySpade.COOLDOWN, onDamage);
         this.damage = 5;
     }
 }   

@@ -7,6 +7,10 @@ class ClientProtagonist extends ClientPlayer {
         
     }
 
+    cooldown(data) {
+        this.weapon.cooldown(data.time);
+    }
+
     /**
      * 
      * @param {ClientProtagonist} instance 
@@ -18,7 +22,6 @@ class ClientProtagonist extends ClientPlayer {
             instance.sprite.scakeY = Math.abs(instance.sprite.scaleY);
             instance.sprite.playStartWalk();
         }
-
     }
 
     /**

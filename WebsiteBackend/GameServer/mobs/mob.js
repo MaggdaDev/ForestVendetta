@@ -16,8 +16,25 @@ class Mob {
         this.type = type;
         this.onUpdateHandlers = [];
 
+        this.shouldRemove = false;
+
         // fighting
         this.fightingObject = new FightingObject(dmg, hp, this.id);
+
+        // remove on dead
+        this.addOnUpdate(()=>{
+            this.checkAlive();
+        });
+    }
+
+    checkAlive() {
+        if(!this.fightingObject.isAlive()) {
+            this.remove();
+        }
+    }
+
+    remove() {
+        this.shouldRemove = true;
     }
 
     update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
@@ -40,7 +57,8 @@ class Mob {
             pos: instance.hitBox.pos,
             id: instance.id,
             isContact: instance.movableBody.isContact,
-            type: instance.type
+            type: instance.type,
+            fightingObject: this.fightingObject
         }
     }
 

@@ -1,6 +1,7 @@
 class PlayerSprite extends Phaser.GameObjects.Container {
     static PROT_DISPLAY_SIZE = 100;
-    constructor(mainScene, x, y, w, h) {
+    static HEALTH_BAR_Y_OFFSET = -65;
+    constructor(mainScene, x, y, maxHp) {
         super(mainScene, x, y);
         this.targetScene = mainScene;
         this.mainScene = mainScene;
@@ -23,8 +24,14 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         this.upperSprite.on('animationupdate', (anim, frame) => this.onUpperAnimationUpdate(anim, frame));
 
+        // hp bar
+        this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER");
+    }
 
-
+    update(x, y, currHp) {
+        this.x = x;
+        this.y = y;
+        this.healthBar.update(x, y, currHp);
     }
 
     onUpperAnimationUpdate(anim, frame) {

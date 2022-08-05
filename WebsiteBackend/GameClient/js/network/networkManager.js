@@ -28,6 +28,9 @@ class NetworkManager {
         this.socket.on(NetworkCommands.UPDATE, (data)=>this.update(data));
         this.socket.on(NetworkCommands.CONTROL_DATA, (data)=>this.controlData(data));
         this.socket.on(NetworkCommands.SPAWN_MOB, (data)=>this.spawnMob(data));
+        this.socket.on(NetworkCommands.COOLDOWN, (data) => this.cooldown(data));
+        this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data)=>this.damageAnimation(data));
+        this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data)=>this.removeGameObjects(data));
         
         // End: registering command handling
 
@@ -109,6 +112,35 @@ class NetworkManager {
         this.mainScene.updateWorld(data.world);
         this.mainScene.updatePlayers(data.players);
         this.mobManager.updateMobs(data.mobs);
+    }
+
+    /**
+     * 
+     * @param {Object} data 
+     * @param {string} data.weaponId
+     * @param {number} data.time
+     */
+    cooldown(data) {
+        this.mainScene.cooldown(data);
+    }
+
+    /**
+     * 
+     * @param {Object} data
+     * @param {string} data.weaponId
+     * @param {number} data.damage
+     * @param {Object} data.pos 
+     */
+    damageAnimation(data) {
+        this.mainScene.damageAnimation(data);
+    }
+
+    /**
+     * 
+     * @param {*} data 
+     */
+    removeGameObjects(data) {
+        this.mainScene.removeGameObjects(data);
     }
 
     // End: Handling commands

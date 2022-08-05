@@ -16,6 +16,12 @@ class ClientMobManager {
         });
     }
 
+    removeMob(data) {
+        var toRemove = this.mobs.get(data.id);
+        this.mobs.delete(data.id);
+        toRemove.destroy();
+    }
+
     showOldMobs(data) {
         var instance = this;
         data.forEach((currUpdateData)=>{

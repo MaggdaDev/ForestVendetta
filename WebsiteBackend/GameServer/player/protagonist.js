@@ -49,7 +49,11 @@ class Protagonist {
         //Fighting
         this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP, this.id);
 
-        this.equippedWeapon = new RustySpade(this.fightingObject);
+
+        var instance = this;
+        this.equippedWeapon = new RustySpade(this.fightingObject, (damage, intersection)=>{
+            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damage, pos: intersection.intersectionPoint});
+        });
     }
 
     /**
@@ -81,6 +85,11 @@ class Protagonist {
         this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
     }
 
+    strike() {
+        this.equippedWeapon.strike();
+        this.socketUser.sendCommand(NetworkCommands.COOLDOWN, {weaponId: this.equippedWeapon.id, time: this.equippedWeapon.getCooldown()});
+    }
+
     /**
      * OVERRIDE
      */
@@ -92,7 +101,8 @@ class Protagonist {
             width: PLAYER_HITBOX_WIDTH,
             id: this.id,
             isContact: this.movableBody.isContact,
-            equippedWeapon: this.equippedWeapon
+            equippedWeapon: this.equippedWeapon,
+            fightingObject: this.fightingObject
         }
     }
 
@@ -132,7 +142,8 @@ class Protagonist {
 
                 break;
             case PlayerControls.STRIKE:
-                this.equippedWeapon.strike();
+                this.strike();
+                
                 break;
             case PlayerControls.JUMP:
                 this.jump();
