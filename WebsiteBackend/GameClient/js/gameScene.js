@@ -23,6 +23,8 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('hotzenplotz', 'images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('hotzenplotzUpper', 'images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('hotzenplotzLegs', 'images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.image('frog', 'images/mobs/frog.png');
+        
 
         this.load.image('rustySpade', 'images/weapons/rustySpade.png');
 
