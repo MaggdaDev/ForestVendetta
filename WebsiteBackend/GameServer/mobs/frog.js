@@ -66,6 +66,7 @@ class Frog extends Mob{
         var instance = this;
         return {
             pos: instance.hitBox.pos,
+            spd: instance.movableBody.spd,
             id: instance.id,
             isContact: instance.movableBody.isContact,
             type: instance.type,

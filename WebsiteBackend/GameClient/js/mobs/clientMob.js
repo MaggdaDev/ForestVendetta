@@ -12,6 +12,13 @@ class ClientMob {
         //Init in subclass constructor:
         this.sprite = undefined;
         this.healthBar = healthBar;
+        this.onServerUpdateList = [];
+    }
+
+
+
+    addOnServerUpdate(h) {
+        this.onServerUpdateList.push(h);
     }
 
     destroy() {
@@ -31,6 +38,10 @@ class ClientMob {
     update(data) {
         this.pos = data.pos;
         this.healthBar.update(data.pos.x, data.pos.y, data.fightingObject.hp);
+        var instance = this;
+        this.onServerUpdateList.forEach((curr)=>{
+            curr(data, instance);
+        });
     }
 
     static fromSpawnCommand(data, scene) {
