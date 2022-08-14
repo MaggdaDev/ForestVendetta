@@ -26,6 +26,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         // hp bar
         this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER");
+  
     }
 
     update(x, y, currHp) {
@@ -42,6 +43,8 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.weapon = weapon;
         if (weapon !== null) {
             this.add(weapon.sprite);
+            this.mainScene.add.existing(weapon.cooldownIndicator);
+            this.add(weapon.cooldownIndicator);
             //this.add(weapon.debugPolygon);
         }
     }

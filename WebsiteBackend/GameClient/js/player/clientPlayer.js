@@ -55,7 +55,6 @@ class ClientPlayer {
         // weapon
         this.weapon = ClientWeapon.fromData(this.mainScene, weapon);
         this.sprite.setWeapon(this.weapon);
-        this.weapon.visible = true;
         this.mainScene.add.existing(this.sprite);
 
 

@@ -405,8 +405,6 @@ class MovableBody {
     updateLastIntersectionTime(object, now, isContact) {
         this.singleContactsMap.get(object.bodyId).lastIntersectionTime = now;
         this.singleContactsMap.get(object.bodyId).isContact = isContact;
-        //object.singleContactsMap.get(this.bodyId).lastIntersectionTime = now;
-        object.singleContactsMap.get(this.bodyId).isContact = isContact;
     }
 
 }

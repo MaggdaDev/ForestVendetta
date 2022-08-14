@@ -17,13 +17,22 @@ class ClientWeapon {
         this.onCooldown = false;
         this.cooldownStart = 0;
         this.cooldownTime = 0;
+
+        this.visible = false;
+
+        this.cooldownIndicator = new WeaponCooldownIndicator(scene);
     }
 
+    /**
+     * 
+     * @param {number} time - time in s
+     */
     cooldown(time) {
         console.log("Cooldown started!");
         this.onCooldown = true;
         this.cooldownStart = this.now;
         this.cooldownTime = time;
+        this.cooldownIndicator.startCooldown(time);
     }
 
     checkCooldown() {
@@ -67,6 +76,7 @@ class ClientWeapon {
 
     startStrike() {
         this.isStriking = true;
+        this.visible = true;
     }
 
     update(frame) {
@@ -92,6 +102,7 @@ class ClientWeapon {
 
     set visible(v) {
         this.sprite.setVisible(v);
+        //this.debugPolygon.setVisible(v);
     }
 
     set playerPos(pos) {

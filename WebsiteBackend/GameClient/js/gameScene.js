@@ -37,6 +37,7 @@ class GameScene extends Phaser.Scene {
         var scene = this;
         this.physicsInfo = new PhysicsControlInfo(this);
 
+
     }
 
 
