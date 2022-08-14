@@ -122,6 +122,7 @@ class NetworkManager {
      */
     cooldown(data) {
         this.mainScene.cooldown(data);
+        console.log("COOLDOWN INCOMING");
     }
 
     /**

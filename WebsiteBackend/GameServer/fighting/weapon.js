@@ -7,10 +7,11 @@ class Weapon {
      * @param {string} typeData.type
      */
     static currentId = 0;
-    constructor(typeData, fighter) {
+    constructor(typeData, owner) {
         this.typeData = typeData;
         this.id = Weapon.nextWeaponId();
-        this.fighter = fighter;
+        this.fighter = owner.fightingObject;
+        this.owner = owner;
     }
 
     /**

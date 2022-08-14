@@ -13,7 +13,7 @@ class MovableBody {
 
     static GRAVITY = 500;
     static FRICTION_STRENGTH = 10000;
-    static ROT_FRICTION_FACT = 0.1;
+    static ROT_FRICTION_FACT = 0.5;
     static MAX_TIMEDIST_FOR_FRICT = 0.2;
     static MAX_WAY_OUT = 5;
 
@@ -166,7 +166,7 @@ class MovableBody {
         }
         nennerSum *= 6;
 
-        return this.mass * zaehlerSum / nennerSum;
+        return 100 * this.mass * zaehlerSum / nennerSum;
     }
 
     get controlData() {
@@ -287,9 +287,9 @@ class MovableBody {
         });
     }
 
-    newIntersectionWithPlayer(object) {
+    newIntersectionWithPlayer(object, intersectionPoint) {
         this.onNewIntersectionWithPlayerHandlers.forEach((element) => {
-            element(object.owner);
+            element(object.owner, intersectionPoint);
         });
     }
 
@@ -312,10 +312,10 @@ class MovableBody {
         // handle high frequency contact = long contact
         if (!this.singleContactsMap.has(object.bodyId)) {   // first intersection this game? => no friction yet
             this.addNewSingleContact(object, now);
-            this.checkForNewPlayerIntersection(object);
+            this.checkForNewPlayerIntersection(object, contact.intersectionCenter);
         } else if (now - this.singleContactsMap.get(object.bodyId).lastIntersectionTime > MovableBody.MAX_TIMEDIST_FOR_FRICT) {  // last intersection with this object long ago?
             this.updateLastIntersectionTime(object, now, false);
-            this.checkForNewPlayerIntersection(object);
+            this.checkForNewPlayerIntersection(object, contact.intersectionCenter);
         } else {        //else: high frequency contact with this object => apply friction
             var rel1to2ParrSpd = Vector.subtractFrom(contact.getParallelPart(this.spd), contact.getParallelPart(object.spd));
 
@@ -390,9 +390,14 @@ class MovableBody {
         return ret;
     }
 
-    checkForNewPlayerIntersection(object) {
+    /**
+     * 
+     * @param {MovableBody} object - intersected body
+     * @param {Vector} intersection - intersection center of physical contact 
+     */
+    checkForNewPlayerIntersection(object, intersectionPoint) {
         if (object.isProtagonist) {
-            this.newIntersectionWithPlayer(object);
+            this.newIntersectionWithPlayer(object, intersectionPoint);
         } 
     }
 

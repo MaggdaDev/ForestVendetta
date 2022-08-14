@@ -35,12 +35,7 @@ class ClientPlayer {
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 
-    strike(instance) {
-        if (instance.weapon.checkCooldown()) {
-            instance.mainScene.networkManager.sendPlayerControl(PlayerControls.STRIKE);
-            instance.sprite.playHeavySwordStrike();
-        }
-    }
+    
 
     remove() {
         this.sprite.destroy(true);

@@ -1,6 +1,7 @@
 const FightingObject = require("../fighting/fightingObject");
 const MovableBody = require("../physics/movableBody");
 const PolygonHitBox = require("../physics/polygonHitBox");
+const Vector = require("../physics/vector");
 const TargetManager = require("./targetManager");
 
 class Mob {
@@ -15,21 +16,35 @@ class Mob {
         this.players = players;
         this.type = type;
         this.onUpdateHandlers = [];
+        this.onDeathHandlers = [];
 
         this.shouldRemove = false;
 
         // fighting
         this.fightingObject = new FightingObject(dmg, hp, this.id);
+        this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
+            this.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 30000),1);
+        });
 
         // remove on dead
         this.addOnUpdate(()=>{
             this.checkAlive();
         });
+
+
+       
+    }
+
+    addOnDeath(handler) {
+        this.onDeathHandlers.push(handler);
     }
 
     checkAlive() {
         if(!this.fightingObject.isAlive()) {
             this.remove();
+            this.onDeathHandlers.forEach((curr)=>{
+                curr();
+            });
         }
     }
 

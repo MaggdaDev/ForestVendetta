@@ -11,9 +11,9 @@ class HeavySword extends Sword {
      * @param {Object} typeData
      * @param {string} typeData.type 
      */
-    constructor(typeData, fighter, cooldown, onDamage) {
+    constructor(typeData, owner, cooldown) {
         typeData.subClass = "HEAVY_SWORD";
-        super(typeData, fighter);
+        super(typeData,owner);
 
         this.setupHitBoxes();
 
@@ -25,8 +25,6 @@ class HeavySword extends Sword {
         this.strikeAnimation = new HeavyStrike(0.3, 0.2);
         this.setupStrikeAnimation();
         this.cooldown = cooldown;
-
-        this.onDamage = onDamage;
     }
 
     setupHitBoxes() {
@@ -75,7 +73,7 @@ class HeavySword extends Sword {
                     if (!this.alreadyDamagedIds.has(element.fightingObject.id)) {
                         var ints = HitBox.getIntersections(this.hitBox, element.hitBox)
                         if (ints !== null && ints !== undefined && ints.length > 0) {
-                            this.damageDamagable(element.fightingObject, ints[0]);
+                            this.damageDamagable(element.fightingObject, ints[0], element.pos);
                         }
                     }
                 }
@@ -83,10 +81,9 @@ class HeavySword extends Sword {
         }
     }
 
-    damageDamagable(fightingObject, intersection) {
+    damageDamagable(fightingObject, intersection, otherPos) {
         this.alreadyDamagedIds.add(fightingObject.id);
-        var damageDone = FightingObject.aDamageB(this.fighter, fightingObject);
-        if(this.onDamage !== null) this.onDamage(damageDone, intersection)
+        var damageDone = FightingObject.aDamageB(this.fighter, fightingObject, this.owner.pos, otherPos, intersection.intersectionPoint);
     }
 
     /**

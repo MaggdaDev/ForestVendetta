@@ -11,6 +11,13 @@ class ClientProtagonist extends ClientPlayer {
         this.weapon.cooldown(data.time);
     }
 
+    strike(instance) {
+        if (instance.weapon.checkCooldown()) {
+            instance.mainScene.networkManager.sendPlayerControl(PlayerControls.STRIKE);
+            instance.sprite.playHeavySwordStrike();
+        }
+    }
+
     /**
      * 
      * @param {ClientProtagonist} instance 

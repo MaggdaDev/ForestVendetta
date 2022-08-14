@@ -13,9 +13,10 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.upperSprite.displayHeight = PlayerSprite.PROT_DISPLAY_SIZE;
         this.upperSprite.displayWidth = PlayerSprite.PROT_DISPLAY_SIZE;
 
-        this.legSprite.on('animationcomplete', () => this.onUpperAnimationFinished());
+        this.upperSprite.on('animationcomplete', () => this.onUpperAnimationFinished());
 
         this.startingWalk = false;
+        this.strikePlaying = false;
 
         this.add(this.legSprite);
         this.add(this.upperSprite);
@@ -26,7 +27,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         // hp bar
         this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER");
-  
+
     }
 
     update(x, y, currHp) {
@@ -90,7 +91,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     onUpperAnimationFinished() {
-        if(this.weapon === null && this.startingWalk) {
+        if (this.weapon === null && this.startingWalk) {
             this.upperSprite.play('upperWalk');
             this.startingWalk = false;
         } else if (this.weapon.isStriking) {
@@ -99,8 +100,13 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     playHeavySwordStrike() {
-        this.upperSprite.play('heavySwordStrike');
-        this.weapon.startStrike();
+        if (!this.strikePlaying) {
+            this.strikePlaying = true;
+            this.upperSprite.play('heavySwordStrike');
+            var instance = this;
+            this.upperSprite.on('animationcomplete', ()=>instance.strikePlaying = false);
+            this.weapon.startStrike();
+        }
     }
 
     playStartWalk() {

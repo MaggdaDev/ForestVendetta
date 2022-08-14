@@ -51,24 +51,24 @@ class PhysicalContact {
         var rotLinSpd1 = Vector.crossWithOnlyZ(r1, (-1.0) * this.body1.rotSpd);
         var rotLinSpd2 = Vector.crossWithOnlyZ(r2, (-1.0) * this.body2.rotSpd);
         var totSpd1 = Vector.add(this.body1.spd, rotLinSpd1);
-        var totSpd2 =Vector.add(this.body2.spd, rotLinSpd2);
+        var totSpd2 = Vector.add(this.body2.spd, rotLinSpd2);
         var zaehler = force1Vec.dot(totSpd2) - force1Vec.dot(totSpd1);
 
         var coeffs = (1.0 / this.body1.mass + 1.0 / this.body2.mass + r1.abs * r1.abs / this.body1.inertiaMoment + r2.abs * r2.abs / this.body2.inertiaMoment);
-        if(this.body1.rotationDisabled && this.body2.rotationDisabled) {
+        if (this.body1.rotationDisabled && this.body2.rotationDisabled) {
             coeffs = (1.0 / this.body1.mass + 1.0 / this.body2.mass);
-        } else if(this.body1.rotationDisabled) {
+        } else if (this.body1.rotationDisabled) {
             coeffs = (1.0 / this.body1.mass + 1.0 / this.body2.mass + r2.abs * r2.abs / this.body2.inertiaMoment);
-        } else if(this.body2.rotationDisabled) {
+        } else if (this.body2.rotationDisabled) {
             coeffs = (1.0 / this.body1.mass + 1.0 / this.body2.mass + r1.abs * r1.abs / this.body1.inertiaMoment);
         }
-        var sum1 = 0.5 * force1Vec.abs * force1Vec.abs * coeffs; 
+        var sum1 = 0.5 * force1Vec.abs * force1Vec.abs * coeffs;
         var sub1 = Math.pow(force1Vec.dot(r1), 2.0) / (2.0 * this.body1.inertiaMoment);
-        if(this.body1.rotationDisabled) {
+        if (this.body1.rotationDisabled) {
             sub1 = 0;
         }
         var sub2 = Math.pow(force1Vec.dot(r2), 2.0) / (2.0 * this.body2.inertiaMoment);
-        if(this.body2.rotationDisabled) {
+        if (this.body2.rotationDisabled) {
             sub2 = 0;
         }
         var nenner = sum1 - sub1 - sub2;
@@ -90,9 +90,9 @@ class PhysicalContact {
             var frstPart = info.bodyToMove.wayOutPriority / (this.body1.wayOutPriority + this.body2.wayOutPriority);
             info.bodyToMove.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, frstPart));
             if (info.bodyToMove === this.body1) {
-                this.body2.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0+frstPart));
+                this.body2.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0 + frstPart));
             } else {
-                this.body1.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0+frstPart));
+                this.body1.hitBox.moveOutOfHitBox(Vector.multiply(wayOut, -1.0 + frstPart));
             }
         }
 
@@ -133,7 +133,7 @@ class PhysicalContact {
         } if (this.body1.hitBox.isPointInside(this.intersection1.segment1.to)) {
             pointsInside.push({ pointInside: this.intersection1.segment1.to, bodyToMove: this.body2 });
         } if (this.body2.hitBox.isPointInside(this.intersection2.segment2.from)) {
-            pointsInside.push({ pointInside: this.intersection2.segment2.from, bodyToMove: this.body1});
+            pointsInside.push({ pointInside: this.intersection2.segment2.from, bodyToMove: this.body1 });
         } if (this.body2.hitBox.isPointInside(this.intersection2.segment2.to)) {
             pointsInside.push({ pointInside: this.intersection2.segment2.to, bodyToMove: this.body1 });
         } if (this.body1.hitBox.isPointInside(this.intersection2.segment1.from)) {
@@ -144,9 +144,9 @@ class PhysicalContact {
         var currMaxDist = 0;
         var curr = 0;
         var currBest = undefined;
-        pointsInside.forEach((element)=>{
+        pointsInside.forEach((element) => {
             curr = this.getRouteToSlightlyOut(element.pointInside).abs;
-            if(curr >= currMaxDist) {
+            if (curr >= currMaxDist) {
                 currMaxDist = curr;
                 currBest = element;
             }
@@ -156,7 +156,7 @@ class PhysicalContact {
     }
 
     shouldPersist() {
-        if(this.killCauseNoInt) {
+        if (this.killCauseNoInt) {
             console.log("kill cause no int!");
             return false;
         }
@@ -166,7 +166,7 @@ class PhysicalContact {
         var force2Comp = this.getNormalPart(this.body2.resultingForce);
         var forceDiff = Vector.subtractFrom(force2Comp, force1Comp);
         if ((Vector.quasiSame(force1Comp, force2Comp) || Vector.sameSign(forceDiff, force2Comp))) { // Vector.subtractFrom(spd2, spd1).abs < 50 && 
-            var midSpd = Vector.multiply(Vector.add(Vector.multiply(spd1, this.body1.mass), Vector.multiply(spd2, this.body2.mass)), 1.0/(this.body1.mass + this.body2.mass));
+            var midSpd = Vector.multiply(Vector.add(Vector.multiply(spd1, this.body1.mass), Vector.multiply(spd2, this.body2.mass)), 1.0 / (this.body1.mass + this.body2.mass));
             //this.body1.spd.setTo(midSpd);
             //this.body2.spd.setTo(midSpd);
             console.log("Persist!");
@@ -191,15 +191,15 @@ class PhysicalContact {
         var out = Vector.multiply(this.normalDir, Vector.subtractFrom(this.intersection1.intersectionPoint, pointIn).dot(this.normalDir));
         //var out = Vector.subtractFrom(this.intersectionCenter, pointIn);
         var outDir = out.dirVec;
-        if(out.x > 0) {
-            out.x = Math.max(0, out.x - 2.0*outDir.x);
+        if (out.x > 0) {
+            out.x = Math.max(0, out.x - 2.0 * outDir.x);
         } else {
-            out.x = Math.min(0, out.x - 2.0*outDir.x);
+            out.x = Math.min(0, out.x - 2.0 * outDir.x);
         }
-        if(out.y > 0) {
-            out.y = Math.max(0, out.y - 2.0*outDir.y);
+        if (out.y > 0) {
+            out.y = Math.max(0, out.y - 2.0 * outDir.y);
         } else {
-            out.y = Math.min(0, out.y - 2.0*outDir.y);
+            out.y = Math.min(0, out.y - 2.0 * outDir.y);
         }
         return out;
     }

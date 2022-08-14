@@ -15,8 +15,6 @@ class ClientWeapon {
 
         // cooldown
         this.onCooldown = false;
-        this.cooldownStart = 0;
-        this.cooldownTime = 0;
 
         this.visible = false;
 
@@ -30,28 +28,19 @@ class ClientWeapon {
     cooldown(time) {
         console.log("Cooldown started!");
         this.onCooldown = true;
-        this.cooldownStart = this.now;
-        this.cooldownTime = time;
         this.cooldownIndicator.startCooldown(time);
     }
 
-    checkCooldown() {
+    checkCooldown() {       // returns: true=ready false=onCooldown
         if(this.onCooldown) {
-            var timeElapsed = this.now - this.cooldownStart;
-            if(timeElapsed > this.cooldownTime) {
+            if(this.cooldownIndicator.checkCooldown()) {
                 this.onCooldown = false;
-                console.log("Cooldown terminated!");
                 return true;
             } else {
-                console.log("ON COOLDOWN!");
                 return false;
             }
         }
         return true;
-    }
-
-    get now() {
-        return Date.now() / 1000.0;
     }
 
     recreateDebugPolygon(x,y,points) {

@@ -20,6 +20,15 @@ class MobManager {
         var frog = new Frog(x,y,this.nextID, this.players, this.world);
         this.mobs.set(frog.id, frog);
         this.networkManager.sendSpawnMobCommand(frog);
+        return frog;
+    }
+
+    spawnRespawningFrog(x,y) {
+        var frog = this.spawnFrog(x,y);
+        var instance = this;
+        frog.addOnDeath(()=>{
+            instance.spawnRespawningFrog(x,y);
+        });
     }
 
     updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {

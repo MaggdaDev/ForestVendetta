@@ -48,12 +48,17 @@ class Protagonist {
 
         //Fighting
         this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP, this.id);
-
-
-        var instance = this;
-        this.equippedWeapon = new RustySpade(this.fightingObject, (damage, intersection)=>{
-            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damage, pos: intersection.intersectionPoint});
+        this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
+            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damageTaken, pos: damagePos});
+            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000),1);
         });
+        this.fightingObject.addOnDamageDealt((damageDealt, damagePos, damageNormalAway)=>{
+            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damageDealt, pos: damagePos});
+            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000),1);
+        });
+        
+        this.equippedWeapon = new RustySpade(this);
+  
     }
 
     /**

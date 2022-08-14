@@ -23,11 +23,11 @@ class Frog extends Mob{
         this.movableBody.adjustJumpData({jumpForce: Frog.JUMP_FORCE, angleAdjust: Frog.JUMP_ANGLE});
 
         this.addOnUpdate((t)=>{this.onUpdate(t)});
-        this.movableBody.addOnNewIntersectionWithPlayer((player)=>this.onPlayerIntersection(player));
+        this.movableBody.addOnNewIntersectionWithPlayer((player, intersectionPoint)=>this.onPlayerIntersection(player, intersectionPoint));
     }
 
-    onPlayerIntersection(player) {
-        FightingObject.aDamageB(this.fightingObject, player.fightingObject);
+    onPlayerIntersection(player, intersectionPoint) {
+        FightingObject.aDamageB(this.fightingObject, player.fightingObject, this.pos, player.pos, intersectionPoint);
     }
 
     onUpdate(timeElapsed) {

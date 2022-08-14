@@ -2,7 +2,7 @@ class WeaponCooldownIndicator extends Phaser.GameObjects.Container{
     static POSITION_OFFSET = {x: 0, y: -90};
     static RADIUS = 10;
     static ARC_WIDTH = 3;
-    static COLORS = {CIRCLE: 0xd3d3d3, ARC: 0x63666A};
+    static COLORS = {CIRCLE: 0xd3d3d3, ARC: 0x808080};
     constructor(mainScene) {
         super(mainScene, WeaponCooldownIndicator.POSITION_OFFSET.x, WeaponCooldownIndicator.POSITION_OFFSET.y);
         this.mainScene = mainScene;
@@ -18,7 +18,8 @@ class WeaponCooldownIndicator extends Phaser.GameObjects.Container{
         this.add(this.arc);
 
         this.setVisible(false);
-        this.startCooldown(1000);
+        this.onCooldown = false;
+        this.alpha = 0.5;
     }
 
     /**
@@ -26,6 +27,7 @@ class WeaponCooldownIndicator extends Phaser.GameObjects.Container{
      * @param {number} cooldown - cooldown in s
      */
     startCooldown(cooldown) {
+        this.onCooldown = true;
         this.arc.startAngle = -90;
         this.setVisible(true);
         this.mainScene.add.tween({
@@ -36,7 +38,12 @@ class WeaponCooldownIndicator extends Phaser.GameObjects.Container{
         });
     }
 
+    checkCooldown() {   // returns: true=ready  false=onCooldown
+        return !(this.onCooldown);
+    }
+
     endCooldown() {
         this.setVisible(false);
+        this.onCooldown = false;
     }
 }
