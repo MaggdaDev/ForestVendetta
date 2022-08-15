@@ -134,6 +134,10 @@ class MainLoop {
         this.players.delete(clientId);
     }
 
+    broadcastToAllPlayers(command, data) {
+        this.networkManager.broadcastToAllPlayers(command, data);
+    }
+
 
 
 

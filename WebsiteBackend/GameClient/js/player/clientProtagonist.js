@@ -7,8 +7,36 @@ class ClientProtagonist extends ClientPlayer {
         
     }
 
+    /** OVERRIDE
+     * 
+     * @param {Object} data 
+     */
+    update(data) {
+        this.updateSpriteToData(data);
+        this.updateDebugPolygon(data);
+        this.updateWalkingAnimationToLocal(data);
+    }
+
+    updateSpriteToLocal(data) {
+        this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp, this.sprite.facingLeft);
+    }
+
+    updateWalkingAnimationToLocal(data) {
+        if (data.isContact && (!this.isContact)) {
+            this.isContact = true;
+            if (this.isWalkingLeft) {
+                this.onStartWalkLeft(this);
+            } else if (this.isWalkingRight) {
+                this.onStartWalkRight(this);
+            }
+        } else if ((!data.isContact) && this.isContact) {
+            this.isContact = false;
+            this.stopAnimation();
+        }
+    }
+
     cooldown(data) {
-        this.weapon.cooldown(data.time);
+        this.weapon.cooldown(data.cooldownTime);
     }
 
     strike(instance) {
@@ -18,53 +46,32 @@ class ClientProtagonist extends ClientPlayer {
         }
     }
 
-    /**
+    /** OVERRIDE 
      * 
-     * @param {ClientProtagonist} instance 
+     * @param {ClientPlayer} instance 
      */
-    onStartWalkRight(instance) {
-        super.isWalkingRight = true;
-        if (this.isContact) {
-            instance.sprite.scaleX = Math.abs(instance.sprite.scaleX);
-            instance.sprite.scakeY = Math.abs(instance.sprite.scaleY);
-            instance.sprite.playStartWalk();
+     onStartWalkRight() {
+        this.isWalkingLeft = false;
+        this.isWalkingRight = true;
+        if (this.isContact) {       // CHANGE TO SUPER: only with contact
+            this.sprite.flipped = false;
+            this.sprite.playStartWalk();
         }
     }
 
-    /**
+    /** OVERRIDE
      * 
-     * @param {ClientProtagonist} instance 
+     * @param {ClientPlayer} instance 
      */
-    onStopWalkRight(instance) {
-        super.isWalkingRight = false;
-        instance.stopAnimation();
-    }
-
-    /**
-     * 
-     * @param {ClientProtagonist} instance 
-     */
-    onStartWalkLeft(instance) {
-        super.isWalkingLeft = true;
-        if (this.isContact) {
-            instance.sprite.scaleX = -1 * Math.abs(instance.sprite.scaleX);
-            instance.sprite.scakeY = -1 * Math.abs(instance.sprite.scaleY);
-
-            instance.sprite.playStartWalk();
+    onStartWalkLeft() {
+        this.isWalkingRight = false;
+        this.isWalkingLeft = true;
+        if (this.isContact) {   // CHANGE TO SUPER: only with contact
+            this.sprite.flipped = true;
+            this.sprite.playStartWalk();
         }
 
     }
 
-    /**
-     * 
-     * @param {ClientProtagonist} instance 
-     */
-    onStopWalkLeft(instance) {
-        super.isWalkingLeft = false;
-        instance.stopAnimation();
-    }
-
-    stopAnimation() {
-        this.sprite.stopWalk();
-    }
+    
 }

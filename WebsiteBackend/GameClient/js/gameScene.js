@@ -23,8 +23,8 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('hotzenplotz', 'images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('hotzenplotzUpper', 'images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('hotzenplotzLegs', 'images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('frog', 'images/mobs/frog.png', { frameWidth: 151, frameHeight: 202});
-        
+        this.load.spritesheet('frog', 'images/mobs/frog.png', { frameWidth: 151, frameHeight: 202 });
+
 
         this.load.image('rustySpade', 'images/weapons/rustySpade.png');
 
@@ -102,8 +102,12 @@ class GameScene extends Phaser.Scene {
         this.world.update(data);
     }
 
-    cooldown(data) {
-        this.clientProtagonist.cooldown(data);
+    strikeAnimation(data) {
+        if (data.id === this.clientProtagonist.id) {
+            this.clientProtagonist.cooldown(data);
+        } else {
+            this.players.get(data.id).strikeAnimationFromServer(data);
+        }
     }
 
     damageAnimation(data) {

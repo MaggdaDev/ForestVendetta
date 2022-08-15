@@ -17,7 +17,7 @@ class Protagonist {
     static HP = 25;
     constructor(id, socket, world, mainLoop) {
         this.id = id;
-        this.startPos = new Vector(Math.random() * 500, 100);
+        this.startPos = new Vector(200 + Math.random() * 500, 100);
 
         this.world = world;
         this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
@@ -35,7 +35,9 @@ class Protagonist {
         //send world data
         this.socketUser.sendWorldData(world);
 
+        // moving
         this.wantGo = "NONE";
+        this.isWalking = false;
         var instance = this;
         this.movableBody.addOnNewContact(() => {
             if (instance.wantGo !== "NONE") {
@@ -92,7 +94,8 @@ class Protagonist {
 
     strike() {
         this.equippedWeapon.strike();
-        this.socketUser.sendCommand(NetworkCommands.COOLDOWN, {weaponId: this.equippedWeapon.id, time: this.equippedWeapon.getCooldown()});
+        //this.socketUser.sendCommand(NetworkCommands.COOLDOWN, {weaponId: this.equippedWeapon.id, time: this.equippedWeapon.getCooldown()});
+        this.mainLoop.broadcastToAllPlayers(NetworkCommands.STRIKE_ANIMATION, {id: this.id, weaponId: this.equippedWeapon.id, cooldownTime: this.equippedWeapon.getCooldown()})
     }
 
     /**
@@ -107,7 +110,9 @@ class Protagonist {
             id: this.id,
             isContact: this.movableBody.isContact,
             equippedWeapon: this.equippedWeapon,
-            fightingObject: this.fightingObject
+            fightingObject: this.fightingObject,
+            facingLeft: this.facingLeft,
+            isWalking: this.isWalking
         }
     }
 
@@ -131,7 +136,7 @@ class Protagonist {
                 if (this.wantGo === "RIGHT") {
                     this.wantGo = "NONE";
                 }
-                this.clearCurrAccImpulse();
+                this.endWalking();
 
                 break;
             case PlayerControls.START_WALK_LEFT:
@@ -143,7 +148,7 @@ class Protagonist {
                 if (this.wantGo === "LEFT") {
                     this.wantGo = "NONE";
                 }
-                this.clearCurrAccImpulse();
+                this.endWalking();
 
                 break;
             case PlayerControls.STRIKE:
@@ -165,7 +170,7 @@ class Protagonist {
      */
     startWalk(dir) {
         if (this.movableBody.isContact) {
-            this.clearCurrAccImpulse();
+            this.endWalking();
             var dirVec;
             if (dir === 'RIGHT') {
                 dirVec = new Vector(1, 0);
@@ -174,6 +179,7 @@ class Protagonist {
             } else {
                 throw new Error('dir must be either LEFT or RIGHT');
             }
+            this.isWalking = true;
             this.movableBody.generateAccelerateImpulse(dirVec, 100, 300);
         }
     }
@@ -184,8 +190,9 @@ class Protagonist {
         }
     }
 
-    clearCurrAccImpulse() {
+    endWalking() {
         this.movableBody.stopAccelerateImpulse();
+        this.isWalking = false;
     }
 
 
@@ -202,23 +209,6 @@ class Protagonist {
     }
 
 
-    /**
-    * 
-    * @param {Object} event - keyup_right, ...
-    */
-    keyEvent(event) {
-        switch (event) {
-            case 'keydown_right':
-                this.spd.x = 250;
-                break;
-            case 'keydown_left':
-                this.spd.x = -250;
-                break;
-            case 'keyup_right': case 'keyup_left':
-                this.spd.x = 0;
-                break;
-        }
-    }
 
 }
 

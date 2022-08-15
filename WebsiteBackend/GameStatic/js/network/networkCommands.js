@@ -11,9 +11,9 @@ const NetworkCommands = {
     DISCONNECT_PLAYER: 'DISCONNECT_PLAYER',     // data: id
     CONTROL_DATA: 'CONTROL_DATA',               // data: energy etc
     SPAWN_MOB: 'SPAWN_MOB',                     // data: mob object (with id,type,pos,...)
-    COOLDOWN: 'COOLDOWN',                       // data: weaponId, time
     DAMAGE_ANIMATION: 'DAMAGE_ANIMATION',       // data: damageAmount, pos
-    REMOVE_GAMEOBJECTS: 'REMOVE_GAMEOBJECTS',     // data: type, id
+    REMOVE_GAMEOBJECTS: 'REMOVE_GAMEOBJECTS',   // data: type, id
+    STRIKE_ANIMATION: 'STRIKE_ANIMATION',       // data: id (player), weaponId, cooldownTime
 
 
     // TO SERVER

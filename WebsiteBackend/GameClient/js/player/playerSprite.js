@@ -4,6 +4,8 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     constructor(mainScene, x, y, maxHp) {
         super(mainScene, x, y);
         this.targetScene = mainScene;
+        this.excludeFromFlip = [];
+        this.facingLeft = false;
         this.mainScene = mainScene;
         this.legSprite = mainScene.add.sprite(0, 0, 'hotzenplotzLegs');
         this.upperSprite = mainScene.add.sprite(0, 0, 'hotzenplotzUpper');
@@ -30,10 +32,27 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     }
 
-    update(x, y, currHp) {
+    set flipped(f) {
+        this.facingLeft = f;
+        if(!f) {
+            this.scaleX = Math.abs(this.scaleX);
+            this.excludeFromFlip.forEach((curr)=>{
+                curr.scaleX = Math.abs(curr.scaleX);
+            });
+            
+        } else {
+            this.scaleX = -1 * Math.abs(this.scaleX);
+            this.excludeFromFlip.forEach((curr)=>{
+                curr.scaleX = -1 * Math.abs(curr.scaleX);
+            });
+        }
+    }
+
+    update(x, y, currHp, facingLeft) {
         this.x = x;
         this.y = y;
         this.healthBar.update(x, y, currHp);
+        this.flipped = facingLeft;
     }
 
     onUpperAnimationUpdate(anim, frame) {
@@ -45,6 +64,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         if (weapon !== null) {
             this.add(weapon.sprite);
             this.mainScene.add.existing(weapon.cooldownIndicator);
+            this.excludeFromFlip.push(weapon.cooldownIndicator);
             this.add(weapon.cooldownIndicator);
             //this.add(weapon.debugPolygon);
         }

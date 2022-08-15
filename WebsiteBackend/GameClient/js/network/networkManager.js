@@ -28,7 +28,7 @@ class NetworkManager {
         this.socket.on(NetworkCommands.UPDATE, (data)=>this.update(data));
         this.socket.on(NetworkCommands.CONTROL_DATA, (data)=>this.controlData(data));
         this.socket.on(NetworkCommands.SPAWN_MOB, (data)=>this.spawnMob(data));
-        this.socket.on(NetworkCommands.COOLDOWN, (data) => this.cooldown(data));
+        this.socket.on(NetworkCommands.STRIKE_ANIMATION, (data) => this.strikeAnimation(data));
         this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data)=>this.damageAnimation(data));
         this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data)=>this.removeGameObjects(data));
         
@@ -117,12 +117,12 @@ class NetworkManager {
     /**
      * 
      * @param {Object} data 
+     * @param {string} data.id
      * @param {string} data.weaponId
      * @param {number} data.time
      */
-    cooldown(data) {
-        this.mainScene.cooldown(data);
-        console.log("COOLDOWN INCOMING");
+    strikeAnimation(data) {
+        this.mainScene.strikeAnimation(data);
     }
 
     /**
