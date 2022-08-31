@@ -180,7 +180,7 @@ class Protagonist {
                 throw new Error('dir must be either LEFT or RIGHT');
             }
             this.isWalking = true;
-            this.movableBody.generateAccelerateImpulse(dirVec, 100, 300);
+            this.movableBody.generateAccelerateImpulse(dirVec, 300, 300);
         }
     }
 
