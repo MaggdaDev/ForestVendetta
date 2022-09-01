@@ -1,14 +1,17 @@
 // Require the necessary discord.js classes
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Routes, Client, GatewayIntentBits } = require('discord.js');
 const { token } = require('./_SECRET.json');
+const {REST} = require('@discordjs/rest');
+const CommandManager = require('./src/Commands/commandManager');
+const ForestScout = require('./src/ForestScout');
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// When the client is ready, run this code (only once)
-client.once('ready', () => {
-	console.log('Ready!');
-});
+const forestScout = new ForestScout(token, client);
 
-// Login to Discord with your client's token
+// When the client is ready, run this code (only once)
+client.once('ready', ()=>forestScout.onReady(forestScout));
+client.on('interactionCreate', (interaction)=>forestScout.onInteraction(forestScout, interaction));
+client.on('message', (message)=>forestScout.onMessage(forestScout, message));
 client.login(token);
