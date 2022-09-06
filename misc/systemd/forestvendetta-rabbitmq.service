@@ -1,0 +1,16 @@
+[Unit]
+Description=Forest Vendetta - RabbitMq Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop forestvendetta-rabbitmq
+ExecStartPre=-/usr/bin/docker rm forestvendetta-rabbitmq
+ExecStartPre=/usr/bin/docker pull rabbitmq:3.10-management
+ExecStart=/usr/bin/docker run --rm --name forestvendetta-rabbitmq --hostname forestvendetta-rabbitmq rabbitmq:3.10-management
+
+[Install]
+WantedBy=multi-user.target
+	
