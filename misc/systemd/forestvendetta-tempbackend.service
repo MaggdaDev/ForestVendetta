@@ -1,5 +1,5 @@
 [Unit]
-Description=Forest Vendetta server backend (temporary)
+Description=Forest Vendetta - server backend (temporary)
 RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
 After=network.target
 

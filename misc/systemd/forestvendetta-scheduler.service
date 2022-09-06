@@ -1,5 +1,5 @@
 [Unit]
-Description=Event scheduler + game creater for forest vendetta
+Description=Forest Vendetta - event scheduler
 RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
 After=network.target
 

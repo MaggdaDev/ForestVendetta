@@ -1,5 +1,5 @@
 [Unit]
-Description=Forest Vendetta meta unit
+Description=Forest Vendetta - meta unit
 RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
 After=network.target
 Requires=forestvendetta-discordbot.service forestvendetta-scheduler.service forestvendetta-tempbackend.service
