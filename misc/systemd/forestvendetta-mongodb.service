@@ -1,15 +1,15 @@
 [Unit]
-Description=Forest Vendetta - RabbitMq Container
+Description=Forest Vendetta - mongodb Container
 After=docker.service
 Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
 Restart=always
-ExecStartPre=-/usr/bin/docker stop forestvendetta-rabbitmq
-ExecStartPre=-/usr/bin/docker rm forestvendetta-rabbitmq
-ExecStartPre=/usr/bin/docker pull rabbitmq:3.10-management
-ExecStart=/usr/bin/docker run --rm --name forestvendetta-rabbitmq -v /var/stuff/forestvendetta/ForestVendetta/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/rabbitmq:/var/lib/rabbitmq rabbitmq:3.10-management
+ExecStartPre=-/usr/bin/docker stop forestvendetta-mongodb
+ExecStartPre=-/usr/bin/docker rm forestvendetta-mongodb
+ExecStartPre=/usr/bin/docker pull mongo:6
+ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb -v /var/stuff/forestvendetta/ForestVendetta/config/mongod.conf:/etc/mongo/mongod.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db mongo:6 --config /etc/mongo/mongod.conf
 
 [Install]
 WantedBy=multi-user.target
