@@ -325,7 +325,7 @@ class MovableBody {
             var time = now - this.singleContactsMap.get(object.bodyId).lastIntersectionTime;
 
             // calc friction:
-            var fricForce = Vector.multiply(rel1to2ParrSpd.dirVec, -MovableBody.FRICTION_STRENGTH);
+            var fricForce = Vector.multiply(Vector.multiply(rel1to2ParrSpd.dirVec, rel1to2ParrSpd.abs/300), -MovableBody.FRICTION_STRENGTH);
 
             // calc manual acc (walking):
             var accForce = this.currControlAccForce;
