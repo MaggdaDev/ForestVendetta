@@ -15,6 +15,8 @@ class Protagonist {
     static JUMP_FORCE = 50000;
     static DAMAGE = 5;
     static HP = 25;
+    static DESIRED_SPEED = 300;
+    static ACC_FORCE = 5000;
     constructor(id, socket, world, mainLoop) {
         this.id = id;
         this.startPos = new Vector(500, 500);
@@ -183,7 +185,7 @@ class Protagonist {
                 throw new Error('dir must be either LEFT or RIGHT');
             }
             this.isWalking = true;
-            this.movableBody.generateAccelerateImpulse(dirVec, 300, 300);
+            this.movableBody.generateAccelerateImpulse(dirVec, Protagonist.DESIRED_SPEED, Protagonist.ACC_FORCE);
         }
     }
 
