@@ -185,9 +185,9 @@ class Protagonist {
     }
 
     jump() {
-        if (this.movableBody.isContact) {
+        //if (this.movableBody.isContact) {
             this.movableBody.wantToJump = true;
-        }
+        //}
     }
 
     endWalking() {
