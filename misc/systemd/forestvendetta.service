@@ -1,0 +1,16 @@
+[Unit]
+Description=Forest Vendetta - meta unit
+RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
+After=network.target
+Requires=forestvendetta-discordbot.service forestvendetta-scheduler.service forestvendetta-tempbackend.service
+
+[Service]
+# The dummy program will exit
+Type=oneshot
+# Execute a dummy program
+ExecStart=/bin/true
+# This service shall be considered active after start
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
