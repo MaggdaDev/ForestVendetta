@@ -17,7 +17,7 @@ class Protagonist {
     static HP = 25;
     constructor(id, socket, world, mainLoop) {
         this.id = id;
-        this.startPos = new Vector(200 + Math.random() * 500, 100);
+        this.startPos = new Vector(500, 500);
 
         this.world = world;
         this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
