@@ -72,7 +72,7 @@ class PhysicalContact {
             sub2 = 0;
         }
         var nenner = sum1 - sub1 - sub2;
-        return 1.0 * zaehler / nenner;
+        return 0.8 * zaehler / nenner;
     }
 
     get wayOut() {
