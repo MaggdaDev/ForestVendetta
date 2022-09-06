@@ -6,10 +6,11 @@ Requires=docker.service
 [Service]
 TimeoutStartSec=0
 Restart=always
+EnvironmentFile=/var/stuff/forestvendetta/ForestVendetta/config/mongodb-credentials.env
 ExecStartPre=-/usr/bin/docker stop forestvendetta-mongodb
 ExecStartPre=-/usr/bin/docker rm forestvendetta-mongodb
 ExecStartPre=/usr/bin/docker pull mongo:6
-ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb -v /var/stuff/forestvendetta/ForestVendetta/config/mongod.conf:/etc/mongo/mongod.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db mongo:6 --config /etc/mongo/mongod.conf
+ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb -v /var/stuff/forestvendetta/ForestVendetta/config/mongod.conf:/etc/mongo/mongod.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db -e MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER} -e MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS} mongo:6 --config /etc/mongo/mongod.conf
 
 [Install]
 WantedBy=multi-user.target

@@ -2,7 +2,7 @@ const { execSync } = require("child_process");
 
 const config = {
     "user":"user",
-    "pass":"pass",
+    "pass":"pass2",
     "database":"forestvendetta"
 }
 
@@ -10,6 +10,6 @@ const ip = execSync("docker container inspect -f '{{range.NetworkSettings.Networ
 
 export default {
     "v":"1",
-    "connectstring":"amqp://" + config.user + ":" + config.pass + "@" + ip,
+    "connectstring":"mongodb://" + config.user + ":" + config.pass + "@" + ip + "/" + config.database,
     "config":config
 };
