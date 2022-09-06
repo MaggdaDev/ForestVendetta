@@ -34,6 +34,7 @@ class ForestScout {
      */
     onMessage(instance, message) {
         console.log("Message: " + message.content);
+        instance.client.users.cache.set(message.author.id, message.author);
     }
 }
 
