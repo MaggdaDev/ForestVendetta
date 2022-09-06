@@ -12,7 +12,7 @@ class MovableBody {
 
 
     static GRAVITY = 500;
-    static FRICTION_STRENGTH = 10000;
+    static FRICTION_STRENGTH = 100000;
     static ROT_FRICTION_FACT = 0.5;
     static MAX_TIMEDIST_FOR_FRICT = 0.2;
     static MAX_WAY_OUT = 5;
