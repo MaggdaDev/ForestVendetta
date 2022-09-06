@@ -2,7 +2,7 @@
 Description=Forest Vendetta meta unit
 RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
 After=network.target
-Requires=forestvendetta-discordbot forestvendetta-scheduler forestvendetta-tempbackend
+Requires=forestvendetta-discordbot.service forestvendetta-scheduler.service forestvendetta-tempbackend.service
 
 [Service]
 # The dummy program will exit
