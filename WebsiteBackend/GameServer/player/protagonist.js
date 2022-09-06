@@ -30,7 +30,7 @@ class Protagonist {
         //physics
         this.movableBody = new MovableBody(this.hitBox, 100, this, id);
         this.movableBody.addGravity();
-        //this.movableBody.disableRotation();
+        this.movableBody.disableRotation();
 
         //send world data
         this.socketUser.sendWorldData(world);
