@@ -56,6 +56,7 @@ class MovableBody {
         this.isCompressable = false;
 
         this.wantToJump = false;
+        this.wantToJumpOnce = false;
         this.jumpData = new JumpData("DEFAULT", 0, 0);
 
         this.onNewContact = [];
@@ -338,8 +339,10 @@ class MovableBody {
         }
 
         // JUMP
-        if (this.wantToJump) {
-            this.wantToJump = false;
+        if (this.wantToJumpOnce || this.wantToJump) {
+            if(this.wantToJumpOnce) {
+                this.wantToJumpOnce = false;
+            }
             this.updateLastIntersectionTime(object, this.now, false);
             var jumpForce = Vector.multiply(contact.normalDir, this.jumpData.jumpForce);
             jumpForce.rotBy(this.jumpData.angleAdjust);

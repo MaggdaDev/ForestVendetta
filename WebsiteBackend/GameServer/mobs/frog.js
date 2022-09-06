@@ -56,7 +56,7 @@ class Frog extends Mob{
         } else {
             this.movableBody.adjustJumpData({angleAdjust: -Frog.JUMP_ANGLE});
         }
-        this.movableBody.wantToJump = true;
+        this.movableBody.wantToJumpOnce = true;
     }
 
     /**

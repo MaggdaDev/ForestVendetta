@@ -155,8 +155,11 @@ class Protagonist {
                 this.strike();
                 
                 break;
-            case PlayerControls.JUMP:
-                this.jump();
+            case PlayerControls.START_JUMP:
+                this.startJump();
+                break;
+            case PlayerControls.STOP_JUMP:
+                this.stopJump();
                 break;
         }
         console.log("Handled player control: " + control);
@@ -184,10 +187,14 @@ class Protagonist {
         }
     }
 
-    jump() {
+    startJump() {
         //if (this.movableBody.isContact) {
             this.movableBody.wantToJump = true;
         //}
+    }
+
+    stopJump() {
+        this.movableBody.wantToJump = false;
     }
 
     endWalking() {

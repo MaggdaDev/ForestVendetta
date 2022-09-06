@@ -22,8 +22,12 @@ class KeyManager {
         this.mainScene.input.keyboard.on(this.getKeyUp(this.walkRightKey), onStopWalkRight);
     }
 
-    set jump(onJump) {
-        this.mainScene.input.keyboard.on(this.getKeyDown(this.jumpKey), onJump);
+    set startJump(onStartJump) {
+        this.mainScene.input.keyboard.on(this.getKeyDown(this.jumpKey), onStartJump);
+    }
+
+    set stopJump(onStopJump) {
+        this.mainScene.input.keyboard.on(this.getKeyUp(this.jumpKey), onStopJump);
     }
 
     getKeyDown(key) {
