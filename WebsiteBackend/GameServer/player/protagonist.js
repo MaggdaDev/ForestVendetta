@@ -169,7 +169,7 @@ class Protagonist {
      * @param {string} dir - 'LEFT' or 'RIGHT' 
      */
     startWalk(dir) {
-        //if (this.movableBody.isContact) {
+        if (this.movableBody.isContact) {
             this.endWalking();
             var dirVec;
             if (dir === 'RIGHT') {
@@ -181,13 +181,13 @@ class Protagonist {
             }
             this.isWalking = true;
             this.movableBody.generateAccelerateImpulse(dirVec, 300, 300);
-        //}
+        }
     }
 
     jump() {
-        if (this.movableBody.isContact) {
+        //if (this.movableBody.isContact) {
             this.movableBody.wantToJump = true;
-        }
+        //}
     }
 
     endWalking() {
