@@ -1,0 +1,8 @@
+[Unit]
+Description=Forest Vendetta meta unit
+RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
+After=network.target
+Requires=forestvendetta-discordbot forestvendetta-scheduler forestvendetta-tempbackend
+
+[Install]
+WantedBy=multi-user.target

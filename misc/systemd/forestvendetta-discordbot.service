@@ -1,0 +1,15 @@
+[Unit]
+Description=Forest Vendetta discord bot
+RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
+After=network.target
+
+[Service]
+User=forestvendetta
+WorkingDirectory=/var/stuff/forestvendetta/ForestVendetta/DiscordBot
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+TimeoutStopSec=10
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
