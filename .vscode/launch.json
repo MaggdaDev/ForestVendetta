@@ -25,6 +25,16 @@
             "cwd": "${workspaceFolder}/WebsiteBackend"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Scheduler",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/Scheduler/script/main.js",
+            "cwd": "${workspaceFolder}/Scheduler"
+        },
+        {
             "type": "pwa-chrome",
             "request": "launch",
             "name": "MapMaker",
