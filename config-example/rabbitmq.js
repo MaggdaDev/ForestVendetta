@@ -8,8 +8,8 @@ const config = {
 
 const ip = execSync("docker container inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' forestvendetta-rabbitmq");
 
-export default {
+module.exports = {
     "v":"1",
-    "connectstring":"amqp://" + config.user + ":" + config.pass + "@" + ip,
+    "connectstring":"amqp://" + config.user + ":" + config.pass + "@" + String(ip).replace("\n", ""),   // docker container inspect returns ip + \n idk why
     "config":config
 };
