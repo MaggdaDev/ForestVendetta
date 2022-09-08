@@ -8,7 +8,7 @@ const ForestScout = require('./src/ForestScout');
 
 // test mode?
 var token;
-if(config.ztestMode) {
+if(config.testMode) {
     token = secret.test_token;
 } else {
     token = secret.token;
