@@ -10,6 +10,7 @@ class ForestScout {
      * @param {Client} client 
      */
     constructor(token, client) {
+        console.log("Initializing ForestScout bot...");
         this.client = client;
         this.token = token;
         this.commandManager = new CommandManager();

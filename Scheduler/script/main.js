@@ -1,20 +1,14 @@
 const amqp = require('amqplib/callback_api');
+const RabbitConnection = require('../../shared/rabbitConnection');
+const Scheduler = require('./scheduler');
 
-console.log("Beginning to start schedular...");
+console.log("Preparing to start scheduler...");
 
-// requiring connect string
-const CONFIG_LOCATION = '../../config-example';
-const CONFIG_NAME = 'rabbitmq';
-const connectConfig = require(CONFIG_LOCATION + "/" + CONFIG_NAME);
-console.log("Connect config from '" + CONFIG_LOCATION + "/" + CONFIG_NAME + "' required: " + JSON.stringify(connectConfig));
-
-// connect
-console.log("Trying to connect using '" + connectConfig.connectstring + "': ");
-amqp.connect(connectConfig.connectstring, (error0, connection)=>{
-    if(error0) throw error0;
-    console.log("Successfully connected to " + connection);
-    connection.createChannel((error1, channel)=>{
-        if(error1) throw error1;
-        console.log("Channel created: " + channel);
-    });
+//rabbit connection
+console.log("Creating rabbit connection...");
+const rabbitConnection = new RabbitConnection();
+rabbitConnection.connectUntilSuccess(2000).then(()=>{
+    console.log("Connected to rabbit => scheduler can be created.");
+    console.log("Creating scheduler...");
+    const scheduler = new Scheduler(rabbitConnection);
 });

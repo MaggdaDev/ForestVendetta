@@ -11,5 +11,5 @@ const ip = execSync("docker container inspect -f '{{range.NetworkSettings.Networ
 export default {
     "v":"1",
     "connectstring":"mongodb://" + config.user + ":" + config.pass + "@" + ip + "/" + config.database,
-    "config":config
+    "config":config    
 };
