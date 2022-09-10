@@ -4,7 +4,7 @@ const secret = require('./_SECRET.json');
 const { REST } = require('@discordjs/rest');
 const config = require('../config-example/discordbot-config.json');
 const CommandManager = require('./src/Commands/commandManager');
-const ForestScout = require('./src/ForestScout');
+const ForestScout = require('./src/forestScout');
 const RabbitConnection = require('../shared/rabbitConnection');
 logMain("Preparing to start discord bot...");
 // test mode?

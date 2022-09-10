@@ -1,4 +1,5 @@
 const amqp = require('amqplib/callback_api');
+const RabbitMessage = require('./rabbitMessage');
 class RabbitConnection {
     static QUEUES = {
         toDiscordBot: 'toDiscordBot',
@@ -94,16 +95,33 @@ class RabbitConnection {
 
 
     // sending start
+    /**
+     * 
+     * @param {RabbitMessage} message 
+     */
     sendToScheduler(message) {
-        this.checkConnection();
-        this.channel.sendToQueue(RabbitConnection.QUEUES.toScheduler, Buffer.from(message));
-        logRabbit("sent message to scheduler: " + message);
+        this._sendTo(RabbitConnection.QUEUES.toScheduler, message);
     }
 
+    /**
+     * 
+     * @param {RabbitMessage} message 
+     */
     sendToDiscordBot(message) {
+        this._sendTo(RabbitConnection.QUEUES.toDiscordBot, message);
+    }
+
+    /**
+     * 
+     * @param {string} queue 
+     * @param {RabbitMessage} message 
+     */
+    _sendTo(queue, message) {
         this.checkConnection();
-        this.channel.sendToQueue(RabbitConnection.QUEUES.toDiscordBot, Buffer.from(message));
-        logRabbit("sent message to discordbot: " + message);
+        var msgString = JSON.stringify(message);
+        this.channel.sendToQueue(RabbitConnection.QUEUES.toDiscordBot, Buffer.from(msgString));
+        logRabbit("sent message to queue '" + queue + "': " + msgString + "");
+
     }
     //sending end
 
@@ -129,7 +147,8 @@ class RabbitConnection {
         logRabbit("Registering handler for messages in queue '" + queue + "'...");
         this.channel.consume(queue, (message) => {
             logRabbit("Message received from queue '" + queue + "': '" + message.content.toString() + "'.");
-            handler(message);
+            var rabbitMessageObject = JSON.parse(message.content.toString());          // convert string to rabbit message json object (/shared/rabbitMessage.js)
+            handler(rabbitMessageObject);
         }, {
             noAck: true
         });

@@ -1,5 +1,12 @@
+const Scheduler = require("./scheduler");
+
 class MainLoop {
     static INTERVAL = 2000;
+
+    /**
+     * 
+     * @param {Scheduler} scheduler 
+     */
     constructor(scheduler) {
         this.loopCount = 0;
         this.startTime;
@@ -16,7 +23,7 @@ class MainLoop {
     }
 
     test() {
-        this.scheduler.sendTestMessage();
+        this.scheduler.rabbitCommunicator.sendTestMessage();
     }
 
     start() {

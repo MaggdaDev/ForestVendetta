@@ -1,5 +1,7 @@
 const RabbitConnection = require("../../shared/rabbitConnection");
 const MainLoop = require("./mainLoop");
+const RabbitCommandHandler = require("./rabbit/schedulerRabbitCommandHandler");
+const RabbitCommunicator = require("./rabbit/schedulerRabbitCommunicator");
 
 class Scheduler {
     /**
@@ -7,17 +9,9 @@ class Scheduler {
      * @param {RabbitConnection} rabbitConnection 
      */
     constructor(rabbitConnection) {
-        this.rabbitConnection = rabbitConnection;
-        this.rabbitConnection.sendToDiscordBot('u are a nignog');
-        this.rabbitConnection.onMessageToScheduler((message)=> {
-            console.log(message.content.toString());
-        })
-
+        this.rabbitCommandHandler = new RabbitCommandHandler(this);
+        this.rabbitCommunicator = new RabbitCommunicator(rabbitConnection, this.rabbitCommandHandler);
         this.mainLoop = new MainLoop(this);
-    }
-
-    sendTestMessage() {
-        this.rabbitConnection.sendToDiscordBot('testMessage');
     }
 
     startMainLoop() {

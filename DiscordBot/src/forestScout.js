@@ -2,6 +2,8 @@ const CommandHandler = require("./Commands/commandHandler");
 const CommandManager = require("./Commands/commandManager");
 const { Message, Client } = require("discord.js");
 const RabbitConnection = require("../../shared/rabbitConnection");
+const RabbitCommandHandler = require("./Rabbit/discordRabbitCommandHandler");
+const RabbitCommunicator = require("./Rabbit/discordRabbitCommunicator");
 
 class ForestScout {
 
@@ -15,26 +17,27 @@ class ForestScout {
         console.log("Initializing ForestScout bot...");
         this.client = client;
         this.token = token;
+
+        // discord slash commands
         this.commandManager = new CommandManager();
         this.commands = this.commandManager.loadCommands();
         this.commandHandler = new CommandHandler(this);
 
         // rabbit
         this.rabbitConnection = rabbitConnection;
+        this.rabbitCommandHandler = new RabbitCommandHandler(this);
+        this.rabbitCommunicator = new RabbitCommunicator(this.rabbitConnection, this.rabbitCommandHandler);
+        
         var instance = this;
-        rabbitConnection.onMessageToDiscordBot((message) => {
-            var content = message.content.toString();
-            if (content === 'testMessage') {
-                if (instance.client.channels.cache.has('995966316143976480')) {
-                    Fetch("https://api.quotable.io/random").then((ss)=>{
-                        instance.client.channels.cache.get('995966316143976480').send("ss");
-                    });
-                    
-                } else {
-                    console.log("Cache not loaded");
-                }
-            }
-        });
+
+    }
+
+    sendTestMessage() {
+        if (this.client.channels.cache.has('847198558204985354')) {
+                this.client.channels.cache.get('847198558204985354').send("ss");
+        } else {
+            console.log("Cache not loaded");
+        }
     }
 
     onReady(instance) {
