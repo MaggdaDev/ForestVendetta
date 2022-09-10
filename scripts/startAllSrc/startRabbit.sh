@@ -1,5 +1,5 @@
 #!/bin/sh
-trap "/usr/bin/docker stop forestvendetta-rabbitmq; exit" INT TERM ERR
+trap "/usr/bin/docker stop forestvendetta-rabbitmq; exit" INT TERM ERR EXIT
 cd /var/stuff/forestvendetta/ForestVendetta
 /usr/bin/docker stop forestvendetta-rabbitmq || true
 /usr/bin/docker rm forestvendetta-rabbitmq || true
