@@ -6,34 +6,33 @@ const config = require('../config-example/discordbot-config.json');
 const CommandManager = require('./src/Commands/commandManager');
 const ForestScout = require('./src/ForestScout');
 const RabbitConnection = require('../shared/rabbitConnection');
+logMain("Preparing to start discord bot...");
+// test mode?
+var token;
+if (config.testMode) {
+    token = secret.test_token;
+    logMain("TESTMODE ACTIVE");
+    logMain("testmode => test token for test-bot user is used");
+} else {
+    token = secret.token;
+    logMain("NORMAL MODE ACTIVE");
+    logMain("normal mode => official forest scout bot account used");
+}
 
-async function init() {
-    logMain("Preparing to start discord bot...");
-    // test mode?
-    var token;
-    if (config.testMode) {
-        token = secret.test_token;
-        logMain("TESTMODE ACTIVE");
-        logMain("testmode => test token for test-bot user is used");
-    } else {
-        token = secret.token;
-        logMain("NORMAL MODE ACTIVE");
-        logMain("normal mode => official forest scout bot account used");
-    }
-
-    // wait for rabbit connection
-    const rabbitConnection = new RabbitConnection();
-    if (config.testMode) {
-        await rabbitConnection.connectUntilSuccess(2000);
-    } else {
-        rabbitConnection.connect();
-    }
-
+// wait for rabbit connection
+const rabbitConnection = new RabbitConnection();
+var connectPromise;
+if (config.testMode) {
+    connectPromise = rabbitConnection.connectUntilSuccess(2000);
+} else {
+    connectPromise = rabbitConnection.connect();
+}
+connectPromise.then(() => {
     // Create a new client instance
-    logMain("Creating bot discord client...");
+    logMain("Connecting to rabbit finished; creating bot discord client...");
     const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
     logMain("Creating Bot...");
-    const forestScout = new ForestScout(token, client);
+    const forestScout = new ForestScout(token, client, rabbitConnection);
 
     // When the client is ready, run this code (only once)
     client.once('ready', () => forestScout.onReady(forestScout));
@@ -42,9 +41,9 @@ async function init() {
 
     // finished
     logMain("[main] All preparations finished - block main thread to run bot");
-    await client.login(token);
-}
-init();
+    client.login(token);
+});
+
 
 function logMain(s) {
     console.log("[main] " + s);
