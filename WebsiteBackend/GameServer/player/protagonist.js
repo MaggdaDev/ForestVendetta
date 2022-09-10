@@ -15,9 +15,11 @@ class Protagonist {
     static JUMP_FORCE = 50000;
     static DAMAGE = 5;
     static HP = 25;
+    static DESIRED_SPEED = 300;
+    static ACC_FORCE = 5000;
     constructor(id, socket, world, mainLoop) {
         this.id = id;
-        this.startPos = new Vector(200 + Math.random() * 500, 100);
+        this.startPos = new Vector(500, 500);
 
         this.world = world;
         this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
@@ -155,8 +157,11 @@ class Protagonist {
                 this.strike();
                 
                 break;
-            case PlayerControls.JUMP:
-                this.jump();
+            case PlayerControls.START_JUMP:
+                this.startJump();
+                break;
+            case PlayerControls.STOP_JUMP:
+                this.stopJump();
                 break;
         }
         console.log("Handled player control: " + control);
@@ -180,14 +185,18 @@ class Protagonist {
                 throw new Error('dir must be either LEFT or RIGHT');
             }
             this.isWalking = true;
-            this.movableBody.generateAccelerateImpulse(dirVec, 300, 300);
+            this.movableBody.generateAccelerateImpulse(dirVec, Protagonist.DESIRED_SPEED, Protagonist.ACC_FORCE);
         }
     }
 
-    jump() {
+    startJump() {
         //if (this.movableBody.isContact) {
             this.movableBody.wantToJump = true;
         //}
+    }
+
+    stopJump() {
+        this.movableBody.wantToJump = false;
     }
 
     endWalking() {

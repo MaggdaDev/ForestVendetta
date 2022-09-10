@@ -1,8 +1,15 @@
 const amqp = require('amqplib/callback_api');
+const RabbitConnection = require('../../shared/rabbitConnection');
+const Scheduler = require('./scheduler');
 
-amqp.connect('amqp://192.168.137.1', (error0, connection)=>{
-    if(error0) throw error0;
-    connection.createChannel(error1, channel)=>{
-        if(error1) throw
-    });
+console.log("Preparing to start scheduler...");
+
+//rabbit connection
+console.log("Creating rabbit connection...");
+const rabbitConnection = new RabbitConnection();
+rabbitConnection.connectUntilSuccess(2000).then(()=>{
+    console.log("Connected to rabbit => scheduler can be created.");
+    console.log("Creating scheduler...");
+    const scheduler = new Scheduler(rabbitConnection);
+    scheduler.startMainLoop();
 });

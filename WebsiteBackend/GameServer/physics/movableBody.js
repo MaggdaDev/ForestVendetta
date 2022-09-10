@@ -12,7 +12,7 @@ class MovableBody {
 
 
     static GRAVITY = 500;
-    static FRICTION_STRENGTH = 10000;
+    static FRICTION_STRENGTH = 100000;
     static ROT_FRICTION_FACT = 0.5;
     static MAX_TIMEDIST_FOR_FRICT = 0.2;
     static MAX_WAY_OUT = 5;
@@ -56,6 +56,7 @@ class MovableBody {
         this.isCompressable = false;
 
         this.wantToJump = false;
+        this.wantToJumpOnce = false;
         this.jumpData = new JumpData("DEFAULT", 0, 0);
 
         this.onNewContact = [];
@@ -324,7 +325,7 @@ class MovableBody {
             var time = now - this.singleContactsMap.get(object.bodyId).lastIntersectionTime;
 
             // calc friction:
-            var fricForce = Vector.multiply(rel1to2ParrSpd.dirVec, -MovableBody.FRICTION_STRENGTH);
+            var fricForce = Vector.multiply(Vector.multiply(rel1to2ParrSpd.dirVec, rel1to2ParrSpd.abs/300), -MovableBody.FRICTION_STRENGTH);
 
             // calc manual acc (walking):
             var accForce = this.currControlAccForce;
@@ -338,8 +339,10 @@ class MovableBody {
         }
 
         // JUMP
-        if (this.wantToJump) {
-            this.wantToJump = false;
+        if (this.wantToJumpOnce || this.wantToJump) {
+            if(this.wantToJumpOnce) {
+                this.wantToJumpOnce = false;
+            }
             this.updateLastIntersectionTime(object, this.now, false);
             var jumpForce = Vector.multiply(contact.normalDir, this.jumpData.jumpForce);
             jumpForce.rotBy(this.jumpData.angleAdjust);

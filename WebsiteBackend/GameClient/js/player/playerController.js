@@ -13,7 +13,8 @@ class PlayerController {
         this.owner.mainScene.keyManager.stopWalkLeft = ()=> this.stopWalkLeft(instance);
         this.owner.mainScene.keyManager.startWalkRight = ()=> this.startWalkRight(instance);
         this.owner.mainScene.keyManager.stopWalkRight = ()=> this.stopWalkRight(instance);
-        this.owner.mainScene.keyManager.jump = ()=> this.jump(instance);
+        this.owner.mainScene.keyManager.startJump = ()=> this.startJump(instance);
+        this.owner.mainScene.keyManager.stopJump = ()=> this.stopJump(instance);
 
         this.owner.mainScene.mouseManager.strike = ()=> this.strike(instance);
     }
@@ -55,9 +56,12 @@ class PlayerController {
         instance.clientProtagonist.onStopWalkRight(instance.clientProtagonist);
     }
 
-    jump(instance) {
-        instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.JUMP);
+    startJump(instance) {
+        instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.START_JUMP);
     }
 
+    stopJump(instance) {
+        instance.owner.mainScene.networkManager.sendPlayerControl(PlayerControls.STOP_JUMP);
+    }
 
 }

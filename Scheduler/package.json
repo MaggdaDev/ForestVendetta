@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "amqplib": "^0.10.3"
+  }, 
+  "scripts": {
+    "start": "node script/main.js"
   }
 }
