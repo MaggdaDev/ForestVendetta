@@ -11,4 +11,5 @@ rabbitConnection.connectUntilSuccess(2000).then(()=>{
     console.log("Connected to rabbit => scheduler can be created.");
     console.log("Creating scheduler...");
     const scheduler = new Scheduler(rabbitConnection);
+    scheduler.startMainLoop();
 });

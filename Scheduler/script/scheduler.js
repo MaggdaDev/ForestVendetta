@@ -1,4 +1,5 @@
 const RabbitConnection = require("../../shared/rabbitConnection");
+const MainLoop = require("./mainLoop");
 
 class Scheduler {
     /**
@@ -11,6 +12,16 @@ class Scheduler {
         this.rabbitConnection.onMessageToScheduler((message)=> {
             console.log(message.content.toString());
         })
+
+        this.mainLoop = new MainLoop(this);
+    }
+
+    sendTestMessage() {
+        this.rabbitConnection.sendToDiscordBot('testMessage');
+    }
+
+    startMainLoop() {
+        this.mainLoop.start();
     }
 }
 
