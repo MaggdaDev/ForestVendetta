@@ -3,6 +3,7 @@ class GameScene extends Phaser.Scene {
         super(data);
     }
     preload() {
+        this.overlayScene = this.scene.get('OverlayScene');
         // scaling
 
         this.mobManager = new ClientMobManager(this);
@@ -27,17 +28,12 @@ class GameScene extends Phaser.Scene {
 
 
         this.load.image('rustySpade', 'images/weapons/rustySpade.png');
-
-
-
     }
 
     create() {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
-        this.physicsInfo = new PhysicsControlInfo(this);
-
-
+        
     }
 
 
@@ -54,6 +50,7 @@ class GameScene extends Phaser.Scene {
         if (data.id == this.networkManager.clientId) {
             this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp);
             console.log('Added local protagonist with server data.');
+            this.cameras.main.startFollow(this.clientProtagonist.sprite);
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
             newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp)

@@ -87,7 +87,7 @@ class NetworkManager {
 
     controlData(data) {
         //console.log(data);
-        this.mainScene.physicsInfo.updateText(data);
+        this.mainScene.overlayScene.physicsInfo.updateText(data);
     }
 
 

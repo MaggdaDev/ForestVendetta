@@ -1,12 +1,13 @@
 var config = {
     type: Phaser.AUTO,
-    width: 2000,
-    height: 1000,
     backgroundColor: '#ffffff',
+    scale: {
+        mode: Phaser.Scale.RESIZE
+    },
     physics: {
         default: 'arcade'
     },
-    scene: new GameScene()
+    scene: [GameScene, OverlayScene]
 };
 
 var game = new Phaser.Game(config);
