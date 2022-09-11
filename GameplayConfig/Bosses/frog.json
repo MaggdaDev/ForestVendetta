@@ -1,0 +1,7 @@
+{
+    "name": "frog",
+    "spawn_config": {
+        "per_day": 2400,
+        "display_name": "common frog"
+    }
+}

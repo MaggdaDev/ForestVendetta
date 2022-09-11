@@ -1,9 +1,10 @@
 const CommandHandler = require("./Commands/commandHandler");
 const CommandManager = require("./Commands/commandManager");
-const { Message, Client } = require("discord.js");
+const { Message, Client, DiscordAPIError } = require("discord.js");
 const RabbitConnection = require("../../shared/rabbitConnection");
 const RabbitCommandHandler = require("./Rabbit/discordRabbitCommandHandler");
 const RabbitCommunicator = require("./Rabbit/discordRabbitCommunicator");
+const DiscordMessageSender = require("./discordMessageSender");
 
 class ForestScout {
 
@@ -23,6 +24,9 @@ class ForestScout {
         this.commands = this.commandManager.loadCommands();
         this.commandHandler = new CommandHandler(this);
 
+        // discord message sender
+        this.discordMessageSender = new DiscordMessageSender(this.client);
+
         // rabbit
         this.rabbitConnection = rabbitConnection;
         this.rabbitCommandHandler = new RabbitCommandHandler(this);
@@ -32,13 +36,7 @@ class ForestScout {
 
     }
 
-    sendTestMessage() {
-        if (this.client.channels.cache.has('847198558204985354')) {
-                this.client.channels.cache.get('847198558204985354').send("ss");
-        } else {
-            console.log("Cache not loaded");
-        }
-    }
+    
 
     onReady(instance) {
         console.log("Bot ready!");

@@ -18,14 +18,24 @@ class DiscordRabbitCommandHandler {
      * @param {RabbitMessage} message 
      */
     handle(message) {
-        switch(message.command) {
-            case RabbitMessage.RABBIT_COMANDS.FROM_SCHEDULER.SEND_TEST_MESSAGE:
-                this.forestScout.sendTestMessage();
-            break;
-            default:
-                throw "Unknown command received: " + message.command;
+        try {
+            switch (message.command) {
+                case RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.SEND_TEST_MESSAGE:
+                    this.forestScout.discordMessageSender.sendTestMessage();
+                    break;
+                case RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.SEND_SPAWN_BOSS_MESSAGE:
+                    this.forestScout.discordMessageSender.sendBossSpawnedMessage(message.args.channelID, message.args.displayName);
+                    break;
+                default:
+                    throw "Unknown command received: " + message.command;
+            }
+        } catch (error) {
+            logCommandHandler("Error while handling command " + message.command + ": " + error);
         }
     }
+}
+function logCommandHandler(s) {
+    console.log("[RabbitCommandHandler] " + s);
 }
 
 module.exports = DiscordRabbitCommandHandler;

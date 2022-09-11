@@ -1,4 +1,5 @@
 const Scheduler = require("./scheduler");
+const Spawner = require("./spawning/spawner");
 
 class MainLoop {
     static INTERVAL = 2000;
@@ -6,11 +7,13 @@ class MainLoop {
     /**
      * 
      * @param {Scheduler} scheduler 
+     * @param {Spawner} spawner
      */
-    constructor(scheduler) {
+    constructor(scheduler, spawner) {
         this.loopCount = 0;
         this.startTime;
         this.scheduler = scheduler;
+        this.spawner = spawner;
     }
 
     /**
@@ -19,11 +22,14 @@ class MainLoop {
      */
      _loop(instance) {          // all loop logic
         instance.loopLogging();
-        instance.test();
+        instance.spawnTicksForEveryGuild();
     }
 
-    test() {
-        this.scheduler.rabbitCommunicator.sendTestMessage();
+    
+    spawnTicksForEveryGuild() {
+        this.scheduler.guildSpawnInfos.forEach((currSpawnInfo)=>{
+            this.spawner.spawnTick(MainLoop.INTERVAL, currSpawnInfo);
+        });
     }
 
     start() {
