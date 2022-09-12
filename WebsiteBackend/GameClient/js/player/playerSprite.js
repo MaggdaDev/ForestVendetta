@@ -34,15 +34,15 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     set flipped(f) {
         this.facingLeft = f;
-        if(!f) {
+        if (!f) {
             this.scaleX = Math.abs(this.scaleX);
-            this.excludeFromFlip.forEach((curr)=>{
+            this.excludeFromFlip.forEach((curr) => {
                 curr.scaleX = Math.abs(curr.scaleX);
             });
-            
+
         } else {
             this.scaleX = -1 * Math.abs(this.scaleX);
-            this.excludeFromFlip.forEach((curr)=>{
+            this.excludeFromFlip.forEach((curr) => {
                 curr.scaleX = -1 * Math.abs(curr.scaleX);
             });
         }
@@ -56,12 +56,20 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     onUpperAnimationUpdate(anim, frame) {
-        this.weapon.update(frame.index);
+        if (this.weapon) {
+            this.weapon.update(frame.index);
+        }
     }
 
     setWeapon(weapon) { // weapon null for none equipped
         this.weapon = weapon;
-        if (weapon !== null) {
+        if(weapon === null || weapon === undefined) {   // no weapon
+            
+
+        } else {                                        // weapon equipped
+            this.weapon.sprite.setVisible(true);                    // weapon visible
+            this.upperSprite.stop();                                // stop swinging arms while walking
+            this.upperSprite.setFrame(10);                          // weapon holding pose
             this.add(weapon.sprite);
             this.mainScene.add.existing(weapon.cooldownIndicator);
             this.excludeFromFlip.push(weapon.cooldownIndicator);
@@ -114,7 +122,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         if (this.weapon === null && this.startingWalk) {
             this.upperSprite.play('upperWalk');
             this.startingWalk = false;
-        } else if (this.weapon.isStriking) {
+        } else if (this.weapon && this.weapon.isStriking) {
             this.weapon.isStriking = false;
         }
     }
@@ -124,7 +132,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
             this.strikePlaying = true;
             this.upperSprite.play('heavySwordStrike');
             var instance = this;
-            this.upperSprite.on('animationcomplete', ()=>instance.strikePlaying = false);
+            this.upperSprite.on('animationcomplete', () => instance.strikePlaying = false);
             this.weapon.startStrike();
         }
     }
@@ -146,7 +154,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         this.legSprite.setFrame(0);
 
-        if (this.weapon === null && (this.upperSprite.anims.getCurrentKey() === 'upperWalk' || this.upperSprite.anims.getCurrentKey() === 'startUpperWalk')) {
+        if (this.weapon === null) {
             this.upperSprite.setFrame(0);
             this.upperSprite.stop();
         }

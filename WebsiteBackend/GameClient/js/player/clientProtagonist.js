@@ -4,7 +4,7 @@ class ClientProtagonist extends ClientPlayer {
     constructor(scene, id) {
         super(scene, id, true);
         this.playerController = new PlayerController(this);
-        
+                
     }
 
     /** OVERRIDE
@@ -12,6 +12,7 @@ class ClientProtagonist extends ClientPlayer {
      * @param {Object} data 
      */
     update(data) {
+        this.updateWeapon(data);
         this.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
@@ -36,11 +37,11 @@ class ClientProtagonist extends ClientPlayer {
     }
 
     cooldown(data) {
-        this.weapon.cooldown(data.cooldownTime);
+        this.inventory.selectedItem.cooldown(data.cooldownTime);
     }
 
     strike(instance) {
-        if (instance.weapon.checkCooldown()) {
+        if (instance.inventory.selectedItem && instance.inventory.selectedItem.checkCooldown()) {
             instance.mainScene.networkManager.sendPlayerControl(PlayerControls.STRIKE);
             instance.sprite.playHeavySwordStrike();
         }

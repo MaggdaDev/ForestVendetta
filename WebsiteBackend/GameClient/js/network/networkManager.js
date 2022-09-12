@@ -152,6 +152,10 @@ class NetworkManager {
         this.sendCommand(NetworkCommands.REQUEST_ADD_PLAYER, {id: this.clientId});
     }
 
+    sendSelectItemCommand(idx) {
+        this.sendCommand(NetworkCommands.REQUEST_SELECT_ITEM, {index: idx});
+    }
+
     sendPlayerControl(control) {
         this.sendCommand(NetworkCommands.PLAYER_CONTROL, control);
     }

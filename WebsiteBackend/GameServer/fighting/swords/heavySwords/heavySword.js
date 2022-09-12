@@ -22,7 +22,7 @@ class HeavySword extends Sword {
         this.alreadyDamagedIds = new Set();
 
         //strike animation
-        this.strikeAnimation = new HeavyStrike(0.3, 0.2);
+        this.strikeAnimation = new HeavyStrike(0.3, 0.2, this);
         this.setupStrikeAnimation();
         this.cooldown = cooldown;
     }
@@ -55,6 +55,7 @@ class HeavySword extends Sword {
 
     strike() {
         this.strikeAnimation.start();
+        return this.strikeAnimation;
     }
 
     update(timeElapsed, damagables, playerPos, facingLeft) {

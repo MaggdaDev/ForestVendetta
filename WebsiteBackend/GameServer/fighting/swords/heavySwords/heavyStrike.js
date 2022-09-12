@@ -1,5 +1,6 @@
 class HeavyStrike {
-    constructor(delay, strikeTime) {
+    constructor(delay, strikeTime, weapon) {
+        this.weapon = weapon;
         this.currentlyStriking = false;
         this.currentlyDelaying = false;
         this.timer = 0;

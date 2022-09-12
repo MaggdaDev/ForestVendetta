@@ -11,10 +11,12 @@ class ClientPlayer {
         this.isContact = false;
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
+            this.inventory = new ClientInventory(scene, isProtagonist);
     }
 
 
     update(data) {
+        this.updateWeapon(data);
         this.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToData(data);
@@ -22,12 +24,24 @@ class ClientPlayer {
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 
+    updateWeapon(data) {
+        if(this.inventory.selected != data.inventory.selected) {
+            this.equipItem(data.inventory.selected);
+        }
+    }
+
+    equipItem(index) {
+        this.inventory.selected = index;
+        this.sprite.setWeapon(this.inventory.selectedItem);
+        console.log("Equip idx " + index);
+    }
+
     updateSpriteToData(data) {
         this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp, data.facingLeft);
     }
 
     updateDebugPolygon(data) {
-        if (this.sprite.weapon.debugPolygon.visible) {
+        if (this.sprite.weapon && this.sprite.weapon.debugPolygon.visible) {
             this.sprite.weapon.recreateDebugPolygon(0, 0, data.equippedWeapon.hitBox.points);
         }
     }
@@ -46,13 +60,15 @@ class ClientPlayer {
         }
     }
 
-    generateSprite(x, y, w, h, weapon, maxHp) {
+    setInventoryItems(data) {
+        this.inventory.setItems(data);
+    }
+
+    generateSprite(x, y, w, h, maxHp) {
         console.log("Generating protagonist sprite...");
         this.sprite = new PlayerSprite(this.mainScene, x, y, w, h, maxHp);
 
         // weapon
-        this.weapon = ClientWeapon.fromData(this.mainScene, weapon);
-        this.sprite.setWeapon(this.weapon);
         this.mainScene.add.existing(this.sprite);
     }
 

@@ -14,6 +14,7 @@ class SocketUser {
         
         // START: register command handling         // handling gameplay commands here; organisation commands in server network manager
         this.socket.on(NetworkCommands.PLAYER_CONTROL, (data)=>this.playerControl(data));
+        this.socket.on(NetworkCommands.REQUEST_SELECT_ITEM, (data)=>this.selectItem(data.index));
         // END: register command handling
     }
 
@@ -25,6 +26,14 @@ class SocketUser {
      */
     playerControl(control) {
         this.owner.playerControl(control);
+    }
+
+    /**
+     * 
+     * @param {number} index 
+     */
+    selectItem(index) {
+        this.owner.selectItem(index);
     }
 
     // END: command handling

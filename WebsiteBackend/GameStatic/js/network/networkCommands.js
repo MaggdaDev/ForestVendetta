@@ -18,6 +18,7 @@ const NetworkCommands = {
 
     // TO SERVER
     REQUEST_ADD_PLAYER: 'REQUEST_ADD_PLAYER',   // data: {string} data.id
+    REQUEST_SELECT_ITEM: 'REQUEST_SELECT_ITEM', // data: {number} data.index
     PLAYER_CONTROL: 'PLAYER_CONTROL'            // data: {string} player control !ONLY PlayerControls.X_Y_Z accepted!
 }
 

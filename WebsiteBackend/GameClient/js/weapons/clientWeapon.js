@@ -1,6 +1,7 @@
 class ClientWeapon {
     constructor(scene, imageName, data) {
         this.mainScene = scene;
+        this.imageName = imageName;
         this.sprite = this.mainScene.add.image(0, 0, imageName, 'Phaser 3 pixelArt: true');
         this.debugPolygon = this.mainScene.add.polygon(0, 0, data.hitBox.points, 0xFF33ff);
         this.debugPolygon.displayOriginX = 0.5;
@@ -13,12 +14,24 @@ class ClientWeapon {
 
         this.debugPolygon.setVisible(false);
 
+        
+
         // cooldown
         this.onCooldown = false;
 
         this.visible = false;
 
         this.cooldownIndicator = new WeaponCooldownIndicator(scene);
+
+        this.createItemIcon();
+        this.update(0);
+    }
+
+    createItemIcon() {
+        this.itemIcon = this.mainScene.add.image(0, 0, this.imageName);
+        this.itemIcon.displayHeight = ItemFrame.SIZE;
+        this.itemIcon.displayWidth = ItemFrame.SIZE;
+        this.itemIcon.setVisible(false);
     }
 
     /**

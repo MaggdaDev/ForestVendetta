@@ -7,6 +7,7 @@ const SocketUser = require("./socketUser");
 const PolygonHitBox = require("../physics/polygonHitBox");
 const FightingObject = require("../fighting/fightingObject");
 const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
+const Inventory = require("./inventory");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -51,18 +52,37 @@ class Protagonist {
         this.movableBody.setProtagonist();
 
         //Fighting
+        this.currentStrike = null;
         this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP, this.id);
-        this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
-            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damageTaken, pos: damagePos});
-            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000),1);
+        this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway) => {
+            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { damage: damageTaken, pos: damagePos });
+            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000), 1);
         });
-        this.fightingObject.addOnDamageDealt((damageDealt, damagePos, damageNormalAway)=>{
-            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, {weaponId: instance.equippedWeapon.id, damage: damageDealt, pos: damagePos});
-            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000),1);
+        this.fightingObject.addOnDamageDealt((damageDealt, damagePos, damageNormalAway) => {
+            instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { weaponId: instance.currentHittingWeapon.id, damage: damageDealt, pos: damagePos });
+            instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000), 1);
         });
-        
-        this.equippedWeapon = new RustySpade(this);
-  
+
+
+        // inventory
+        this.inventory = new Inventory();
+        this.inventory.loadItems(this);
+
+    }
+
+    selectItem(index) {
+        this.inventory.selectItem(index);
+    }
+
+    get equippedWeapon() {
+        return this.inventory.selectedItem;
+    }
+
+    get currentHittingWeapon() {
+        if (this.currentStrike === null) {
+            return null;
+        }
+        return this.currentStrike.weapon;
     }
 
     /**
@@ -91,13 +111,19 @@ class Protagonist {
      */
     update(timeElapsed, worldObjects, mobs) {
         this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
-        this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
+
+        if (this.equippedWeapon) {
+            this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
+        }
     }
 
     strike() {
-        this.equippedWeapon.strike();
-        //this.socketUser.sendCommand(NetworkCommands.COOLDOWN, {weaponId: this.equippedWeapon.id, time: this.equippedWeapon.getCooldown()});
-        this.mainLoop.broadcastToAllPlayers(NetworkCommands.STRIKE_ANIMATION, {id: this.id, weaponId: this.equippedWeapon.id, cooldownTime: this.equippedWeapon.getCooldown()})
+        if (this.equippedWeapon) {
+            this.currentStrike = this.equippedWeapon.strike();
+
+            //this.socketUser.sendCommand(NetworkCommands.COOLDOWN, {weaponId: this.equippedWeapon.id, time: this.equippedWeapon.getCooldown()});
+            this.mainLoop.broadcastToAllPlayers(NetworkCommands.STRIKE_ANIMATION, { id: this.id, weaponId: this.equippedWeapon.id, cooldownTime: this.equippedWeapon.getCooldown() })
+        }
     }
 
     /**
@@ -111,7 +137,7 @@ class Protagonist {
             width: PLAYER_HITBOX_WIDTH,
             id: this.id,
             isContact: this.movableBody.isContact,
-            equippedWeapon: this.equippedWeapon,
+            inventory: this.inventory,
             fightingObject: this.fightingObject,
             facingLeft: this.facingLeft,
             isWalking: this.isWalking
@@ -155,7 +181,7 @@ class Protagonist {
                 break;
             case PlayerControls.STRIKE:
                 this.strike();
-                
+
                 break;
             case PlayerControls.START_JUMP:
                 this.startJump();
@@ -191,7 +217,7 @@ class Protagonist {
 
     startJump() {
         //if (this.movableBody.isContact) {
-            this.movableBody.wantToJump = true;
+        this.movableBody.wantToJump = true;
         //}
     }
 

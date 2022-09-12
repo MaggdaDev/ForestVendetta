@@ -48,12 +48,14 @@ class GameScene extends Phaser.Scene {
      */
     addPlayer(data) {
         if (data.id == this.networkManager.clientId) {
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp);
+            this.clientProtagonist.setInventoryItems(data.inventory);
+            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.fightingObject.hp);
             console.log('Added local protagonist with server data.');
             this.cameras.main.startFollow(this.clientProtagonist.sprite);
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
-            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.equippedWeapon, data.fightingObject.hp)
+            newPlayer.setInventoryItems(data.inventory);
+            newPlayer.generateSprite(data.pos.x, data.pos.y, data.width, data.height, data.fightingObject.hp)
             this.players.set(data.id, newPlayer);
             console.log('Added new player with id: ' + data.id);
         }
@@ -81,6 +83,7 @@ class GameScene extends Phaser.Scene {
         var instance = this;
         data.forEach((currData) => {
             var newPlayer = new ClientPlayer(instance, currData.id, false);
+            newPlayer.setInventoryItems(currData.inventory)
             newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.width, currData.height, currData.equippedWeapon, currData.fightingObject.hp);
             instance.players.set(currData.id, newPlayer);
         });

@@ -6,6 +6,18 @@ class OverlayScene extends Phaser.Scene {
     preload() {
         this.gameScene = this.scene.get('GameScene');
 
+
+        // aligning on hud
+        this.screenZone = this.add.zone(0, 0, this.scale.gameSize.width, this.scale.gameSize.height);
+        this.screenZone.setOrigin(0,0);
+        window.addEventListener('resize', () => {
+            console.log("Window resize!");
+            this.screenZone.setSize(this.scale.gameSize.width, this.scale.gameSize.height);
+        });
+
+        // inventory
+        this.inventoryHUD = new InventoryHUD(this);
+
     }
 
     create() {
@@ -13,16 +25,11 @@ class OverlayScene extends Phaser.Scene {
         this.physicsInfo = new PhysicsControlInfo(this);
 
         // screen zone for aligning objects
-        this.screenZone = this.add.zone(0, 0, this.scale.gameSize.width, this.scale.gameSize.height);
-        this.screenZone.setOrigin(0,0);
-        window.addEventListener('resize', () => {
-            console.log("Window resize!");
-            this.screenZone.setSize(this.scale.gameSize.width, this.scale.gameSize.height);
-        });
+        
+        
         
 
-        // hotbar
-        this.hotBar = new HotBar(this, 500, 500);
-        this.add.existing(this.hotBar.sprite);
+        
+
     }
 }
