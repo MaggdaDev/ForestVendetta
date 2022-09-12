@@ -12,6 +12,21 @@ class HotBar {
         this.selectionRect = this.overlayScene.add.rectangle(this.calcXOfNthFrame(0),0,ItemFrame.SIZE+2*ItemFrame.BORDER_WIDTH, ItemFrame.SIZE+2*ItemFrame.BORDER_WIDTH);
         this.selectionRect.setStrokeStyle(ItemFrame.BORDER_WIDTH+2, 0x808080);
         this.sprite.add(this.selectionRect);
+        this.currSelectionPos = 0;
+
+        // scrolling
+        var instance = this;
+        this.overlayScene.gameScene.mouseManager.mouseScroll = function(pointer, gameObject, dx, dy, dz) {
+            instance.currSelectionPos += dy/100;
+            console.log(dy);
+            while(instance.currSelectionPos < 0) {
+                instance.currSelectionPos += 9;
+            }
+            while(instance.currSelectionPos > 8) {
+                instance.currSelectionPos -= 9;
+            }
+            instance.selectionRect.x = instance.calcXOfNthFrame(Math.floor(instance.currSelectionPos));
+        };
     }
 
     setupFrames() {

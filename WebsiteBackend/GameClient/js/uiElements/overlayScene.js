@@ -4,7 +4,7 @@ class OverlayScene extends Phaser.Scene {
     }
 
     preload() {
-        
+        this.gameScene = this.scene.get('GameScene');
 
     }
 
@@ -19,6 +19,7 @@ class OverlayScene extends Phaser.Scene {
             console.log("Window resize!");
             this.screenZone.setSize(this.scale.gameSize.width, this.scale.gameSize.height);
         });
+        
 
         // hotbar
         this.hotBar = new HotBar(this, 500, 500);

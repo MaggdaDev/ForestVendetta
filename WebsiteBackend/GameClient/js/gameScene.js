@@ -1,6 +1,6 @@
 class GameScene extends Phaser.Scene {
     constructor(data) {
-        super(data);
+        super({ key: 'GameScene', active: true });
     }
     preload() {
         this.overlayScene = this.scene.get('OverlayScene');
@@ -9,7 +9,7 @@ class GameScene extends Phaser.Scene {
         this.mobManager = new ClientMobManager(this);
         this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
-        this.mouseManager = new MouseManager(this);
+        this.mouseManager = new MouseManager(this);     // important preload: will be accessed in create of overlay scene
         this.particleManager = new ParticleManager(this);
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
