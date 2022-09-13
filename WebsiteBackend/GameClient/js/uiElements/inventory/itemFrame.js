@@ -25,7 +25,6 @@ class ItemFrame extends Phaser.GameObjects.Container {
     }
 
     select() {
-        this.frameRect.setFillStyle(0x90ee90, 0.4);
         if(this.item) {
             this.item.sprite.setVisible(true);
         }
@@ -35,7 +34,6 @@ class ItemFrame extends Phaser.GameObjects.Container {
         if(this.item) {
             this.item.sprite.setVisible(false);
         }
-        this.frameRect.setFillStyle();
     }
 
 }

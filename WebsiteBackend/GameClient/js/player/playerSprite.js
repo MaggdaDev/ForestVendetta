@@ -32,21 +32,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     }
 
-    set flipped(f) {
-        this.facingLeft = f;
-        if (!f) {
-            this.scaleX = Math.abs(this.scaleX);
-            this.excludeFromFlip.forEach((curr) => {
-                curr.scaleX = Math.abs(curr.scaleX);
-            });
-
-        } else {
-            this.scaleX = -1 * Math.abs(this.scaleX);
-            this.excludeFromFlip.forEach((curr) => {
-                curr.scaleX = -1 * Math.abs(curr.scaleX);
-            });
-        }
-    }
+    
 
     update(x, y, currHp, facingLeft) {
         this.x = x;
@@ -62,9 +48,14 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     setWeapon(weapon) { // weapon null for none equipped
+        if(this.weapon && (!weapon)) {  // from equipped to unequipped
+            this.upperSprite.stop();
+            this.upperSprite.setFrame(0);
+            this.weapon.update(0);
+        }
         this.weapon = weapon;
         if(weapon === null || weapon === undefined) {   // no weapon
-            
+        
 
         } else {                                        // weapon equipped
             this.weapon.sprite.setVisible(true);                    // weapon visible
@@ -75,6 +66,74 @@ class PlayerSprite extends Phaser.GameObjects.Container {
             this.excludeFromFlip.push(weapon.cooldownIndicator);
             this.add(weapon.cooldownIndicator);
             //this.add(weapon.debugPolygon);
+        }
+    }
+
+    
+
+    onUpperAnimationFinished() {
+        if (this.weapon === null && this.startingWalk) {
+            this.upperSprite.play('upperWalk');
+            this.startingWalk = false;
+        } else if (this.weapon && this.weapon.isStriking) {
+            this.weapon.isStriking = false;
+        }
+    }
+
+    playHeavySwordStrike() {
+        if (!this.strikePlaying) {
+            this.strikePlaying = true;
+            this.upperSprite.play('heavySwordStrike');
+            var instance = this;
+            this.upperSprite.on('animationcomplete', () => instance.onStrikeFinished());
+            this.upperSprite.on('animationstop', () => instance.onStrikeFinished());
+            this.weapon.startStrike();
+        }
+    }
+
+    onStrikeFinished() {
+        this.strikePlaying = false;
+    }
+
+    playStartWalk() {
+        this.startingWalk = true;
+        this.legSprite.play('startLegWalk');
+        this.legSprite.playAfterRepeat('legWalk');
+        this.legSprite.on('animationrepeat', ()=>{
+            if (this.weapon === null) {
+                this.upperSprite.play('upperWalk');
+            }
+        });
+
+        if (this.weapon === null) {
+            this.upperSprite.play('startUpperWalk');
+        }
+    }
+
+    stopWalk() {
+        this.legSprite.stop();
+
+        this.legSprite.setFrame(0);
+
+        if (this.weapon === null) {
+            this.upperSprite.setFrame(0);
+            this.upperSprite.stop();
+        }
+    }
+
+    set flipped(f) {
+        this.facingLeft = f;
+        if (!f) {
+            this.scaleX = Math.abs(this.scaleX);
+            this.excludeFromFlip.forEach((curr) => {
+                curr.scaleX = Math.abs(curr.scaleX);
+            });
+
+        } else {
+            this.scaleX = -1 * Math.abs(this.scaleX);
+            this.excludeFromFlip.forEach((curr) => {
+                curr.scaleX = -1 * Math.abs(curr.scaleX);
+            });
         }
     }
 
@@ -116,48 +175,6 @@ class PlayerSprite extends Phaser.GameObjects.Container {
             repeat: 0
         }
         this.mainScene.anims.create(heavySwordStrike);
-    }
-
-    onUpperAnimationFinished() {
-        if (this.weapon === null && this.startingWalk) {
-            this.upperSprite.play('upperWalk');
-            this.startingWalk = false;
-        } else if (this.weapon && this.weapon.isStriking) {
-            this.weapon.isStriking = false;
-        }
-    }
-
-    playHeavySwordStrike() {
-        if (!this.strikePlaying) {
-            this.strikePlaying = true;
-            this.upperSprite.play('heavySwordStrike');
-            var instance = this;
-            this.upperSprite.on('animationcomplete', () => instance.strikePlaying = false);
-            this.weapon.startStrike();
-        }
-    }
-
-    playStartWalk() {
-        this.startingWalk = true;
-        this.legSprite.play('startLegWalk');
-        this.legSprite.on('animationcomplete', () => {
-            this.legSprite.play('legWalk');
-        });
-
-        if (this.weapon === null) {
-            this.upperSprite.play('startUpperWalk');
-        }
-    }
-
-    stopWalk() {
-        this.legSprite.stop();
-
-        this.legSprite.setFrame(0);
-
-        if (this.weapon === null) {
-            this.upperSprite.setFrame(0);
-            this.upperSprite.stop();
-        }
     }
 
 
