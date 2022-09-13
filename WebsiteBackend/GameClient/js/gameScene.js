@@ -28,6 +28,8 @@ class GameScene extends Phaser.Scene {
 
 
         this.load.image('rustySpade', 'images/weapons/rustySpade.png');
+
+        
     }
 
     create() {

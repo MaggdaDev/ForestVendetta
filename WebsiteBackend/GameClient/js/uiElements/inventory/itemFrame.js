@@ -11,6 +11,10 @@ class ItemFrame extends Phaser.GameObjects.Container {
 
         // item
         this.item = null;
+
+        // hovering
+        this.hoverInfo = new ItemHoverInfo(this.scene);
+        this.add(this.hoverInfo.sprite);
     }
 
     /**
