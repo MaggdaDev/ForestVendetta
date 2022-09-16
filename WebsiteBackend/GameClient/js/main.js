@@ -5,6 +5,11 @@ var config = {
     dom: {
         createContainer: true
     },
+    input:{
+        mouse:{
+            target:"parentDiv"// or target:document.getElementById("targetDiv") 
+        }
+    },
     scale: {
         mode: Phaser.Scale.RESIZE
     },

@@ -1,0 +1,6 @@
+.hoverInfo {
+    user-select: none;
+    background-color: yellow;
+    width: 200px;
+    height: 100px;
+}

@@ -6,7 +6,6 @@ class OverlayScene extends Phaser.Scene {
     preload() {
         this.gameScene = this.scene.get('GameScene');
 
-
         // aligning on hud
         this.screenZone = this.add.zone(0, 0, this.scale.gameSize.width, this.scale.gameSize.height);
         this.screenZone.setOrigin(0, 0);
@@ -29,7 +28,7 @@ class OverlayScene extends Phaser.Scene {
 
         // inventory
         this.inventoryHUD = new InventoryHUD(this);
-
+        this.input.topOnly = false;
 
 
 

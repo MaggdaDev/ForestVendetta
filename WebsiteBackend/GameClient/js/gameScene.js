@@ -35,7 +35,7 @@ class GameScene extends Phaser.Scene {
     create() {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
-        
+        this.input.topOnly = false;
     }
 
 
