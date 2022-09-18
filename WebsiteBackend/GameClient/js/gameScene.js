@@ -18,16 +18,22 @@ class GameScene extends Phaser.Scene {
         console.log("Sending register request add player...");
         this.networkManager.sendRequestAddPlayer();
 
-        this.load.setBaseURL('GameClient');
+        
+        this.load.setBaseURL('./');
+
+        // load game config
+        const gameConfigLoader = new GameConfigLoader(this);
+        gameConfigLoader.loadWeapons();
 
         // load ressources
-        this.load.spritesheet('hotzenplotz', 'images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('hotzenplotzUpper', 'images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('hotzenplotzLegs', 'images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('frog', 'images/mobs/frog.png', { frameWidth: 151, frameHeight: 202 });
+        
+        this.load.spritesheet('hotzenplotz', 'GameClient/images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('hotzenplotzUpper', 'GameClient/images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('hotzenplotzLegs', 'GameClient/images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('frog', 'GameClient/images/mobs/frog.png', { frameWidth: 151, frameHeight: 202 });
 
 
-        this.load.image('rustySpade', 'images/weapons/rustySpade.png');
+        this.load.image('rustySpade', 'GameClient/images/weapons/rustySpade.png');
 
         
     }

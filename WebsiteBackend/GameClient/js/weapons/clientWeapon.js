@@ -14,7 +14,7 @@ class ClientWeapon {
 
         this.debugPolygon.setVisible(false);
 
-        
+
 
         // cooldown
         this.onCooldown = false;
@@ -25,6 +25,19 @@ class ClientWeapon {
 
         this.createItemIcon();
         this.update(0);
+
+        this.staticConfig = this.mainScene.cache.json.get(data.typeData.type + "_CONFIG");  // auto name guessing: loading i.e. "RUSTY_SPADE_CONFIG" from cache (see game config loader)
+        try {
+            this.rarityInfo = this.mainScene.cache.json.get("ITEM_RARITY_CONFIG")[this.staticConfig.rarity];        // for displaying the rarity
+            if (this.rarityInfo === undefined || this.rarityInfo === null) throw ("rarity info is null/undefined for weapon " + data.type);
+        } catch (error) {
+            console.error(error);
+        }
+
+        //hover info
+        this.hoverInfo = new ItemHoverInfo(scene.overlayScene, this.staticConfig, this.rarityInfo)
+
+
     }
 
     createItemIcon() {
@@ -45,8 +58,8 @@ class ClientWeapon {
     }
 
     checkCooldown() {       // returns: true=ready false=onCooldown
-        if(this.onCooldown) {
-            if(this.cooldownIndicator.checkCooldown()) {
+        if (this.onCooldown) {
+            if (this.cooldownIndicator.checkCooldown()) {
                 this.onCooldown = false;
                 return true;
             } else {
@@ -56,7 +69,7 @@ class ClientWeapon {
         return true;
     }
 
-    recreateDebugPolygon(x,y,points) {
+    recreateDebugPolygon(x, y, points) {
         if (this.debugPolygon.visible) {
             this.debugPolygon.destroy();
             this.debugPolygon = this.mainScene.add.polygon(x, y, points, 0xFF33ff);

@@ -26,8 +26,7 @@ class ItemFrame extends Phaser.GameObjects.Container {
 
         // hovering
 
-        this.hoverInfo = new ItemHoverInfo(this.scene);
-        this.add(this.hoverInfo.sprite);
+        this.hoverInfo = null;
         var instance = this;
         this.frameRect.setInteractive();
         this.frameRect.on("pointerover", () => instance.onPointerOver());
@@ -37,21 +36,27 @@ class ItemFrame extends Phaser.GameObjects.Container {
 
     onPointerOver() {
         this.overlayScene.inventoryHUD.notifyEnterFrame(this);
-        this.hoverInfo.sprite.setVisible(true);
+        if (this.hoverInfo) {
+            this.hoverInfo.sprite.setVisible(true);
+        }
 
         console.log("Pointer over item frame");
     }
 
     onPointerOut() {
         this.overlayScene.inventoryHUD.notifyExitFrame(this);
-        this.hoverInfo.sprite.setVisible(false);
+        if(this.hoverInfo) {
+            this.hoverInfo.sprite.setVisible(false);
+        }
 
         console.log("Pointer out of item frame");
     }
 
     onPointerMove(pointer, localX, localY) {
-        const localPoint = this.getLocalPoint(pointer.worldX, pointer.worldY);
-        this.hoverInfo.setPos(localPoint.x, localPoint.y - 20);
+        if (this.hoverInfo) {
+            const localPoint = this.getLocalPoint(pointer.worldX, pointer.worldY);
+            this.hoverInfo.setPos(localPoint.x, localPoint.y - 20);
+        }
     }
 
     /**
@@ -63,6 +68,19 @@ class ItemFrame extends Phaser.GameObjects.Container {
         this.item = item;
         this.add(item.itemIcon);
         item.itemIcon.setVisible(true);
+
+        if (!item) {
+            if (this.hoverInfo) {
+                this.remove(this.hoverInfo.sprite);
+                this.hoverInfo = null;
+            }
+        } else {
+            if (this.hoverInfo) {
+                this.remove(this.hoverInfo.sprite);
+            }
+            this.hoverInfo = item.hoverInfo;
+            this.add(this.hoverInfo.sprite);
+        }
     }
 
     select() {

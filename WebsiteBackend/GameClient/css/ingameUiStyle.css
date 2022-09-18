@@ -1,6 +1,28 @@
 .hoverInfo {
     user-select: none;
-    background-color: yellow;
+    border-radius: 4px;
+    background-color: rgb(191,165,138, 0.8);
     width: 200px;
     height: 100px;
+    border-style: solid;
+    border-width: 2px;
+    padding: 5px;
+}
+
+.hoverInfoName {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.hoverInfoDsc {
+    line-height: 70%;
+    font-size: smaller;
+    color: grey;
+    margin-top: 0px;
+    
+}
+
+.hoverInfoRarity {
+    position:absolute;
+    bottom: 5px;
 }

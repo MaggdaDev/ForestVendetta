@@ -1,0 +1,14 @@
+{
+    "COMMON": {
+        "display": {
+            "name": "COMMON ITEM",
+            "color": "#d3d3d3"
+        }
+    },
+    "UNCOMMON": {
+        "display": {
+            "name": "UNCOMMON ITEM",
+            "color": "#90EE90"
+        }
+    }
+}
