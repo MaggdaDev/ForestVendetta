@@ -21,21 +21,9 @@ class GameScene extends Phaser.Scene {
         
         this.load.setBaseURL('./');
 
-        // load game config
-        const gameConfigLoader = new GameConfigLoader(this);
-        gameConfigLoader.loadWeapons();
-
-        // load ressources
-        
-        this.load.spritesheet('hotzenplotz', 'GameClient/images/hotzenplotz.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('hotzenplotzUpper', 'GameClient/images/hotzenplotzUpper.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('hotzenplotzLegs', 'GameClient/images/hotzenplotzLegs.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.spritesheet('frog', 'GameClient/images/mobs/frog.png', { frameWidth: 151, frameHeight: 202 });
-
-
-        this.load.image('rustySpade', 'GameClient/images/weapons/rustySpade.png');
-
-        
+        // load 
+        const loader = new Loader(this);
+        loader.loadAll();
     }
 
     create() {

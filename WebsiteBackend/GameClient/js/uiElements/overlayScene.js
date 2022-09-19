@@ -13,13 +13,6 @@ class OverlayScene extends Phaser.Scene {
             console.log("Window resize!");
             this.screenZone.setSize(this.scale.gameSize.width, this.scale.gameSize.height);
         });
-
-
-        // loading
-        this.load.setBaseURL('GameClient');
-        this.load.html('itemHoverInfo', 'html/itemHoverInfo.html');
-        this.load.css('ingameUiStyle', 'css/ingameUiStyle.css');
-
     }
 
     create() {

@@ -1,7 +1,11 @@
 {
     "display": {
         "name": "Rusty Spade",
+        "class_name": "Heavy Sword", 
         "description": "It's just the rusty spade from the back of your barn..."
+    },
+    "stats": {
+        "damage": 5
     },
     "rarity": "COMMON"
 }

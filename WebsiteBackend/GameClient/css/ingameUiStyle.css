@@ -2,27 +2,93 @@
     user-select: none;
     border-radius: 4px;
     background-color: rgb(191,165,138, 0.8);
-    width: 200px;
+    width: 300px;
     height: 100px;
     border-style: solid;
     border-width: 2px;
     padding: 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .hoverInfoName {
-    margin-bottom: 0px;
+    margin-bottom: 3px;
     margin-top: 0px;
 }
 
 .hoverInfoDsc {
-    line-height: 70%;
+    line-height: 80%;
     font-size: smaller;
     color: grey;
     margin-top: 0px;
+    margin-bottom: 0px;
     
+}
+
+.hoverInfoStats {
+    margin-top: 7px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .hoverInfoRarity {
     position:absolute;
     bottom: 5px;
+    text-decoration: underlinde overline darkslategray;
+    -webkit-text-stroke: 1px;
+    -webkit-text-stroke-color: darkslategrey;
 }
+
+@-webkit-keyframes epicColorchange {
+    20% {
+      
+        color: rgb(162, 89, 231)
+      }
+    40% {
+      
+      color: blueviolet
+    }
+    
+    60% {
+      
+      color: rebeccapurple
+    }
+    
+    80% {
+      
+      color: rgb(86, 25, 129)
+    }
+    
+    100% {
+      
+      color: indigo
+    }
+  }
+
+  @-webkit-keyframes legendaryColorchange {
+    0% {
+      
+      color: yellow;
+    }
+    
+    20% {
+      
+      color: rgb(255, 200, 0)
+    }
+    
+    40% {
+      
+        color: rgb(255, 162, 0)
+    }
+    
+    60% {
+      
+        color: rgb(255, 123, 0)
+    }
+
+    80% {
+        color: rgb(255, 85, 0) 
+    }
+
+    100% {
+        color: rgb(255, 0, 0)
+    }
+  }

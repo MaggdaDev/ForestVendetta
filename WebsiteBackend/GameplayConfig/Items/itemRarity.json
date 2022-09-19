@@ -1,14 +1,40 @@
 {
     "COMMON": {
         "display": {
-            "name": "COMMON ITEM",
+            "name": "COMMON",
             "color": "#d3d3d3"
         }
     },
     "UNCOMMON": {
         "display": {
-            "name": "UNCOMMON ITEM",
+            "name": "UNCOMMON",
             "color": "#90EE90"
+        }
+    },
+    "RARE": {
+        "display": {
+            "name": "RARE",
+            "color": "#6495ED"
+        }
+    },
+    "SUPER_RARE": {
+        "display": {
+            "name": "SUPER RARE",
+            "color": "#00008B"
+        }
+    },
+    "EPIC": {
+        "display": {
+            "name": "EPIC",
+            "color": "blueviolet",
+            "colorchange": "epicColorchange"
+        }
+    },
+    "LEGENDARY": {
+        "display": {
+            "name": "LEGENDARY",
+            "color": "yellow",
+            "colorchange": "legendaryColorchange"
         }
     }
 }
