@@ -1,6 +1,7 @@
 const Frog = require("./frog");
 const Mob = require("./mob");
 
+const frogConfig = require("../../GameplayConfig/Bosses/frog");
 class MobManager {
     constructor(networkManager,players, world) {
         this.currId = 0;
@@ -17,7 +18,7 @@ class MobManager {
         return "M" + String(temp);
     }
     spawnFrog(x,y) {
-        var frog = new Frog(x,y,this.nextID, this.players, this.world);
+        var frog = new Frog(x,y,this.nextID, this.players, this.world, frogConfig);
         this.mobs.set(frog.id, frog);
         this.networkManager.sendSpawnMobCommand(frog);
         return frog;

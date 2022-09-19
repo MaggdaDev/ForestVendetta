@@ -3,5 +3,12 @@
     "spawn_config": {
         "per_day": 2400,
         "display_name": "common frog"
+    },
+    "physics_stats": {
+        "mass": 200
+    },
+    "fighting_stats": {
+        "max_hp": 50,
+        "damage": 5
     }
 }

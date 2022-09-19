@@ -29,6 +29,7 @@ class GameScene extends Phaser.Scene {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
         this.input.topOnly = false;
+        
         console.log("Sending register request add player...");
         this.networkManager.sendRequestAddPlayer();
     }

@@ -5,10 +5,10 @@ const Vector = require("../physics/vector");
 const TargetManager = require("./targetManager");
 
 class Mob {
-    constructor(hitBox, mass, id, type, players,world, dmg, hp) {
+    constructor(hitBox, id, type, players,world, frogConfig) {
         this.hitBox = hitBox;
         this.id = id;
-        this.movableBody = new MovableBody(hitBox, mass, this, id);
+        this.movableBody = new MovableBody(hitBox, frogConfig.physics_stats.mass, this, id);
         this.movableBody.wayOutPriority = 50;
         this.movableBody.disableRotation();
         
@@ -21,7 +21,7 @@ class Mob {
         this.shouldRemove = false;
 
         // fighting
-        this.fightingObject = new FightingObject(dmg, hp, this.id);
+        this.fightingObject = new FightingObject(frogConfig.fighting_stats.damage, frogConfig.fighting_stats.max_hp, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
             this.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 30000),1);
         });
