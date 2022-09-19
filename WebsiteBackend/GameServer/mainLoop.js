@@ -1,4 +1,5 @@
 const NetworkCommands = require('../GameStatic/js/network/networkCommands');
+const WeaponManager = require('./fighting/weaponManager');
 const MobManager = require('./mobs/mobManager');
 const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
@@ -25,6 +26,7 @@ class MainLoop {
         this.mobManager = new MobManager(this.networkManager, this.players, this.world);  // after network manager is created
         this.updateData = this.collectUpdateData();     // after mob manager is created
         this.mobManager.spawnRespawningFrog(900,700);
+        this.weaponManager = new WeaponManager();
     }
 
     /**

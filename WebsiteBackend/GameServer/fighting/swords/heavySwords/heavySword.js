@@ -11,7 +11,7 @@ class HeavySword extends Sword {
      * @param {Object} typeData
      * @param {string} typeData.type 
      */
-    constructor(typeData, owner, cooldown) {
+    constructor(typeData, owner) {
         typeData.subClass = "HEAVY_SWORD";
         super(typeData,owner);
 
@@ -24,7 +24,6 @@ class HeavySword extends Sword {
         //strike animation
         this.strikeAnimation = new HeavyStrike(0.3, 0.2, this);
         this.setupStrikeAnimation();
-        this.cooldown = cooldown;
     }
 
     setupHitBoxes() {
@@ -50,7 +49,7 @@ class HeavySword extends Sword {
     }
 
     getCooldown() {
-        return this.cooldown;
+        return this.baseCombatStats.cooldown;
     }
 
     strike() {

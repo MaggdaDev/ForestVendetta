@@ -8,8 +8,8 @@ class Inventory {
     }
 
     loadItems(owner) {   // todo; maybe in constructor better
-        this.hotBar[0] = new RustySpade(owner);
-        this.hotBar[2] = new RustySpade(owner);
+        this.hotBar[0] = owner.mainLoop.weaponManager.createNewWeapon(RustySpade, owner);
+        this.hotBar[2] = owner.mainLoop.weaponManager.createNewWeapon(RustySpade, owner);
     }
 
     selectItem(index) {

@@ -14,6 +14,11 @@ class Weapon {
         this.owner = owner;
     }
 
+    applyConfig(config) {       // loading all attributes
+        this.rarity = config.rarity;
+        this.baseCombatStats = config.stats;
+    }
+
     /**
      * OVERRIDE
      */
