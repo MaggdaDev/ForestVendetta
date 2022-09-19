@@ -2,13 +2,14 @@ const FightingObject = require("../fighting/fightingObject");
 const MovableBody = require("../physics/movableBody");
 const PolygonHitBox = require("../physics/polygonHitBox");
 const Vector = require("../physics/vector");
+const DropHandler = require("./dropHandler");
 const TargetManager = require("./targetManager");
 
 class Mob {
-    constructor(hitBox, id, type, players,world, frogConfig) {
+    constructor(hitBox, id, type, players,world, mobConfig, weaponManager) {
         this.hitBox = hitBox;
         this.id = id;
-        this.movableBody = new MovableBody(hitBox, frogConfig.physics_stats.mass, this, id);
+        this.movableBody = new MovableBody(hitBox, mobConfig.physics_stats.mass, this, id);
         this.movableBody.wayOutPriority = 50;
         this.movableBody.disableRotation();
         
@@ -21,7 +22,7 @@ class Mob {
         this.shouldRemove = false;
 
         // fighting
-        this.fightingObject = new FightingObject(frogConfig.fighting_stats.damage, frogConfig.fighting_stats.max_hp, this.id);
+        this.fightingObject = new FightingObject(mobConfig.fighting_stats.damage, mobConfig.fighting_stats.max_hp, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
             this.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 30000),1);
         });
@@ -31,8 +32,17 @@ class Mob {
             this.checkAlive();
         });
 
-
-       
+        // drops
+        this.dropHandler = new DropHandler(mobConfig.drop_config, weaponManager);
+        this.addOnDeath(()=> {
+            var drops;
+            this.players.forEach((player)=>{
+                drops = this.dropHandler.createDrops(player);
+                drops.forEach((currDrop)=>{
+                    player.addDrop(currDrop);
+                });
+            })
+        });  
     }
 
     addOnDeath(handler) {

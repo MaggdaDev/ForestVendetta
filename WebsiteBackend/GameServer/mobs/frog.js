@@ -14,8 +14,8 @@ class Frog extends Mob{
     //fighting
     static DAMAGE = 5;
     static HP = 50;
-    constructor(x,y,id,players,world, frogConfig) {
-        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig);
+    constructor(x,y,id,players,world, frogConfig, weaponManager) {
+        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, weaponManager);
         this.movableBody.addGravity();
         
 
@@ -25,7 +25,7 @@ class Frog extends Mob{
         this.addOnUpdate((t)=>{this.onUpdate(t)});
         this.movableBody.addOnNewIntersectionWithPlayer((player, intersectionPoint)=>this.onPlayerIntersection(player, intersectionPoint));
 
-        // stats from config
+        
 
     }
 

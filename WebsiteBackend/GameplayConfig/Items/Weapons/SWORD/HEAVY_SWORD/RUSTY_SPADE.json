@@ -5,7 +5,7 @@
         "description": "It's just the rusty spade from the back of your barn..."
     },
     "stats": {
-        "damage": 5,
+        "damage": 50,
         "cooldown": 0.8
     },
     "rarity": "COMMON"

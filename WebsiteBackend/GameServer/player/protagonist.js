@@ -70,6 +70,10 @@ class Protagonist {
 
     }
 
+    addDrop(item) {
+        this.inventory.addDrop(item);
+    }
+
     selectItem(index) {
         this.inventory.selectItem(index);
     }

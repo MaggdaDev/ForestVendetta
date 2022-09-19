@@ -10,5 +10,12 @@
     "fighting_stats": {
         "max_hp": 50,
         "damage": 5
+    },
+    "drop_config": {
+        "drops": [
+            {
+                "item": "RUSTY_SPADE", "chance": 1
+            }
+        ]
     }
 }

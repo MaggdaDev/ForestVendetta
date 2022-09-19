@@ -3,13 +3,14 @@ const Mob = require("./mob");
 
 const frogConfig = require("../../GameplayConfig/Bosses/frog");
 class MobManager {
-    constructor(networkManager,players, world) {
+    constructor(networkManager,players, world, weaponManager) {
         this.currId = 0;
         this.mobs = new Map();
         this.networkManager = networkManager;
         this.players = players;
         this.world = world;
         this.mobsToRemove = [];
+        this.weaponManager = weaponManager;
     }
 
     get nextID() {
@@ -18,7 +19,7 @@ class MobManager {
         return "M" + String(temp);
     }
     spawnFrog(x,y) {
-        var frog = new Frog(x,y,this.nextID, this.players, this.world, frogConfig);
+        var frog = new Frog(x,y,this.nextID, this.players, this.world, frogConfig, this.weaponManager);
         this.mobs.set(frog.id, frog);
         this.networkManager.sendSpawnMobCommand(frog);
         return frog;

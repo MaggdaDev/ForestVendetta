@@ -23,10 +23,11 @@ class MainLoop {
     }
 
     init() {        // after constructor before start; after network manager is created
-        this.mobManager = new MobManager(this.networkManager, this.players, this.world);  // after network manager is created
+        this.weaponManager = new WeaponManager();
+        this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
         this.updateData = this.collectUpdateData();     // after mob manager is created
         this.mobManager.spawnRespawningFrog(900,700);
-        this.weaponManager = new WeaponManager();
+        
     }
 
     /**
