@@ -15,8 +15,7 @@ class GameScene extends Phaser.Scene {
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
 
-        console.log("Sending register request add player...");
-        this.networkManager.sendRequestAddPlayer();
+        
 
         
         this.load.setBaseURL('./');
@@ -30,6 +29,8 @@ class GameScene extends Phaser.Scene {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
         this.input.topOnly = false;
+        console.log("Sending register request add player...");
+        this.networkManager.sendRequestAddPlayer();
     }
 
 
