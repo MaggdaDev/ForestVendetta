@@ -72,6 +72,7 @@ class Protagonist {
 
     addDrop(item) {
         this.inventory.addDrop(item);
+        //this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, {id: this.id, weaponId: item.id});
     }
 
     selectItem(index) {

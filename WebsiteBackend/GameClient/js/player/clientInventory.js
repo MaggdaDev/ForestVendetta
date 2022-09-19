@@ -13,11 +13,21 @@ class ClientInventory {
      * @param {Object[]} data.hotBar
      * @param {number} data.selected 
      */
-    setItems(data) {
+    generateItems(data) {
         for(var i = 0; i < data.hotBar.length; i += 1) {
             this.setNewItemToSlot(data.hotBar[i], i);
         }
         this.selected = -1;
+    }
+
+    updateItems(data) {
+        for(var i = 0; i < data.hotBar.length; i += 1) {
+            if(!this.hotBarItems[i]) {
+                this.setNewItemToSlot(data.hotBar[i], i);
+            } else if(this.hotBarItems[i].id !== data.hotBar[i].id) {
+                throw "Not supported yet: Overriding client item with new one";
+            }
+        }
     }
 
     setNewItemToSlot(itemData, i) {

@@ -14,6 +14,7 @@ const NetworkCommands = {
     DAMAGE_ANIMATION: 'DAMAGE_ANIMATION',       // data: damageAmount, pos
     REMOVE_GAMEOBJECTS: 'REMOVE_GAMEOBJECTS',   // data: type, id
     STRIKE_ANIMATION: 'STRIKE_ANIMATION',       // data: id (player), weaponId, cooldownTime
+    ADD_ITEM_DROP: 'ADD_ITEM_DROP',             // data: id (player), inventory
 
 
     // TO SERVER

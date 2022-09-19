@@ -16,6 +16,11 @@ class ClientProtagonist extends ClientPlayer {
         this.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
+        this.updateInventory(data);
+    }
+
+    updateInventory(data) {
+        this.updateInventoryItems(data.inventory);
     }
 
     updateSpriteToLocal(data) {

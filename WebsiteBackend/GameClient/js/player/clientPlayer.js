@@ -11,7 +11,7 @@ class ClientPlayer {
         this.isContact = false;
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
-            this.inventory = new ClientInventory(scene, isProtagonist);
+        this.inventory = new ClientInventory(scene, isProtagonist);
     }
 
 
@@ -61,7 +61,11 @@ class ClientPlayer {
     }
 
     setInventoryItems(data) {
-        this.inventory.setItems(data);
+        this.inventory.generateItems(data);
+    }
+
+    updateInventoryItems(data) {
+        this.inventory.updateItems(data);
     }
 
     generateSprite(x, y, w, h, maxHp) {

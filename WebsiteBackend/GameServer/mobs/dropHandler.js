@@ -9,7 +9,7 @@ class DropHandler {
     createDrops(owner) {
         const droppedItems = [];
         this.dropConfig.drops.forEach((currObj)=> {
-            this.performWithProb(()=> {
+            athis.performWithProb(()=> {
                 droppedItems.push(this.dropWeapon(currObj.item, owner));
             }, currObj.chance);
         });
