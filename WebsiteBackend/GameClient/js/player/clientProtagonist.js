@@ -3,7 +3,7 @@ class ClientProtagonist extends ClientPlayer {
 
     constructor(scene, id) {
         super(scene, id, true);
-        this.playerController = new PlayerController(this);
+        this.playerController = new PlayerController(this, MobileController.isMobile(scene));
                 
     }
 
@@ -16,7 +16,7 @@ class ClientProtagonist extends ClientPlayer {
         this.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
-        this.updateInventory(data);
+        //this.updateInventory(data);
     }
 
     updateInventory(data) {

@@ -28,7 +28,7 @@ class OverlayScene extends Phaser.Scene {
         this.input.topOnly = false;
 
         // controls
-        if (this.isDesktop()) {
+        if (!MobileController.isMobile(this)) {
             this.setupMobileControlls();
         }
 
@@ -43,7 +43,4 @@ class OverlayScene extends Phaser.Scene {
         this.mobileController.setupControlls();
     }
 
-    isDesktop() {
-        return this.game.device.os.desktop;
-    }
 }
