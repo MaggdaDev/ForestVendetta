@@ -31,9 +31,6 @@ class ItemFrame extends Phaser.GameObjects.Container {
         this.frameRect.setInteractive();
         this.frameRect.on("pointerover", () => instance.onPointerOver());
         this.frameRect.on("pointerout", () => instance.onPointerOut());
-        if (!scene.game.device.os.desktop) {
-            this.frameRect.setFillStyle(0xFF0000);
-        }
         this.frameRect.setInteractive();
     }
 

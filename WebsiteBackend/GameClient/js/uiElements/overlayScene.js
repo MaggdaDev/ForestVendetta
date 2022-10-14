@@ -23,9 +23,22 @@ class OverlayScene extends Phaser.Scene {
         this.inventoryHUD = new InventoryHUD(this);
         this.input.topOnly = false;
 
+        // controls
+        if (this.isDesktop()) {
+            this.setupMobileControlls();
+        }
 
 
 
 
+
+    }
+
+    setupMobileControlls() {
+        
+    }
+
+    isDesktop() {
+        return this.game.device.os.desktop;
     }
 }
