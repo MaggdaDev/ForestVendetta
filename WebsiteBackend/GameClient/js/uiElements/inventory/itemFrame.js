@@ -31,6 +31,9 @@ class ItemFrame extends Phaser.GameObjects.Container {
         this.frameRect.setInteractive();
         this.frameRect.on("pointerover", () => instance.onPointerOver());
         this.frameRect.on("pointerout", () => instance.onPointerOut());
+        if (!scene.game.device.os.desktop) {
+            this.frameRect.setFillStyle(0xFF0000);
+        }
         this.frameRect.setInteractive();
     }
 
@@ -45,7 +48,7 @@ class ItemFrame extends Phaser.GameObjects.Container {
 
     onPointerOut() {
         this.overlayScene.inventoryHUD.notifyExitFrame(this);
-        if(this.hoverInfo) {
+        if (this.hoverInfo) {
             this.hoverInfo.sprite.setVisible(false);
         }
 
