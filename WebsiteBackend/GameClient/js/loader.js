@@ -17,7 +17,7 @@ class Loader {
 
 
         // general
-        this.scene.load.json('ITEM_RARITY_CONFIG', "GameplayConfig/Items/itemRarity.json");
+        
     }
 
     loadSpriteSheets() {
@@ -29,13 +29,23 @@ class Loader {
 
     loadImages() {
         this.scene.load.image('rustySpade', "GameClient/images/weapons/rustySpade.png");
+
+        
     }
 
     loadHtml() {
-        this.scene.load.html('itemHoverInfo', 'GameClient/html/itemHoverInfo.html');
+       
     }
 
     loadCss() {
+        
+    }  
+
+    loadOverlayStuff() {
+        this.scene.load.image('mobileWalkstick', "GameClient/images/walkstick.png");
+
         this.scene.load.css('ingameUiStyle', 'GameClient/css/ingameUiStyle.css');
+        this.scene.load.html('itemHoverInfo', 'GameClient/html/itemHoverInfo.html');
+        this.scene.load.json('ITEM_RARITY_CONFIG', "GameplayConfig/Items/itemRarity.json");
     }
 }

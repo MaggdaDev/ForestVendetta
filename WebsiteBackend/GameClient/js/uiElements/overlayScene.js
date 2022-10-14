@@ -13,6 +13,10 @@ class OverlayScene extends Phaser.Scene {
             console.log("Window resize!");
             this.screenZone.setSize(this.scale.gameSize.width, this.scale.gameSize.height);
         });
+
+        // loading
+        var loader = new Loader(this);
+        loader.loadOverlayStuff();
     }
 
     create() {
@@ -35,7 +39,8 @@ class OverlayScene extends Phaser.Scene {
     }
 
     setupMobileControlls() {
-        
+        this.mobileController = new MobileController(this);
+        this.mobileController.setupControlls();
     }
 
     isDesktop() {
