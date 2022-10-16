@@ -28,7 +28,7 @@ class OverlayScene extends Phaser.Scene {
         this.input.topOnly = false;
 
         // controls
-        if (!MobileController.isMobile(this)) {
+        if (MobileController.isMobile(this)) {
             this.setupMobileControlls();
         }
 

@@ -1,7 +1,7 @@
 class PlayerController {
     constructor(owner, isMobile) {
         this.owner = owner;
-        if (!isMobile) {
+        if (isMobile) {
             this.setupMobileEvents();
         } else {
             this.setupKeyEvents();
