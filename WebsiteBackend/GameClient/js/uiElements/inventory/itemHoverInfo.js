@@ -16,10 +16,17 @@ class ItemHoverInfo {
         const itemStatsHtml = new ItemStatsHtml(staticItemConfig.stats);
         const itemRarityHtml = new ItemRarityHtml(rarityConfig, staticItemConfig.display.class_name);
 
+        this.sprite.getChildByID("nameLbl").innerHTML = itemNameHtml.toHtml();
+        this.sprite.getChildByID("descriptionLbl").innerHTML = itemDescriptionHtml.toHtml();
+        this.sprite.getChildByID("statsLbl").innerHTML = itemStatsHtml.toHtml();
+        this.sprite.getChildByID("rarityLbl").innerHTML = itemRarityHtml.toHtml();
+
+        /*
         this.sprite.getChildByID("nameLbl").setHTML(itemNameHtml.toHtml());
         this.sprite.getChildByID("descriptionLbl").setHTML(itemDescriptionHtml.toHtml());
         this.sprite.getChildByID("statsLbl").setHTML(itemStatsHtml.toHtml());
         this.sprite.getChildByID("rarityLbl").setHTML(itemRarityHtml.toHtml());
+        */
         this.sprite.originX = 0.5;
         this.sprite.originY = 1;
         this.sprite.setVisible(false);

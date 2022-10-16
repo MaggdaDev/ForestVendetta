@@ -1,10 +1,10 @@
 class WalkStick extends Phaser.GameObjects.Container {
     static HEIGHT = 300;
-    static LEFT_OFFSET = 150;
+    static LEFT_OFFSET = 200;
     static BOTTOM_OFFSET = 180;
     static WIDTH = 150;
 
-    static MAX_OFF = 200;
+    static MAX_OFF = 150;
 
     constructor(scene) {
         super(scene);
