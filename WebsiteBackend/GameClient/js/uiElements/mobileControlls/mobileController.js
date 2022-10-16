@@ -6,10 +6,20 @@ class MobileController {
     }
 
     setupControlls() {
+        const instance = this;
+        // walkstick
         this.walkStick = new WalkStick(this.overlayScene);
         this.overlayScene.add.existing(this.walkStick);
         this.resetWalkstickPosition();
         this.walkStick.setupListeners(this);
+
+        // jumpbutton
+        this.jumpButton = new JumpButton(this.overlayScene, () => instance.onStartJump(), () => instance.onEndJump());
+        this.overlayScene.add.existing(this.jumpButton.sprite);
+
+        // strikebutton
+        this.strikeButton = new StrikeButton(this.overlayScene, () => instance.onStartStrike(), () => instance.onEndStrike());
+        this.overlayScene.add.existing(this.strikeButton.sprite);
     }
 
     resetWalkstickPosition() {

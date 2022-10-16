@@ -43,6 +43,8 @@ class Loader {
 
     loadOverlayStuff() {
         this.scene.load.image('mobileWalkstick', "GameClient/images/walkstick.png");
+        this.scene.load.image('mobileJumpButton', "GameClient/imagesjumpbutton.png");
+        this.scene.load.image('mobileStrikeButton', "GameClient/images/strikebutton.png");
 
         this.scene.load.css('ingameUiStyle', 'GameClient/css/ingameUiStyle.css');
         this.scene.load.html('itemHoverInfo', 'GameClient/html/itemHoverInfo.html');
