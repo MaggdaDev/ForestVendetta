@@ -15,16 +15,32 @@ class MobileController {
 
         // jumpbutton
         this.jumpButton = new JumpButton(this.overlayScene, () => instance.onStartJump(), () => instance.onEndJump());
-        this.overlayScene.add.existing(this.jumpButton.sprite);
+        Phaser.Display.Align.In.BottomRight(this.jumpButton.sprite, this.overlayScene.screenZone, -1 * JumpButton.RIGHT_OFFSET, -1 * JumpButton.BOTTOM_OFFSET);
 
         // strikebutton
         this.strikeButton = new StrikeButton(this.overlayScene, () => instance.onStartStrike(), () => instance.onEndStrike());
-        this.overlayScene.add.existing(this.strikeButton.sprite);
+        Phaser.Display.Align.In.BottomRight(this.strikeButton.sprite, this.overlayScene.screenZone, -1 * StrikeButton.RIGHT_OFFSET, -1 * (JumpButton.BOTTOM_OFFSET + JumpButton.ORIGINAL_SIZE.h*JumpButton.DISPLAY_FACT + StrikeButton.BOTTOM_OFFSET));
     }
 
     resetWalkstickPosition() {
         Phaser.Display.Align.In.BottomLeft(this.walkStick, this.overlayScene.screenZone, -1 * WalkStick.LEFT_OFFSET, -1 * WalkStick.BOTTOM_OFFSET);
         this.walkStick.updateStartPoint();
+    }
+
+    onStartJump() {
+        MobileEventEmitter.getInstance().emit("JUMPBUTTON_START");
+    }
+
+    onEndJump() {
+        MobileEventEmitter.getInstance().emit("JUMPBUTTON_END");
+    }
+
+    onStartStrike() {
+        MobileEventEmitter.getInstance().emit("STRIKEBUTTON_START");
+    }
+
+    onEndStrike() {
+        MobileEventEmitter.getInstance().emit("STRIKEBUTTON_END");
     }
 
     onDragStart(data) {

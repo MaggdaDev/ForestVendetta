@@ -33,10 +33,10 @@ class PlayerController {
         MobileEventEmitter.getInstance().on('WALKSTICK_RELEASE_RIGHT', () => this.stopWalkRight(instance));
         MobileEventEmitter.getInstance().on('WALKSTICK_RELEASE_LEFT', () => this.stopWalkLeft(instance));
 
-        //this.owner.mainScene.keyManager.startJump = ()=> this.startJump(instance);
-        //this.owner.mainScene.keyManager.stopJump = ()=> this.stopJump(instance);
+        MobileEventEmitter.getInstance().on('JUMPBUTTON_START', ()=> this.startJump(instance));
+        MobileEventEmitter.getInstance().on('JUMPBUTTON_END', ()=> this.stopJump(instance));
 
-        //this.owner.mainScene.mouseManager.strike = ()=> this.strike(instance);
+        MobileEventEmitter.getInstance().on('STRIKEBUTTON_START', ()=> this.strike(instance));
     }
 
     get clientProtagonist() {
