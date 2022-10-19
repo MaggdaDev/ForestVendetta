@@ -46,10 +46,10 @@ class ClientPlayer {
     }
 
     updateSpriteToData(data) {
-        if (Math.random() < 0.1) {
+        //if (Math.random() < 0.1) {
             this.clientPrediction.addRealPoint(new ClientPredictionPoint(data.pos.x, data.pos.y, this.mainScene.time.now));
             this.sprite.update((0.5 * data.pos.x + 0.5 * this.sprite.x), (0.5 * data.pos.y + 0.5 * this.sprite.y), data.fightingObject.hp, data.facingLeft);
-        }
+        //}
     }
 
     updateDebugPolygon(data) {
