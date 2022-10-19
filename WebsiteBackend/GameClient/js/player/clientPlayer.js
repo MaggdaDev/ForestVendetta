@@ -12,6 +12,15 @@ class ClientPlayer {
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
         this.inventory = new ClientInventory(scene, isProtagonist);
+        this.clientPrediction = new ClientPrediction();
+    }
+
+    clientSideUpdate(time, delta) {
+        const pred = this.clientPrediction.getNext(time);
+        if (pred !== null) {
+            this.sprite.updatePredicted(0.5 * this.sprite.x + 0.5 * pred.x, 0.5 * this.sprite.y + 0.5 * pred.y);
+            console.log("setto");
+        }
     }
 
 
@@ -25,7 +34,7 @@ class ClientPlayer {
     }
 
     updateWeapon(data) {
-        if(this.inventory.selected != data.inventory.selected) {
+        if (this.inventory.selected != data.inventory.selected) {
             this.equipItem(data.inventory.selected);
         }
     }
@@ -37,7 +46,10 @@ class ClientPlayer {
     }
 
     updateSpriteToData(data) {
-        this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp, data.facingLeft);
+        if (Math.random() < 0.1) {
+            this.clientPrediction.addRealPoint(new ClientPredictionPoint(data.pos.x, data.pos.y, this.mainScene.time.now));
+            this.sprite.update((0.5 * data.pos.x + 0.5 * this.sprite.x), (0.5 * data.pos.y + 0.5 * this.sprite.y), data.fightingObject.hp, data.facingLeft);
+        }
     }
 
     updateDebugPolygon(data) {

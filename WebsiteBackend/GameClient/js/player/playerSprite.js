@@ -32,7 +32,9 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     }
 
-    
+    updatePredicted(x,y) {
+        this.update(x,y, this.healthBar.currentHealth, this.flipped);
+    }
 
     update(x, y, currHp, facingLeft) {
         this.x = x;
@@ -111,6 +113,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     stopWalk() {
+        this.legSprite.playAfterRepeat(null);
         this.legSprite.stop();
 
         this.legSprite.setFrame(0);

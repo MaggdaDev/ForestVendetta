@@ -25,6 +25,11 @@ class GameScene extends Phaser.Scene {
         loader.loadAll();
     }
 
+    // OVERRIDE
+    update(time, delta) {           // CLIENTSIDE UPDATE LOOP
+        this.clientProtagonist.clientSideUpdate(time, delta);
+    }
+
     create() {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
