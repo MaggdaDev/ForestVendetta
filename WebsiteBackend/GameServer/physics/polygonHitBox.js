@@ -1,5 +1,5 @@
 const Segment = require("./segment");
-const Vector = require("./vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class PolygonHitBox {
     /**

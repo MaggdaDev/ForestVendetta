@@ -1,7 +1,6 @@
 const HitBox = require("../physics/hitbox");
 const Segment = require("../physics/segment");
-const Vector = require("../physics/vector");
-
+const Vector = require("../../GameStatic/js/maths/vector");
 class TargetManager {
     constructor(owner, players, world) {
         this.owner = owner;

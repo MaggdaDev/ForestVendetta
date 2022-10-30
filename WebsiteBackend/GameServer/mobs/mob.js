@@ -1,7 +1,7 @@
 const FightingObject = require("../fighting/fightingObject");
 const MovableBody = require("../physics/movableBody");
 const PolygonHitBox = require("../physics/polygonHitBox");
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 const DropHandler = require("./dropHandler");
 const TargetManager = require("./targetManager");
 

@@ -1,5 +1,5 @@
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class FightingObject {
 

@@ -1,4 +1,4 @@
-const Vector = require("./vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class Segment {
     constructor(from, to) {

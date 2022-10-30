@@ -1,6 +1,6 @@
 const FightingObject = require("../fighting/fightingObject");
 const PolygonHitBox = require("../physics/polygonHitBox");
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 const Mob = require("./mob");
 
 class Frog extends Mob{

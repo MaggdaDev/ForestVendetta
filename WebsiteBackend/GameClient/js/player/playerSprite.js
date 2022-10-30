@@ -32,15 +32,17 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     }
 
-    updatePredicted(x,y) {
-        this.update(x,y, this.healthBar.currentHealth, this.flipped);
-    }
-
-    update(x, y, currHp, facingLeft) {
+    updatePredicted(x, y) {
         this.x = x;
         this.y = y;
-        this.healthBar.update(x, y, currHp);
-        this.flipped = facingLeft;
+        this.healthBar.update(this.x, this.y, this.healthBar.currentHealth);
+    }
+
+    updateServer(currHp, facingLeft) {
+        this.healthBar.update(this.x, this.y, currHp);
+        if (facingLeft !== undefined) {
+            this.flipped = facingLeft;
+        }
     }
 
     onUpperAnimationUpdate(anim, frame) {
@@ -50,14 +52,14 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     setWeapon(weapon) { // weapon null for none equipped
-        if(this.weapon && (!weapon)) {  // from equipped to unequipped
+        if (this.weapon && (!weapon)) {  // from equipped to unequipped
             this.upperSprite.stop();
             this.upperSprite.setFrame(0);
             this.weapon.update(0);
         }
         this.weapon = weapon;
-        if(weapon === null || weapon === undefined) {   // no weapon
-        
+        if (weapon === null || weapon === undefined) {   // no weapon
+
 
         } else {                                        // weapon equipped
             this.weapon.sprite.setVisible(true);                    // weapon visible
@@ -71,7 +73,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         }
     }
 
-    
+
 
     onUpperAnimationFinished() {
         if (this.weapon === null && this.startingWalk) {
@@ -101,7 +103,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.startingWalk = true;
         this.legSprite.play('startLegWalk');
         this.legSprite.playAfterRepeat('legWalk');
-        this.legSprite.on('animationrepeat', ()=>{
+        this.legSprite.on('animationrepeat', () => {
             if (this.weapon === null) {
                 this.upperSprite.play('upperWalk');
             }

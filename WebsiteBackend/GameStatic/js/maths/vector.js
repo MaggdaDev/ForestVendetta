@@ -179,4 +179,6 @@ class Vector {
 
 
 }
-module.exports = Vector;
+if (typeof module !== 'undefined') {
+    module.exports = Vector;
+}

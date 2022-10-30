@@ -1,4 +1,4 @@
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 const Platform = require("./platform");
 const PolygonObject = require("./polygonObject");
 const WorldObjectGenerator = require("./worldObjectGenerator");

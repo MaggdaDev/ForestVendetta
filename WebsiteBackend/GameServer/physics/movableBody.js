@@ -2,8 +2,8 @@ const HitBox = require("./hitbox");
 const JumpData = require("./jumpData");
 const PhysicalContact = require("./physicalContact");
 const RubberPoint = require("./rubberPoint");
-const { isSimilarDir } = require("./vector");
-const Vector = require("./vector");
+const { isSimilarDir } = require("../../GameStatic/js/maths/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class MovableBody {
 

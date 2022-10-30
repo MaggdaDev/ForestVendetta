@@ -1,6 +1,6 @@
 const Intersection = require("./intersection");
 const PolygonHitBox = require("./polygonHitBox");
-const Vector = require("./vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class HitBox {
     constructor(x, y, w, h) {  //x,y: center cords; w,h: width/height

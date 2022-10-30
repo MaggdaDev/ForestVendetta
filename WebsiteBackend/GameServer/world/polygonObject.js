@@ -1,5 +1,5 @@
 const PolygonHitBox = require("../physics/polygonHitBox");
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 const WorldObject = require("./worldObject");
 
 class PolygonObject extends WorldObject {

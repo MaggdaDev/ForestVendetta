@@ -2,7 +2,7 @@ const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
 const PlayerControls = require("../../GameStatic/js/playerControls");
 const HitBox = require("../physics/hitbox");
 const MovableBody = require("../physics/movableBody");
-const Vector = require("../physics/vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 const SocketUser = require("./socketUser");
 const PolygonHitBox = require("../physics/polygonHitBox");
 const FightingObject = require("../fighting/fightingObject");
@@ -138,6 +138,8 @@ class Protagonist {
         var instance = this;
         return {
             pos: this.hitBox.pos,
+            spd: this.movableBody.spd,
+            acc: Vector.multiply(this.movableBody.resultingForce, 1.0/this.movableBody.mass),
             height: PLAYER_HITBOX_HEIGHT,
             width: PLAYER_HITBOX_WIDTH,
             id: this.id,

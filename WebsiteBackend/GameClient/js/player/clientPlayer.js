@@ -12,13 +12,12 @@ class ClientPlayer {
         this.isWalkingRight = false;
         this.isWalkingLeft = false;
         this.inventory = new ClientInventory(scene, isProtagonist);
-        this.clientPrediction = new ClientPrediction();
+        this.clientPrediction = new ClientPrediction({x:0, y:0});
     }
-
     clientSideUpdate(time, delta) {
-        const pred = this.clientPrediction.getNext(time);
-        if (pred !== null) {
-            this.sprite.updatePredicted(0.5 * this.sprite.x + 0.5 * pred.x, 0.5 * this.sprite.y + 0.5 * pred.y);
+        const pred = this.clientPrediction.getNextClientPos(delta);
+        if (pred !== null && this.sprite !== undefined && this.sprite !== null) {
+            this.sprite.updatePredicted(pred.x, pred.y);
             console.log("setto");
         }
     }
@@ -47,8 +46,8 @@ class ClientPlayer {
 
     updateSpriteToData(data) {
         //if (Math.random() < 0.1) {
-            this.clientPrediction.addRealPoint(new ClientPredictionPoint(data.pos.x, data.pos.y, this.mainScene.time.now));
-            this.sprite.update((0.5 * data.pos.x + 0.5 * this.sprite.x), (0.5 * data.pos.y + 0.5 * this.sprite.y), data.fightingObject.hp, data.facingLeft);
+            this.clientPrediction.updateServer(data);
+            this.sprite.updateServer(data.fightingObject.hp, data.facingLeft);
         //}
     }
 

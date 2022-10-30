@@ -1,6 +1,6 @@
 const Intersection = require("./intersection");
 const MovableBody = require("./movableBody");
-const Vector = require("./vector");
+const Vector = require("../../GameStatic/js/maths/vector");
 
 class PhysicalContact {
 
