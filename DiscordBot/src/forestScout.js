@@ -5,6 +5,7 @@ const RabbitConnection = require("../../shared/rabbitConnection");
 const RabbitCommandHandler = require("./Rabbit/discordRabbitCommandHandler");
 const RabbitCommunicator = require("./Rabbit/discordRabbitCommunicator");
 const DiscordMessageSender = require("./discordMessageSender");
+const ForestScoutMongoAccessor = require("./MongoAccess/ForestScoutMongoAccessor");
 
 class ForestScout {
 
@@ -31,6 +32,9 @@ class ForestScout {
         this.rabbitConnection = rabbitConnection;
         this.rabbitCommandHandler = new RabbitCommandHandler(this);
         this.rabbitCommunicator = new RabbitCommunicator(this.rabbitConnection, this.rabbitCommandHandler);
+
+        // mongo
+        this.mongoAccess = new ForestScoutMongoAccessor(this);
         
         var instance = this;
 

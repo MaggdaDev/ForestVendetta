@@ -1,7 +1,7 @@
 #!/bin/sh
 if [ -z "$1"]
 then
-source scripts/startAllSrc/startAllCommand.sh
+    source scripts/startAllSrc/startAllCommand.sh
 else
 case $1 in
     discordbot)
@@ -20,4 +20,4 @@ case $1 in
     /mnt/c/Windows/System32/cmd.exe /c "wt --title Mongo wsl source /var/stuff/forestvendetta/ForestVendetta/scripts/startAllSrc/startMongo.sh"
     ;;
 esac
-fi 
+fi

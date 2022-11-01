@@ -5,6 +5,7 @@
   "author": "dajabe",
   "license": "ISC",
   "dependencies": {
-    "amqplib": "^0.10.3"
+    "amqplib": "^0.10.3",
+    "mongodb": "^4.11.0"
   }
 }

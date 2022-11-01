@@ -6,9 +6,9 @@ const config = {
     "database":"forestvendetta"
 }
 
-const ip = execSync("docker container inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' forestvendetta-rabbitmq");
+const ip = '127.69.42.34:27017';//execSync("docker container inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' forestvendetta-rabbitmq");
 
-export default {
+module.exports = {
     "v":"1",
     "connectstring":"mongodb://" + config.user + ":" + config.pass + "@" + ip + "/" + config.database,
     "config":config    
