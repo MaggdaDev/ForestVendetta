@@ -28,6 +28,16 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "LoginWebsite",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/LoginWebsite/index.js",
+            "cwd": "${workspaceFolder}/LoginWebsite"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Scheduler",
             "skipFiles": [
                 "<node_internals>/**"
