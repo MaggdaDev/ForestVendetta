@@ -14,6 +14,7 @@ class ForestScoutMongoAccessor {
         const player = await this.mongoAccess.playerCollection.findOne(query);
         if(player === null) {   // not existing
             logMongo("Player not existing; now being created...");
+            const addPlayer = {discordID: String(userID), accountLevel: 1};
             await this.mongoAccess.playerCollection.insertOne({discordID: String(userID), accountLevel: 1});
             logMongo("Player created.");
         } else {
