@@ -10,17 +10,14 @@ db.createCollection(playersDBName, {
         $jsonSchema: {
             bsonType: "object",
             title: "Player Object Validation",
-            required: ["discordID", "accountLevel", "inventory"],
+            required: ["accountLevel", "inventory"],
             properties: {
-                discordID: {
-                    bsonType: "string"
-                },
                 accountLevel: {
                     bsonType: "int",
                     minimum: 1
                 }, 
                 inventory: {    
-                    bsonType: "array"           // ARRAY OF UNIQUE _IDs OF WEAPONS
+                    bsonType: "object"           // ARRAY OF UNIQUE _IDs OF WEAPONS
                 }
             }
         }
@@ -35,12 +32,12 @@ db.createCollection(playersDBName, {
         $jsonSchema: {
             bsonType: "object",
             title: "Items Object Validation",
-            required: ["type", "ownerDiscordID"],
+            required: ["itemName", "ownerDiscordID"],
             properties: {
                 ownerDiscordID: {           // UNIQUE LINK TO: PLAYERS
                     bsonType: "string"
                 },
-                type: {
+                itemName: {
                     bsonType: "string"
                 }
             }

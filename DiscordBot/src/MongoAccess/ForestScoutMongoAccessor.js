@@ -10,18 +10,17 @@ class ForestScoutMongoAccessor {
 
     async getPlayerOrCreate(userID) {
         logMongo("Get player or create if not existing...");
-        const query = {discordID: userID};
+        const query = {_id: userID};
         const player = await this.mongoAccess.playerCollection.findOne(query);
         if(player === null) {   // not existing
             logMongo("Player not existing; now being created...");
-            const addPlayer = {discordID: String(userID), accountLevel: 1};
-            await this.mongoAccess.playerCollection.insertOne({discordID: String(userID), accountLevel: 1});
+            var newplayer = this.mongoAccess.objectFactory.addNewPlayer(userID);
             logMongo("Player created.");
+            return newplayer;
         } else {
             logMongo("Player existing.");
             return player;
         }
-        return await this.mongoAccess.playerCollection.findOne(query);
     }
 
     async getAccountLevel(userID) {

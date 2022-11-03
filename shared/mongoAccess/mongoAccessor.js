@@ -1,8 +1,10 @@
 const {MongoClient} = require('mongodb');
+const ObjectFactory = require('./objectFactory');
 
 class MongoAccessor {
     static DATABASE_NAME = "forestvendetta";
     static PLAYER_COLLECTION_NAME = "players";
+    static ITEM_COLLECTION_NAME = "items";
     constructor() {
         logMongo("Initializing mongo connection...")
 
@@ -23,6 +25,8 @@ class MongoAccessor {
             logMongo("Connected successfully!");
             this.database = this.client.db(MongoAccessor.DATABASE_NAME);
             this.playerCollection = this.database.collection(MongoAccessor.PLAYER_COLLECTION_NAME);
+            this.itemCollection = this.database.collection(MongoAccessor.ITEM_COLLECTION_NAME);
+            this.objectFactory = new ObjectFactory(this);
         });
         
     }
