@@ -27,6 +27,16 @@ class SchedulerRabbitCommunicator {
         }))
     }
 
+    /**
+     * 
+     * @param {number} port 
+     */
+    sendCreateShardCommand(port) {
+        this.rabbitConnection.sendToShardManager(new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.CREATE_SHARD, {
+            port: port
+        }))
+    }
+
     sendTestMessage() {
         this.rabbitConnection.sendToDiscordBot(new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.SEND_TEST_MESSAGE));
     }

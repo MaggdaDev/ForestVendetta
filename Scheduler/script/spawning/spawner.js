@@ -3,7 +3,7 @@ const path = require('path');
 const SchedulerRabbitCommunicator = require('../rabbit/schedulerRabbitCommunicator');
 const Randomizer = require('./randomizer');
 class Spawner {
-    static CONFIG_PATH = "../GameplayConfig/Bosses";
+    static CONFIG_PATH = "../WebsiteBackend/GameplayConfig/Bosses";
     static MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
     /**
@@ -37,6 +37,7 @@ class Spawner {
 
     spawn(bossConfig, guildInfo) {
         this.rabbitCommunicator.sendSpawnBossCommand(bossConfig.spawn_config.display_name, guildInfo.channelID);
+        this.rabbitCommunicator.sendCreateShardCommand(3000);
     }
 
     canSpawn(config) {

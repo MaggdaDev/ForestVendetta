@@ -3,8 +3,9 @@ class RabbitMessage {
     static RABBIT_COMMANDS = {
         FROM_SCHEDULER: {                                           // all messages sent by scheduler
             SEND_TEST_MESSAGE: 'SEND_TEST_MESSAGE',             // to discordbot
-
             SEND_SPAWN_BOSS_MESSAGE: 'SEND_SPAWN_BOSS_MESSAGE', // to discordbot; args: displayName, channelID
+
+            CREATE_SHARD: 'CREATE_SHARD'                            // to shard manager; args: port
         },
 
         FROM_DISCORDBOT: {                                          // all messages sent by discordbot

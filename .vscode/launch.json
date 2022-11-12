@@ -18,6 +18,16 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "ShardManager",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/shardManager/main.js",
+            "cwd": "${workspaceFolder}/shardManager"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "WebsiteBackend",
             "skipFiles": [
                 "<node_internals>/**"

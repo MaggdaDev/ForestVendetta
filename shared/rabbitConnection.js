@@ -70,7 +70,9 @@ class RabbitConnection {
                 })
                 .catch((error) => {
                     logRabbit("First attempt to connect to rabbit failed. Starting blocking recursive connection attempts with interval " + interval + "...");
-                    instance._connectUntilSuccessRecursion(interval);
+                    instance._connectUntilSuccessRecursion(interval).then(() => {
+                        resolve();
+                    });
                 });
         }, 2000);
         return prom;
@@ -81,10 +83,14 @@ class RabbitConnection {
         const prom = new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.connect()
-                    .then(() => resolve())
+                    .then(() => {
+                        resolve()
+                    })
                     .catch((error) => {
                         logRabbit("Can't connect to rabbit! Retrying in " + interval + "ms...");
-                        instance._connectUntilSuccessRecursion(interval);
+                        instance._connectUntilSuccessRecursion(interval).then(() => {
+                            resolve();
+                        });
                     });
             }, interval);
 
@@ -95,6 +101,14 @@ class RabbitConnection {
 
 
     // sending start
+/**
+ * 
+ * @param {RabbitMessage} message 
+ */
+    sendToShardManager(message) {
+        this._sendTo(RabbitConnection.QUEUES.toShardManager, message);
+    }
+
     /**
      * 
      * @param {RabbitMessage} message 
@@ -119,13 +133,21 @@ class RabbitConnection {
     _sendTo(queue, message) {
         this.checkConnection();
         var msgString = JSON.stringify(message);
-        this.channel.sendToQueue(RabbitConnection.QUEUES.toDiscordBot, Buffer.from(msgString));
+        this.channel.sendToQueue(queue, Buffer.from(msgString));
         logRabbit("sent message to queue '" + queue + "': " + msgString + "");
-
     }
     //sending end
 
     //consuming start
+
+    /**
+     * @description SHOULD BE ONLY USED BY SHARDHANDLER
+     * @param {function(message)} handler 
+     */
+    onMessageToShardHandler(handler) {
+        this._onMessageToQueue(handler, RabbitConnection.QUEUES.toShardManager);
+    }
+
     /**
      * @description SHOULD BE ONLY USED BY DISCORDBOT
      * @param {function(message)} handler - handler to be executed for every received message 
