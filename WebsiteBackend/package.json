@@ -1,7 +1,7 @@
 {
-    "name": "discord-dungeons-gameserver",
+    "name": "forest-vendetta-gameserver",
     "version": "0.0.1",
-    "description": "nodejs gameserver for discord dungeons",
+    "description": "nodejs gameserver for forest vendetta",
     "dependencies": {
         "amqplib": "^0.10.3",
         "express": "^4.18.1",

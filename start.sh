@@ -19,5 +19,8 @@ case $1 in
     mongo)
     /mnt/c/Windows/System32/cmd.exe /c "wt --title Mongo wsl source /var/stuff/forestvendetta/ForestVendetta/scripts/startAllSrc/startMongo.sh"
     ;;
+    shardmanager)
+    /mnt/c/Windows/System32/cmd.exe /c "wt --title Mongo wsl source /var/stuff/forestvendetta/ForestVendetta/scripts/startAllSrc/startShardManager.sh"
+    ;;
 esac
 fi

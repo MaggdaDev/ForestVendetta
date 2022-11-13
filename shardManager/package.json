@@ -4,7 +4,7 @@
   "description": "Connecting to rabbit and starting new shards on request",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js"
   },
   "author": "maggda",
   "license": "ISC"

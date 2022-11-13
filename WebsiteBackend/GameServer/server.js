@@ -9,6 +9,11 @@ const NetworkCommands = require('../GameStatic/js/network/networkCommands.js');
 const ServerNetworkManager = require('./network/serverNetworkManager');
 const io = new Server(server);
 
+const args = process.argv;
+const port = args[2];     // first 2 elements internal
+
+console.log("Args: " + JSON.stringify(args));
+
 app.use(express.static('.'));
 
 app.get('/', (req, res) => {
@@ -22,6 +27,6 @@ mainLoop.init();
 mainLoop.start();
 
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(port, () => {
+  console.log('listening on port: ' + port);
 });
