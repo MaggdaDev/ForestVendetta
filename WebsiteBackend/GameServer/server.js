@@ -35,7 +35,7 @@ rabbitConnection.connectUntilSuccess(2000).then(()=> {
   });
   
   var playerList = new Map();
-  var mainLoop = new MainLoop(playerList);
+  var mainLoop = new MainLoop(playerList, server);
   var networkManager = new ServerNetworkManager(io, playerList, mainLoop);
   mainLoop.init();
   mainLoop.start();

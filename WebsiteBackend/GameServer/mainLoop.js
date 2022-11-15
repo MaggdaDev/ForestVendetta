@@ -7,9 +7,13 @@ const World = require('./world/world');
 const WorldLoader = require('./world/worldLoader');
 class MainLoop {
 
-    constructor(playerList) {
+
+    constructor(playerList, server) {
+        this.server = server;
         console.log("Main Loop created!")
         this.oldTime = Date.now();
+        this.birthTime = -1;
+        this.startTime = -1;
         this.lastLog = 0;
         this.timeElapsed = 0;
         this.players = playerList;
@@ -18,7 +22,7 @@ class MainLoop {
         this.world = this.worldLoader.loadWorld();
 
         this.networkManager = undefined;
-              
+
 
     }
 
@@ -26,8 +30,8 @@ class MainLoop {
         this.weaponManager = new WeaponManager();
         this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
         this.updateData = this.collectUpdateData();     // after mob manager is created
-        this.mobManager.spawnRespawningFrog(900,700);
-        
+        this.mobManager.spawnRespawningFrog(900, 700);
+
     }
 
     /**
@@ -48,7 +52,7 @@ class MainLoop {
         this.updateAllPlayers(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.mobManager.updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.allPlayersSendUpdate(this.updateData);
-        
+
     }
 
     updateWorld(timeElapsed, ws, ms, ps) {
@@ -88,7 +92,7 @@ class MainLoop {
 
     get sendablePlayerUpdateData() {
         var ret = [];
-        this.players.forEach((curr)=>{
+        this.players.forEach((curr) => {
             ret.push(curr);
         });
         return ret;
@@ -97,7 +101,7 @@ class MainLoop {
     get playerIntersectables() {
         return Array.from(this.players.values());
     }
-    
+
 
     /*
     @param {Object} instance - this instance
@@ -105,24 +109,64 @@ class MainLoop {
     loop(instance) {
         instance.timeElapsed = (Date.now() - instance.oldTime) / 1000.0;
         instance.oldTime = Date.now();
-        if(instance.timeElapsed > 0.1) {
+        if (instance.timeElapsed > 0.1) {
             console.log("More than 100ms in server loop. Cropping time elapsed.");
             instance.timeElapsed = 0.1;
         }
         if (instance.oldTime - instance.lastLog > 3000) {
             instance.lastLog = instance.oldTime;
-            console.log("Mainloop running");
+            console.log("Mainloop running for " + Math.round(0.001 * (Date.now() - this.startTime)) + "s (after " + Math.round(0.001 * (this.startTime - this.birthTime)) + "s idling)");
         }
         instance.update(instance.timeElapsed);
+        if(!this.checkShardALive()) {
+            console.log("Shard shall die after " + Math.round(0.001 * (Date.now() - this.startTime)) + "s life (after " + Math.round(0.001 * (this.startTime - this.birthTime)) + "s idling)");
+            this.end();
+        }
+    }
 
+    end() {
+        clearInterval(this.intervalID);
+        console.log("F");
+        this.server.close();
+        process.exit(0);
+    }
+
+    /**
+     * @description determines wether or not shard should shut down -   60s after birth
+     */
+    checkShardALive() {
+        if(Date.now() - this.birthTime > 1000 * 10 && this.players.size === 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     start() {
-        var self = this
-        setInterval(function () {
-            self.loop(self);
-        }, 30);
+        console.log("Starting main loop...");
+        this.birthTime = Date.now();
+        var self = this;
+        console.log("Beginning waiting for players...");
+        const idleEmptyLobbyIntervalID = setInterval(function () {      // begin idling and waiting for players
+            if (self.players.size === 0) {
+                console.log("Lobby empty... waiting for " + Math.round(0.001 * (Date.now() - self.birthTime)) + "s...");
+            } else {
+                console.log("Lobby not empty! Starting mainLoop!");
+                clearInterval(idleEmptyLobbyIntervalID);
+                self.startTime = Date.now();
+                self.intervalID = setInterval(function () {
+                    self.loop(self);
+                }, 30);
+            }
+            if(!self.checkShardALive()) {
+                console.log("Shard dieing during idle phase.");
+                self.end();
+            }
+        }, 1000);
+
     }
+
+
 
     addPlayer(socket, data) {
         console.log("Register: " + JSON.stringify(data));
