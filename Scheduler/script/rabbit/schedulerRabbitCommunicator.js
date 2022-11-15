@@ -17,14 +17,13 @@ class SchedulerRabbitCommunicator {
     }
 
     sendCreateShardCommandThen(gameID, thenFunc) {
-        const messageID = IDGenerator.instance().nextMessageID();
-        this.rabbitConnection.onReplied(messageID, (args)=>{
-            console.log("Reply to create shard command caught successfully! Now executing then()");
-            thenFunc(args);
-        });
-        this.rabbitConnection.sendToShardManager(new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.CREATE_SHARD, {
-            gameID: gameID
-        }, messageID));
+        this.rabbitConnection.sendToQueueAndHandleReply(
+            RabbitConnection.QUEUES.toShardManager,
+            new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.CREATE_SHARD,
+                {
+                    gameID: gameID
+                }),
+            thenFunc);
     }
 
     /**

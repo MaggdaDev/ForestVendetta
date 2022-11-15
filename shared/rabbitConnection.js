@@ -1,4 +1,5 @@
 const amqp = require('amqplib/callback_api');
+const IDGenerator = require('./idGen/idGenerator');
 const RabbitMessage = require('./rabbitMessage');
 class RabbitConnection {
     static QUEUES = {
@@ -21,6 +22,22 @@ class RabbitConnection {
 
     }
 
+    /**
+     * 
+     * @param {string} queue - PLEASE use RabbitConnection.QUEUES
+     * @param {RabbitMessage} message 
+     * @param {function(args)} replyHandler 
+     */
+    sendToQueueAndHandleReply(queue, message, replyHandler) {
+        const messageID = IDGenerator.instance().nextMessageID();
+        console.log("Setting up reply-await: Message ID '" + messageID + "' generated");
+        this.onReplied(messageID, (args)=>{
+            console.log("Reply caught successfully! Now executing replyHandler()");
+            replyHandler(args);
+        });
+        message.correlationID = messageID;
+        this._sendTo(queue, message);
+    }
 
     // connecting start
     assertQueues(channel) {
