@@ -9,6 +9,8 @@ class RabbitConnection {
     constructor() {
         logRabbit("Initializing rabbit connection...")
 
+        this.awaitedReplies = new Map();
+
         // requiring connect string
         const CONFIG_LOCATION = '../config-example';
         const CONFIG_NAME = 'rabbitmq';
@@ -28,6 +30,12 @@ class RabbitConnection {
                 channel.assertQueue(val, { durable: false });
             }
         }
+    }
+
+    // assert custom queue, i.e. with name [gameID] to address specific shards
+    assertCustomQueue(queue) {
+        logRabbit("Asserting custom queue: " + queue);
+        this.channel.assertQueue(queue, {durable: false});
     }
 
     connect() {
@@ -101,10 +109,19 @@ class RabbitConnection {
 
 
     // sending start
-/**
- * 
- * @param {RabbitMessage} message 
- */
+
+    /**
+     * 
+     * @param {string} queue - custom queue, i.e. game shard queue
+     * @param {RabbitMessage} message 
+     */
+    sendToCustomQueue(queue, message) {
+        this._sendTo(queue, message);
+    }
+    /**
+     * 
+     * @param {RabbitMessage} message 
+     */
     sendToShardManager(message) {
         this._sendTo(RabbitConnection.QUEUES.toShardManager, message);
     }
@@ -138,6 +155,18 @@ class RabbitConnection {
     }
     //sending end
 
+    /**
+     * 
+     * @param {string} messageID - aka correlationID, should be IDGenerator.instance().nextMessageID()
+     * @param {function(args)} onReplyHandler - function that accepts args[]
+     */
+    onReplied(messageID, onReplyHandler) {
+        this.awaitedReplies.set(messageID, onReplyHandler);
+        logRabbit("Added awaited reply: wait for ID '" + messageID +"' Now all awaited IDs are: " + Array.from(this.awaitedReplies.keys()).toString());
+       
+        
+    }
+
     //consuming start
 
     /**
@@ -170,7 +199,19 @@ class RabbitConnection {
         this.channel.consume(queue, (message) => {
             logRabbit("Message received from queue '" + queue + "': '" + message.content.toString() + "'.");
             var rabbitMessageObject = JSON.parse(message.content.toString());          // convert string to rabbit message json object (/shared/rabbitMessage.js)
-            handler(rabbitMessageObject);
+            if (rabbitMessageObject.command === "REPLY") {
+                logRabbit("Catching reply before handling! " + rabbitMessageObject.correlationID);
+                if (this.awaitedReplies.has(rabbitMessageObject.correlationID)) {
+                    logRabbit("Awaited reply received! Now handling reply");
+                    this.awaitedReplies.get(rabbitMessageObject.correlationID)(rabbitMessageObject.args);
+                    this.awaitedReplies.delete(rabbitMessageObject.correlationID);
+                    console.log("Removed caught await, now all awaited IDs are: " + Array.from(this.awaitedReplies.keys()).toString());
+                } else {
+                    logRabbit("Unknown reply; must belong to other. Skipping usual handling.");
+                }
+            } else {
+                handler(rabbitMessageObject);
+            }
         }, {
             noAck: true
         });

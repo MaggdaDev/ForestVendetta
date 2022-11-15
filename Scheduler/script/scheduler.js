@@ -4,6 +4,7 @@ const RabbitCommandHandler = require("./rabbit/schedulerRabbitCommandHandler");
 const RabbitCommunicator = require("./rabbit/schedulerRabbitCommunicator");
 const GuildSpawnInfo = require("./spawning/guildSpawnInfo");
 const Spawner = require("./spawning/spawner");
+const WorldInitializer = require("./spawning/worldInititalizer");
 
 class Scheduler {
     /**
@@ -13,7 +14,8 @@ class Scheduler {
     constructor(rabbitConnection) {
         this.rabbitCommandHandler = new RabbitCommandHandler(this);
         this.rabbitCommunicator = new RabbitCommunicator(rabbitConnection, this.rabbitCommandHandler);
-        this.spawner = new Spawner(this.rabbitCommunicator);
+        this.worldInitializer = new WorldInitializer(this.rabbitCommunicator);
+        this.spawner = new Spawner(this.worldInitializer);
         this.mainLoop = new MainLoop(this, this.spawner);
         this.spawner.loadConfig();
 

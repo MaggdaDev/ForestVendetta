@@ -24,7 +24,7 @@ class DiscordRabbitCommandHandler {
                     this.forestScout.discordMessageSender.sendTestMessage();
                     break;
                 case RabbitMessage.RABBIT_COMMANDS.FROM_SCHEDULER.SEND_SPAWN_BOSS_MESSAGE:
-                    this.forestScout.discordMessageSender.sendBossSpawnedMessage(message.args.channelID, message.args.displayName);
+                    this.forestScout.discordMessageSender.sendBossSpawnedMessage(message.args.channelID, message.args.displayName, message.args.adress);
                     break;
                 default:
                     throw "Unknown command received: " + message.command;

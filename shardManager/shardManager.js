@@ -2,6 +2,7 @@ const RabbitConnection = require("../shared/rabbitConnection");
 const RabbitComandHandler = require("./rabbitCommunication/rabbitCommandHandler");
 const {fork} = require("child_process");
 const stream = require("stream");
+const RabbitMessage = require("../shared/rabbitMessage");
 
 class ShardManager {
 
@@ -12,30 +13,32 @@ class ShardManager {
     static startPort = 3000;
     static GAMEBACKEND_CWD_PATH = "../WebsiteBackend";
     static GAMEOACKEND_CWD_TO_SERVER = "/GameServer/server";
-    constructor(rabbitConnection) {
+    constructor(rabbitConnection, adress) {
         this.rabbitConnection = rabbitConnection;
         this.rabbitCommandHandler = new RabbitComandHandler(this);
         this.rabbitConnection.onMessageToShardHandler((message) => this.rabbitCommandHandler.handle(message));
         this.usedPorts = [];
         this.shards = [];
-        this.createShard();
+
+        this.adress = adress;
     }
 
     /**
      * 
-     * @param {number} port 
+     * @param {RabbitMessage} message 
      */
     createShard(message) {
+        console.log("Create shard command received with correlationID: " + message.correlationID);
         console.log("Creating shard...");
         const shardPort = this.reserveFreePort();
-        console.log("Port for new shad: " + shardPort);
+        console.log("Port for new shard: " + shardPort);
         console.log("Now all used ports are: " + this.usedPorts);
 
         // forking child
-        const child = fork(ShardManager.GAMEBACKEND_CWD_PATH + ShardManager.GAMEOACKEND_CWD_TO_SERVER, [shardPort], {
+        const child = fork(ShardManager.GAMEBACKEND_CWD_PATH + ShardManager.GAMEOACKEND_CWD_TO_SERVER, 
+            [this.adress, shardPort, message.args.gameID, message.correlationID], {
             cwd: ShardManager.GAMEBACKEND_CWD_PATH, // working directory for server
             silent: true
-            
         });
         child.stdout.on("data", (message)=> {
             console.log("[Port " + shardPort + "] " + message);

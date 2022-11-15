@@ -1,6 +1,6 @@
 class BossSpawnedMessage {
-    constructor(displayName) {
-        this.content = "A " + displayName + " has appeared!";
+    constructor(displayName, adress) {
+        this.content = "A " + displayName + " has appeared! Click here to fight it: " + adress;
     }
 }
 

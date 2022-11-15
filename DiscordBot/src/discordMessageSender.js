@@ -5,8 +5,8 @@ class DiscordMessageSender {
         this.client = client;
     }
 
-    sendBossSpawnedMessage(channelID, displayName) {
-        this._sendToChannel(channelID, new BossSpawnedMessage(displayName));
+    sendBossSpawnedMessage(channelID, displayName, adress) {
+        this._sendToChannel(channelID, new BossSpawnedMessage(displayName, adress));
     }
 
     sendTestMessage(channelID) {

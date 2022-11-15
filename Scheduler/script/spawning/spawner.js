@@ -10,10 +10,10 @@ class Spawner {
      * 
      * @param {SchedulerRabbitCommunicator} rabbitCommunicator 
      */
-    constructor(rabbitCommunicator) {
+    constructor(worldInitializer) {
         this.bossConfigs = new Map();
         this.randomizer = new Randomizer();
-        this.rabbitCommunicator = rabbitCommunicator;
+        this.worldInitializer = worldInitializer;
     }
 
     /**
@@ -36,8 +36,8 @@ class Spawner {
     }
 
     spawn(bossConfig, guildInfo) {
-        this.rabbitCommunicator.sendSpawnBossCommand(bossConfig.spawn_config.display_name, guildInfo.channelID);
-        this.rabbitCommunicator.sendCreateShardCommand(3000);
+        this.worldInitializer.initializeWorld(bossConfig, guildInfo);
+        
     }
 
     canSpawn(config) {
