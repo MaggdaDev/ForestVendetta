@@ -2,7 +2,7 @@
   "name": "loginwebsite",
   "version": "1.0.0",
   "description": "Website for creating and managing forest vendetta accounts",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
