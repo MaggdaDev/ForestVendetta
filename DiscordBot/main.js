@@ -32,7 +32,7 @@ connectPromise.then(() => {
     logMain("Connecting to rabbit finished; creating bot discord client...");
     const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
     logMain("Creating Bot...");
-    const forestScout = new ForestScout(token, client, rabbitConnection);
+    const forestScout = new ForestScout(token, client, rabbitConnection, config.testMode);
 
     // When the client is ready, run this code (only once)
     client.once('ready', () => forestScout.onReady(forestScout));
@@ -48,3 +48,4 @@ connectPromise.then(() => {
 function logMain(s) {
     console.log("[main] " + s);
 }
+

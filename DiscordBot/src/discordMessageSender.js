@@ -1,12 +1,13 @@
 const BossSpawnedMessage = require("./DiscordMessages/bossSpawnedMessage");
 
 class DiscordMessageSender {
-    constructor(client) {
+    constructor(client, testMode) {
         this.client = client;
+        this.testMode = testMode;
     }
 
     sendBossSpawnedMessage(channelID, displayName, adress) {
-        this._sendToChannel(channelID, new BossSpawnedMessage(displayName, adress));
+        this._sendToChannel(channelID, new BossSpawnedMessage(displayName, adress, this.testMode));
     }
 
     sendTestMessage(channelID) {

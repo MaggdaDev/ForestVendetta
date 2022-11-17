@@ -43,7 +43,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/LoginWebsite/server.js",
+            "program": "${workspaceFolder}/LoginWebsite/main.js",
             "cwd": "${workspaceFolder}/LoginWebsite"
         },
         {

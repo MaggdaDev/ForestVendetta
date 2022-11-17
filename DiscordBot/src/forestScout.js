@@ -15,10 +15,11 @@ class ForestScout {
      * @param {Client} client 
      * @param {RabbitConnection} rabbitConnection
      */
-    constructor(token, client, rabbitConnection) {
+    constructor(token, client, rabbitConnection, testMode) {
         console.log("Initializing ForestScout bot...");
         this.client = client;
         this.token = token;
+        this.testMode = testMode;
 
         // discord slash commands
         this.commandManager = new CommandManager();
@@ -26,7 +27,7 @@ class ForestScout {
         this.commandHandler = new CommandHandler(this);
 
         // discord message sender
-        this.discordMessageSender = new DiscordMessageSender(this.client);
+        this.discordMessageSender = new DiscordMessageSender(this.client, this.testMode);
 
         // rabbit
         this.rabbitConnection = rabbitConnection;

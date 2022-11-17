@@ -7,12 +7,12 @@ class WorldInitializer {
 
     initializeWorld(bossConfig, guildInfo) {
         const gameID = IDGenerator.instance().nextGameID();
-        this.rabbitCommunicator.sendCreateShardCommandThen(gameID, (args)=> this.onShardCreated(bossConfig, guildInfo, args));
+        this.rabbitCommunicator.sendCreateShardCommandThen(gameID, (args)=> this.onShardCreated(bossConfig, guildInfo, gameID, args));
     }
 
-    onShardCreated(bossConfig, guildInfo, args) {
+    onShardCreated(bossConfig, guildInfo, gameID, args) {
         console.log("Reply caught: Shard started! Now sending discord notification...");
-        this.sendSpawnBossCommand(bossConfig, guildInfo, args.adress);
+        this.sendSpawnBossCommand(bossConfig, guildInfo, gameID);
     }
 
     sendSpawnBossCommand(bossConfig, guildInfo, adress) {
