@@ -2,6 +2,10 @@
   "name": "loginwebsite",
   "version": "1.0.0",
   "description": "Website for creating and managing forest vendetta accounts",
+  "dependencies": {
+    "express": "^4.18.1",
+    "node-fetch": "^2.6.7"
+  },
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
