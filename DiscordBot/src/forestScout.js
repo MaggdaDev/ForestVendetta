@@ -15,7 +15,7 @@ class ForestScout {
      * @param {Client} client 
      * @param {RabbitConnection} rabbitConnection
      */
-    constructor(token, client, rabbitConnection, testMode) {
+    constructor(token, client, rabbitConnection, mongoAccessor, testMode) {
         console.log("Initializing ForestScout bot...");
         this.client = client;
         this.token = token;
@@ -35,7 +35,7 @@ class ForestScout {
         this.rabbitCommunicator = new RabbitCommunicator(this.rabbitConnection, this.rabbitCommandHandler);
 
         // mongo
-        this.mongoAccess = new ForestScoutMongoAccessor(this);
+        this.mongoAccess = new ForestScoutMongoAccessor(this, mongoAccessor);
         
         var instance = this;
 

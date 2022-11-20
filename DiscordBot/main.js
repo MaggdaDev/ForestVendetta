@@ -6,6 +6,7 @@ const config = require('../config-example/discordbot-config.json');
 const CommandManager = require('./src/Commands/commandManager');
 const ForestScout = require('./src/forestScout');
 const RabbitConnection = require('../shared/rabbitConnection');
+const MongoAccessor = require('../shared/mongoAccess/mongoAccessor');
 logMain("Preparing to start discord bot...");
 // test mode?
 var token;
@@ -21,18 +22,13 @@ if (config.testMode) {
 
 // wait for rabbit connection
 const rabbitConnection = new RabbitConnection();
-var connectPromise;
-if (config.testMode) {
-    connectPromise = rabbitConnection.connectUntilSuccess(2000);
-} else {
-    connectPromise = rabbitConnection.connect();
-}
-connectPromise.then(() => {
+const mongoAccessor = new MongoAccessor();
+rabbitConnection.connectUntilSuccess(2000).then(()=>mongoAccessor.connect().then(()=> {
     // Create a new client instance
     logMain("Connecting to rabbit finished; creating bot discord client...");
     const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
     logMain("Creating Bot...");
-    const forestScout = new ForestScout(token, client, rabbitConnection, config.testMode);
+    const forestScout = new ForestScout(token, client, rabbitConnection, mongoAccessor, config.testMode);
 
     // When the client is ready, run this code (only once)
     client.once('ready', () => forestScout.onReady(forestScout));
@@ -42,7 +38,7 @@ connectPromise.then(() => {
     // finished
     logMain("[main] All preparations finished - block main thread to run bot");
     client.login(token);
-});
+}));
 
 
 function logMain(s) {

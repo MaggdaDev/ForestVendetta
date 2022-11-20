@@ -10,6 +10,6 @@ const ip = '127.69.42.34:27017';//execSync("docker container inspect -f '{{range
 
 module.exports = {
     "v":"1",
-    "connectstring":"mongodb://" + config.user + ":" + config.pass + "@" + ip + "/" + config.database,
+    "connectstring":"mongodb://" + config.user + ":" + config.pass + "@" + ip + "/" + config.database + "?serverSelectionTimeoutMS=1000",
     "config":config    
 };

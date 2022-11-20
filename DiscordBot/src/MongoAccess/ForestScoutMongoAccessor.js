@@ -1,10 +1,9 @@
 const MongoAccessor = require("../../../shared/mongoAccess/mongoAccessor");
 
 class ForestScoutMongoAccessor {
-    constructor(forestScout) {
+    constructor(forestScout, mongoAccessor) {
         this.forestScout = forestScout;
-        this.mongoAccess = new MongoAccessor();
-        this.mongoAccess.connect();
+        this.mongoAccess = mongoAccessor;
     }
 
 
