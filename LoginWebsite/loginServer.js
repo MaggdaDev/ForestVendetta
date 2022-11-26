@@ -9,7 +9,7 @@ class LoginServer {
     static LOCALHOST = "localhost";
     static HOST = "minortom.net";
     static LOGINPAGE = "index.html";
-    constructor(config) {
+    constructor(config, mongoAccess) {
         this.server = null;
         if (config.testMode) {
             console.log("Entering TEST MODE");
@@ -19,12 +19,13 @@ class LoginServer {
         }
         this.port = LoginServer.PORT;
         console.log("Creating server for: " + this.host + ":" + this.port);
-        this.api = new FVAPI();
+        this.api = new FVAPI(mongoAccess);
         this.app = express();
         console.log("Setting up static serving of /client");
         this.app.use(express.static("./client"));
         console.log("Setting up routing of api requests to API");
         this.app.get(FVAPI.API_URI + "*", (req,res) => this.api.apiRequestListenerHandler(req,res));
+        this.mongoAccess = mongoAccess;
     }
 
     createServer() {

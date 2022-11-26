@@ -39,6 +39,23 @@ class MongoAccessor {
         logMongo("Trying to connect to mongo...");
         return this.connector.connectUntilSuccess(2000);
     }
+
+    // requests
+
+    async getPlayerOrCreate(userID) {
+        logMongo("Get player or create if not existing...");
+        const query = {_id: userID};
+        const player = await this.playerCollection.findOne(query);
+        if(player === null) {   // not existing
+            logMongo("Player not existing; now being created...");
+            var newplayer = this.objectFactory.addNewPlayer(userID);
+            logMongo("Player created.");
+            return newplayer;
+        } else {
+            logMongo("Player existing.");
+            return player;
+        }
+    }
 }
 
 function logMongo(s) {

@@ -5,21 +5,38 @@ class RequestHandler {
      * 
      * @param {DiscordAPIAccessor} discordApiAccessor 
      */
-    constructor(discordApiAccessor) {
+    constructor(discordApiAccessor, mongoAccessor) {
         console.log("Constructing request handler");
         this.discordApiAccessor = discordApiAccessor;
+        this.mongoAccessor = mongoAccessor;
     }
 
     requestJoinGameData(query) {
-        const promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             console.log("Handling request for join match data...");
-            if (query.code === undefined || query.token === null || query.token === "") {
-                console.log("Empty code!");
-                return;
-            }
-            this.discordApiAccessor.requestJoinGameData(query.code).then((token) => resolve(token));
+            //discord API data
+            this.requestUserIdentifyData(query).then((discordData) => {
+                this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {
+                    resolve({
+                        discordAPI: discordData,
+                        mongo: mongoData
+                    })
+                });
+            });          
+       
         });
-        return promise;
+    }
+
+    async requestMongoJoinGameData(query, discordID) {
+        this.mongoAccessor;
+    }
+
+    async requestUserIdentifyData(query) {
+        if (query.code === undefined || query.token === null || query.token === "") {
+            console.error("Empty code when trying to get user identify data!");
+            return;
+        }
+        return this.discordApiAccessor.requestUserIdentifyData(query.code);  
     }
 }
 

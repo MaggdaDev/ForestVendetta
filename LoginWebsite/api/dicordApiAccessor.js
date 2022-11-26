@@ -17,7 +17,7 @@ class DiscordAPIAccessor {
         }
     }
 
-    requestJoinGameData(token) {
+    requestUserIdentifyData(token) {
         const promise = new Promise((resolve, reject) => {
             this.requestAuthToken(token).then((code) => {
                 const headers = {

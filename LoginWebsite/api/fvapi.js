@@ -1,4 +1,5 @@
 const url = require("url");
+const LoginMongoAccessor = require("../mongo/loginMongoAccessor");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
 const RequestHandler = require("./requestHandler");
 class FVAPI {
@@ -8,10 +9,14 @@ class FVAPI {
         joinGameData: "joingamedata"
     }
 
-    constructor() {
+    /**
+     * 
+     * @param {LoginMongoAccessor} mongoAccessor 
+     */
+    constructor(mongoAccessor) {
         console.log("API constructed");
         this.discordApiAccessor = new DiscordAPIAccessor();
-        this.requestHandler = new RequestHandler(this.discordApiAccessor);
+        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor);
 
     }
 
