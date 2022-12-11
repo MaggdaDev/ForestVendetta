@@ -4,6 +4,10 @@ class LoginMongoAccessor {
         this.mongoAccessor = new MongoAccessor();
     }
 
+    async getPlayerOrCreate(userID) {
+        return this.mongoAccessor.getPlayerOrCreate(userID);
+    }
+
     async connect() {
         return new Promise((resolve, reject) => {
             this.mongoAccessor.connect().then(resolve);

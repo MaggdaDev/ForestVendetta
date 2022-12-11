@@ -13,27 +13,33 @@ class FVAPI {
      * 
      * @param {LoginMongoAccessor} mongoAccessor 
      */
-    constructor(mongoAccessor) {
+    constructor(mongoAccessor, adressManager) {
         console.log("API constructed");
+        this.adressManager = adressManager;
         this.discordApiAccessor = new DiscordAPIAccessor();
-        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor);
+        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor, adressManager);
+        this.authMap = new Map();
 
     }
 
     apiRequestListenerHandler(req, res) {
-        console.log("API request received!");
-        const reqUrl = req.url;
-        const parsed = url.parse(reqUrl, true);
-        const pathName = parsed.pathname;
-        if (pathName.length < 6) {       // every starting with /api/
-            this.logInvalid(pathName);
-            return;
+        try {
+            console.log("API request received!");
+            const reqUrl = req.url;
+            const parsed = url.parse(reqUrl, true);
+            const pathName = parsed.pathname;
+            if (pathName.length < 6) {       // every starting with /api/
+                this.logInvalid(pathName);
+                return;
+            }
+            const withoutAPI = pathName.substring(5);
+            const query = parsed.query;
+            this.routeRequest(withoutAPI, query).then((result) => {
+                res.send(result);
+            });
+        } catch (e) {
+            console.error(e);
         }
-        const withoutAPI = pathName.substring(5);
-        const query = parsed.query;
-        this.routeRequest(withoutAPI, query).then((result) => {
-            res.send(result);
-        });
     }
 
     routeRequest(path, query) {
@@ -41,7 +47,18 @@ class FVAPI {
             console.log("Routing request: " + path);
             switch (path.toLowerCase()) {
                 case FVAPI.API_REQUESTS.joinGameData:       // data before joining game
-                    this.requestHandler.requestJoinGameData(query).then((res) => resolve(res));
+                    this.requestHandler.requestJoinGameData(query).then((res) => {
+                        console.log("Retrieved join game data: " + res);
+                        const code = query.code;
+                        const userID = res.discordAPI.id;
+                        this.authMap.set("userID", code);
+                        console.log("Now matching code (" + code + ") and userID (" + userID + ") to auth hash map.");
+                        console.log("Auth map is now: " + this.authMap.entries.toString());
+                        resolve(res);
+                    }).catch((clientRedirectRes)=> {
+                        console.log("API calls failed! Sending error redirect to client");
+                        resolve(clientRedirectRes);
+                    });
                     return;
 
                 default:
@@ -51,8 +68,6 @@ class FVAPI {
             }
         });
         return promise;
-
-
     }
 
     logInvalid(pathName) {

@@ -1,14 +1,23 @@
+
+const LoginMongoAccessor = require("../mongo/loginMongoAccessor");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
 
 class RequestHandler {
     /**
      * 
      * @param {DiscordAPIAccessor} discordApiAccessor 
+     * @param {LoginMongoAccessor} mongoAccessor
      */
-    constructor(discordApiAccessor, mongoAccessor) {
+
+    // errors
+    static ERRORS = {
+        DISCORD_API_FAIL: "DISCORD_API_FAIL"
+    }
+    constructor(discordApiAccessor, mongoAccessor, adressManager) {
         console.log("Constructing request handler");
         this.discordApiAccessor = discordApiAccessor;
         this.mongoAccessor = mongoAccessor;
+        this.adressManager = adressManager;
     }
 
     requestJoinGameData(query) {
@@ -22,21 +31,31 @@ class RequestHandler {
                         mongo: mongoData
                     })
                 });
-            });          
-       
+                // discordAPI returned null
+
+
+            }).catch((error) => {
+                if (error.startsWith("401")) {   // unauthorized
+                    reject({
+                        error: RequestHandler.ERRORS.DISCORD_API_FAIL,
+                        redirect: this.adressManager.getIndexURL({ error: RequestHandler.ERRORS.DISCORD_API_FAIL })
+                    })
+                }
+            });
+
         });
     }
 
     async requestMongoJoinGameData(query, discordID) {
-        this.mongoAccessor;
+        return this.mongoAccessor.getPlayerOrCreate(discordID);
     }
 
     async requestUserIdentifyData(query) {
-        if (query.code === undefined || query.token === null || query.token === "") {
+        if (query.code === undefined || query.code === null || query.code === "") {
             console.error("Empty code when trying to get user identify data!");
             return;
         }
-        return this.discordApiAccessor.requestUserIdentifyData(query.code);  
+        return this.discordApiAccessor.requestUserIdentifyData(query.code);
     }
 }
 

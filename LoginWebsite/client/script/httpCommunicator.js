@@ -4,10 +4,29 @@ class HTTPCommunicator {
     static JOIN_GAME_DATA_REQUEST = "joingamedata";
     constructor(host) {
         this.adress = host + HTTPCommunicator.API_URI;
+        this.userID = null;
     }
 
     requestProfileDataAsync(code, callback) {
-        this.getAsync(HTTPCommunicator.JOIN_GAME_DATA_REQUEST + "?code=" + code, callback);
+        var apiSubAdress = HTTPCommunicator.JOIN_GAME_DATA_REQUEST;
+        // params
+        apiSubAdress += "?";
+        // code
+        apiSubAdress += "code=" + code;
+        // userID
+        if (this.userID !== null && this.userID !== undefined) {
+            apiSubAdress += "&userid=" + this.userID;
+        }
+        this.getAsync(apiSubAdress, callback);
+    }
+
+    setUserID(userID) {
+        if (userID !== null && userID !== undefined) {
+            consnole.log("Setting userID in http communicator: " + this.userID);
+            this.userID = userID;
+        } else {
+            console.error("Trying to set null/undef userID in http communicator");
+        }
     }
 
 

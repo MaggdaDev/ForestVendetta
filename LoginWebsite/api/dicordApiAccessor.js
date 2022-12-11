@@ -30,13 +30,18 @@ class DiscordAPIAccessor {
                 };
                 console.log("Get request: " + JSON.stringify(getReqObject));
                 fetch(DiscordAPIAccessor.API_ENDPOINT + DiscordAPIAccessor.API_IDENTIFY_URI, getReqObject).then((res) => res.json()).then((json) => {
-                    console.log("API userr data received:");
+                    console.log("API user data received:");
                     console.log(json);
-                    resolve(json.user);
+                    if (json.message !== undefined && json.message.startsWith("401")) {
+                        console.error("401: Unauthorized, returning null");
+                        reject(json.message);
+                    } else {
+                        resolve(json.user);
+                    }
                 })
             });
         });
-        return promise;      
+        return promise;
     }
 
     requestAuthToken(code) {

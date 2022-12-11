@@ -14,6 +14,20 @@ window.onload = () => {
     // read query params
     const params = ParamReader.params;
 
+    if(params.error !== undefined) {
+        console.log("Coming from error redirect!");
+        switch(params.error) {
+            case "DISCORD_API_FAIL":
+            document.getElementById("discordAPIerror").hidden = false;
+            break;
+
+            default:
+                document.getElementById("unkownError").hidden = false;
+
+            break;
+        }
+    }
+
     // setup login with discord
     if (isTestMode) {
         const form = document.getElementById("loginWithDiscordForm")

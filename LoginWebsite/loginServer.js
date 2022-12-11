@@ -3,6 +3,7 @@ const fs = require('fs');
 const url = require("url");
 const express = require('express');
 const FVAPI = require('./api/fvapi');
+const AdressManager = require('./adressManager');
 
 class LoginServer {
     static PORT = 2999;
@@ -18,8 +19,11 @@ class LoginServer {
             this.host = LoginServer.HOST;
         }
         this.port = LoginServer.PORT;
+        this.adress = `http://${this.host}:${this.port}`;
+        this.adressManager = new AdressManager(this.adress);
+
         console.log("Creating server for: " + this.host + ":" + this.port);
-        this.api = new FVAPI(mongoAccess);
+        this.api = new FVAPI(mongoAccess, this.adressManager);
         this.app = express();
         console.log("Setting up static serving of /client");
         this.app.use(express.static("./client"));
@@ -32,9 +36,11 @@ class LoginServer {
         console.log("Creating server...");
         this.server = http.createServer(this.app);
         this.server.listen(this.port, this.host, () => {
-            console.log(`Server is running on http://${this.host}:${this.port}`);
+            console.log("Server is running on: " + this.adress);
         });
     }
+
+
 
     requestListener(req, res) {
         try {
