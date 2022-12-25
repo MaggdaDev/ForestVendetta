@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
 const Protagonist = require("../player/protagonist");
 const MovableBody = require("../physics/movableBody");
+const PasswordGenerator = require("./passwordGenerator");
 
 class ServerNetworkManager {
 
@@ -17,7 +18,42 @@ class ServerNetworkManager {
 
         var instance = this;
 
-        io.on('connection', (socket)=>{
+        this.openPasswordAccesses = new Map();      // userID <-> pw
+
+        io.use((socket, next) => {      // authentication
+            if(socket.handshake.auth === undefined || socket.handshake.auth === undefined) {
+                console.error("Someone trying to connect without auth string!");
+                next(new Error("unauthorized"));
+                return;
+            }
+            const userID = socket.handshake.auth.userID;
+            const pw = socket.handshake.auth.pw;
+            if(userID === undefined || userID === null) {
+                console.error("No user ID given in connect uri!");
+                next(new Error("unauthorized"));
+                return;
+            }
+            if(pw === undefined || pw === null) {
+                console.error("No pw given in connect uri!");
+                next(new Error("unauthorized"));
+                return;
+            }
+            if(!this.openPasswordAccesses.has(userID)) {
+                console.error("No PW access available for this user");
+                next(new Error("unauthorized"));
+                return;
+            }
+            if(this.openPasswordAccesses.get(userId) !== pw) {
+                console.error("Wrong PW for user " + userID + " !");
+                next(new Error("unauthorized"));
+                return;
+            }
+
+            // success
+            this.openPasswordAccesses.delete(userID);
+            console.log("User authenticated successfully! Removing pw access for " + userID + " now.");
+            next();
+        }).on('connection', (socket)=>{
             console.log('a user connected');
 
             /**
@@ -38,6 +74,12 @@ class ServerNetworkManager {
         });
     }
 
+    addPasswordAccessFor(userID) {
+        const pw = PasswordGenerator.generatePassword();
+        this.openPasswordAccesses.set(userID, pw);
+        console.log("Addes password access for " + userID + " with password " + pw);
+        return pw;
+    }
 
 
     handleDisconnect(clientId) {

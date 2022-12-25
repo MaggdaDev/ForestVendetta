@@ -132,10 +132,10 @@ class MainLoop {
     }
 
     /**
-     * @description determines wether or not shard should shut down -   60s after birth
+     * @description determines wether or not shard should shut down -   100s after birth
      */
     checkShardALive() {
-        if(Date.now() - this.birthTime > 1000 * 10 && this.players.size === 0) {
+        if(Date.now() - this.birthTime > 1000 * 100 && this.players.size === 0) {
             return false;
         } else {
             return true;

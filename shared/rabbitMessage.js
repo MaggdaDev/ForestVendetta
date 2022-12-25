@@ -14,6 +14,10 @@ class RabbitMessage {
 
         GLOBAL: {
             _REPLY: "REPLY"
+        },
+
+        FROM_LOGIN_WEBSITE: {
+            DEPLOY_TO_GAME_IF_POSSIBLE: "DEPLOY_TO_GAME_IF_POSSIBLE"  // to certain shard; args: playerData {code:, mongo:, discordAPI:}; awaits reply: {status: 0/1, shardUri: shardAdress:port?pw=123, error:}
         }
     }
 

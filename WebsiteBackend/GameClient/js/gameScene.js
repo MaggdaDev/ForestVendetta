@@ -132,4 +132,10 @@ class GameScene extends Phaser.Scene {
 
     // End: Executing incoming commands from network manager
 
+    // error handling
+    connectionIsUnauthorized(error) {
+        super.visible = false;
+        console.log("UNAUTHORIZED-HIDE ALL");
+    }
+
 }

@@ -1,30 +1,33 @@
 const url = require("url");
 const LoginMongoAccessor = require("../mongo/loginMongoAccessor");
+const LoginRabbitCommunicator = require("../rabbit/loginRabbitCommunicator");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
 const RequestHandler = require("./requestHandler");
 class FVAPI {
     static API_URI = "/api/";
 
     static API_REQUESTS = {     // lower case all
-        joinGameData: "joingamedata"
+        joinGameData: "joingamedata",       // request user profile data before joining a game
+        deployToGameIfPossible: "deploytogameifpossible"   
     }
 
     /**
      * 
      * @param {LoginMongoAccessor} mongoAccessor 
+     * @param {LoginRabbitCommunicator} rabbitCommunicator
      */
-    constructor(mongoAccessor, adressManager) {
-        console.log("API constructed");
+    constructor(mongoAccessor, rabbitCommunicator, adressManager) {
+        logApi("API constructed");
+        this.rabbitCommunicator = rabbitCommunicator;
+        this.authMap = new Map();       // DO NOT re-construct, request handler is using this object
         this.adressManager = adressManager;
         this.discordApiAccessor = new DiscordAPIAccessor();
-        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor, adressManager);
-        this.authMap = new Map();
-
+        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor, this.rabbitCommunicator, adressManager, this.authMap);
     }
 
     apiRequestListenerHandler(req, res) {
         try {
-            console.log("API request received!");
+            logApi("API request received!");
             const reqUrl = req.url;
             const parsed = url.parse(reqUrl, true);
             const pathName = parsed.pathname;
@@ -43,27 +46,34 @@ class FVAPI {
     }
 
     routeRequest(path, query) {
+        const instance = this;
         const promise = new Promise((resolve, reject) => {
-            console.log("Routing request: " + path);
+            logApi("Routing request: " + path);
             switch (path.toLowerCase()) {
                 case FVAPI.API_REQUESTS.joinGameData:       // data before joining game
                     this.requestHandler.requestJoinGameData(query).then((res) => {
-                        console.log("Retrieved join game data: " + res);
-                        const code = query.code;
+                        res.code = query.code;
+                        logApi("Retrieved join game data: " + res);
                         const userID = res.discordAPI.id;
-                        this.authMap.set("userID", code);
-                        console.log("Now matching code (" + code + ") and userID (" + userID + ") to auth hash map.");
-                        console.log("Auth map is now: " + this.authMap.entries.toString());
+                        instance.authMap.set(userID, res);
+                        logApi("Now matching res with code (" + res.code + ") and userID (" + userID + ") to auth hash map.");
+                        logApi("Auth map is now: " + this.authMap.entries.toString());
                         resolve(res);
                     }).catch((clientRedirectRes)=> {
-                        console.log("API calls failed! Sending error redirect to client");
+                        logApi("API calls failed! Sending error redirect to client");
                         resolve(clientRedirectRes);
                     });
                     return;
 
+                case FVAPI.API_REQUESTS.deployToGameIfPossible:
+                    this.requestHandler.deployToGameIfPossible(query).then((res) => {
+                        logApi("Handling deploy request finished! Returning to client: " + res);
+                        resolve(res);
+                    });
+                    break;
                 default:
                     this.logInvalid(path);
-                    reject();
+                    reject("invalid request");
                     break;
             }
         });
@@ -71,8 +81,13 @@ class FVAPI {
     }
 
     logInvalid(pathName) {
-        console.log("Invalid api request: " + pathName);
+        logApi("Invalid api request: " + pathName);
     }
+
+    
+}
+function logApi(s) {
+    console.log("[FVAPI] " + s);
 }
 
 module.exports = FVAPI;

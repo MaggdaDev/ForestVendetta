@@ -6,7 +6,8 @@ class RabbitConnection {
     static QUEUES = {
         toDiscordBot: 'toDiscordBot',
         toScheduler: 'toScheduler',
-        toShardManager: 'toShardManager'
+        toShardManager: 'toShardManager',
+        toLoginWebsite: 'toLoginWebsite'
     }
     constructor() {
         logRabbit("Initializing rabbit connection...")
@@ -25,11 +26,11 @@ class RabbitConnection {
         this.connector = new Connector(() => {
             const promise = new Promise((resolve, reject) => {
                 amqp.connect(instance.connectConfig.miniconnectstring, (error0, connection) => {
-                    if (error0) { reject(error0); return }
+                    if (error0 !== null && error0 !== undefined) { reject(error0); return }
                     logRabbit("Successfully connected to rabbit!");
                     instance.connection = connection;                               // important property
                     connection.createChannel(function (error1, channel) {
-                        if (error1) throw error1;
+                        if (error1 !== null && error1 !== undefined) throw error1;
                         logRabbit("Channel create successful")
                         instance.channel = channel;
                         instance.assertQueues(channel);
@@ -48,7 +49,7 @@ class RabbitConnection {
      * @param {RabbitMessage} message 
      * @param {function(args)} replyHandler 
      */
-    sendToQueueAndHandleReply(queue, message, replyHandler) {
+    sendToQueueAndHandleReply(queue, message, replyHandler) {       // to send reply: user message.correlationID and message.fromCorrelationID to create answer
         const messageID = IDGenerator.instance().nextMessageID();
         console.log("Setting up reply-await: Message ID '" + messageID + "' generated");
         this.onReplied(messageID, (args) => {
@@ -94,7 +95,7 @@ class RabbitConnection {
 
     /**
      * 
-     * @param {string} queue - custom queue, i.e. game shard queue
+     * @param {string} queue - custom queue, i.e. game shard queue, in that case use gameID
      * @param {RabbitMessage} message 
      */
     sendToCustomQueue(queue, message) {
@@ -122,6 +123,14 @@ class RabbitConnection {
      */
     sendToDiscordBot(message) {
         this._sendTo(RabbitConnection.QUEUES.toDiscordBot, message);
+    }
+
+    /**
+     * 
+     * @param {RabbitMessage} message 
+     */
+    sendToLoginWebsite(message) {
+        this._sendTo(RabbitConnection.QUEUES.toLoginWebsite, message);
     }
 
     /**
@@ -173,6 +182,23 @@ class RabbitConnection {
      */
     onMessageToScheduler(handler) {
         this._onMessageToQueue(handler, RabbitConnection.QUEUES.toScheduler);
+    }
+
+    /**
+     * 
+     * @param {function(message)} handler 
+     * @param {string} queue 
+     */
+    onMessageToCustomQueue(handler, queue) {
+        this._onMessageToQueue(handler, queue);
+    }
+
+    /**
+     * 
+     * @param {function(message)} handler 
+     */
+    onMessageToLoginWebsite(handler) {
+        this._onMessageToQueue(handler, RabbitConnection.QUEUES.toLoginWebsite);
     }
 
     _onMessageToQueue(handler, queue) {

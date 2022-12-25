@@ -4,13 +4,14 @@ const url = require("url");
 const express = require('express');
 const FVAPI = require('./api/fvapi');
 const AdressManager = require('./adressManager');
+const LoginRabbitCommunicator = require('./rabbit/loginRabbitCommunicator');
 
 class LoginServer {
     static PORT = 2999;
     static LOCALHOST = "localhost";
     static HOST = "minortom.net";
     static LOGINPAGE = "index.html";
-    constructor(config, mongoAccess) {
+    constructor(config, mongoAccess, rabbitConnection) {
         this.server = null;
         if (config.testMode) {
             console.log("Entering TEST MODE");
@@ -23,13 +24,15 @@ class LoginServer {
         this.adressManager = new AdressManager(this.adress);
 
         console.log("Creating server for: " + this.host + ":" + this.port);
-        this.api = new FVAPI(mongoAccess, this.adressManager);
+        this.rabbitCommunicator = new LoginRabbitCommunicator(rabbitConnection);
+        this.api = new FVAPI(mongoAccess, this.rabbitCommunicator, this.adressManager);
         this.app = express();
         console.log("Setting up static serving of /client");
         this.app.use(express.static("./client"));
         console.log("Setting up routing of api requests to API");
         this.app.get(FVAPI.API_URI + "*", (req,res) => this.api.apiRequestListenerHandler(req,res));
         this.mongoAccess = mongoAccess;
+        
     }
 
     createServer() {

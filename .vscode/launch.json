@@ -30,6 +30,7 @@
             "type": "node",
             "request": "launch",
             "name": "WebsiteBackend",
+            "args": ["localhost", "3000", "testtest123"],
             "skipFiles": [
                 "<node_internals>/**"
             ],

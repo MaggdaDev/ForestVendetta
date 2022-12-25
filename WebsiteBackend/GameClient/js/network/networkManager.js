@@ -8,33 +8,52 @@ class NetworkManager {
         console.log("Creating Network manager...");
         this.mainScene = scene;
 
+        const authObj = this.extractUriParams();
+
         console.log("Creating socket...")
-        this.socket = io();
-        
+        this.socket = io(window.location.host, { auth: authObj });
+        this.socket.on('connect_error', (error) => {
+            console.log("UNAUTHORIZED");
+            scene.connectionIsUnauthorized(error);
+        });
+
         this.clientId = "P" + String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
         console.log("ClientId created: " + this.clientId);
 
         this.mobManager = mobManager;
 
-        
+
         // Start: registering command handling
-        this.socket.on(NetworkCommands.ADD_PLAYER, (data)=>this.addPlayer(data));
-        this.socket.on(NetworkCommands.SETUP_WORLD, (data)=>this.setupWorld(data));
-        this.socket.on(NetworkCommands.UPDATE_PLAYERS, (data)=>this.updatePlayers(data));
-        this.socket.on(NetworkCommands.SHOW_OLD_PLAYERS, (data)=>this.showOldPlayers(data));
-        this.socket.on(NetworkCommands.SHOW_OLD_MOBS, (data)=>this.showOldMobs(data));
-        this.socket.on(NetworkCommands.DISCONNECT_PLAYER, (data)=>this.disconnectPlayer(data));
-        this.socket.on(NetworkCommands.UPDATE_WORLD, (data)=>this.updateWorld(data));
-        this.socket.on(NetworkCommands.UPDATE, (data)=>this.update(data));
-        this.socket.on(NetworkCommands.CONTROL_DATA, (data)=>this.controlData(data));
-        this.socket.on(NetworkCommands.SPAWN_MOB, (data)=>this.spawnMob(data));
+        this.socket.on(NetworkCommands.ADD_PLAYER, (data) => this.addPlayer(data));
+        this.socket.on(NetworkCommands.SETUP_WORLD, (data) => this.setupWorld(data));
+        this.socket.on(NetworkCommands.UPDATE_PLAYERS, (data) => this.updatePlayers(data));
+        this.socket.on(NetworkCommands.SHOW_OLD_PLAYERS, (data) => this.showOldPlayers(data));
+        this.socket.on(NetworkCommands.SHOW_OLD_MOBS, (data) => this.showOldMobs(data));
+        this.socket.on(NetworkCommands.DISCONNECT_PLAYER, (data) => this.disconnectPlayer(data));
+        this.socket.on(NetworkCommands.UPDATE_WORLD, (data) => this.updateWorld(data));
+        this.socket.on(NetworkCommands.UPDATE, (data) => this.update(data));
+        this.socket.on(NetworkCommands.CONTROL_DATA, (data) => this.controlData(data));
+        this.socket.on(NetworkCommands.SPAWN_MOB, (data) => this.spawnMob(data));
         this.socket.on(NetworkCommands.STRIKE_ANIMATION, (data) => this.strikeAnimation(data));
-        this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data)=>this.damageAnimation(data));
-        this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data)=>this.removeGameObjects(data));
-        
+        this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data) => this.damageAnimation(data));
+        this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data) => this.removeGameObjects(data));
+
         // End: registering command handling
 
         console.log("NetworkManager created.")
+    }
+
+    extractUriParams() {
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        const userID = params.userID;
+        const pw = params.pw;
+        console.log("Extracted auth params from uri: userID:" + userID + " and pw: " + pw);
+        return {
+            userID: userID,
+            pw: pw
+        }
     }
 
     // Start: Handling commands
@@ -149,11 +168,11 @@ class NetworkManager {
 
     // Start: Sending commands
     sendRequestAddPlayer() {
-        this.sendCommand(NetworkCommands.REQUEST_ADD_PLAYER, {id: this.clientId});
+        this.sendCommand(NetworkCommands.REQUEST_ADD_PLAYER, { id: this.clientId });
     }
 
     sendSelectItemCommand(idx) {
-        this.sendCommand(NetworkCommands.REQUEST_SELECT_ITEM, {index: idx});
+        this.sendCommand(NetworkCommands.REQUEST_SELECT_ITEM, { index: idx });
     }
 
     sendPlayerControl(control) {
