@@ -8,7 +8,7 @@ const WorldLoader = require('./world/worldLoader');
 class MainLoop {
 
 
-    constructor(playerList, server) {
+    constructor(playerMap, server) {
         this.server = server;
         console.log("Main Loop created!")
         this.oldTime = Date.now();
@@ -16,7 +16,7 @@ class MainLoop {
         this.startTime = -1;
         this.lastLog = 0;
         this.timeElapsed = 0;
-        this.players = playerList;
+        this.players = playerMap;  //Map
 
         this.worldLoader = new WorldLoader();
         this.world = this.worldLoader.loadWorld();
@@ -168,12 +168,12 @@ class MainLoop {
 
 
 
-    addPlayer(socket, data) {
+    addPlayer(socket, data, discordID) {
         console.log("Register: " + JSON.stringify(data));
-        var newPlayer = new Protagonist(data.id, socket, this.world, this);
+        var newPlayer = new Protagonist(discordID, socket, this.world, this);
         newPlayer.showOldPlayers(this.players);
         newPlayer.showOldMobs(this.mobManager);
-        this.players.set(data.id, newPlayer);
+        this.players.set(discordID, newPlayer);
         return newPlayer;
     }
 

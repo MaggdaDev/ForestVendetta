@@ -7,7 +7,8 @@ const gameID = params.state;
 var profileData = null; // waiting to be set in async request profile data
 var userID = null;
 
-const joinGameBtnObject = new JoinGameBtn(code, gameID, httpCommunicator);
+const errorInfoObject = new ErrorInfo();
+const joinGameBtnObject = new JoinGameBtn(code, gameID, httpCommunicator, errorInfoObject);
 
 
 

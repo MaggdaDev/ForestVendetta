@@ -17,7 +17,7 @@ class NetworkManager {
             scene.connectionIsUnauthorized(error);
         });
 
-        this.clientId = "P" + String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
+        this.clientId = authObj.userID;
         console.log("ClientId created: " + this.clientId);
 
         this.mobManager = mobManager;

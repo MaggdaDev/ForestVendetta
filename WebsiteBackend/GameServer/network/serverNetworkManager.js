@@ -19,6 +19,7 @@ class ServerNetworkManager {
         var instance = this;
 
         this.openPasswordAccesses = new Map();      // userID <-> pw
+        this.authenticatedPlayerIDs = [];
 
         io.use((socket, next) => {      // authentication
             if(socket.handshake.auth === undefined || socket.handshake.auth === undefined) {
@@ -43,7 +44,7 @@ class ServerNetworkManager {
                 next(new Error("unauthorized"));
                 return;
             }
-            if(this.openPasswordAccesses.get(userId) !== pw) {
+            if(this.openPasswordAccesses.get(userID) !== pw) {
                 console.error("Wrong PW for user " + userID + " !");
                 next(new Error("unauthorized"));
                 return;
@@ -52,17 +53,18 @@ class ServerNetworkManager {
             // success
             this.openPasswordAccesses.delete(userID);
             console.log("User authenticated successfully! Removing pw access for " + userID + " now.");
+            socket.discordID = userID;
             next();
         }).on('connection', (socket)=>{
             console.log('a user connected');
-
+            const discordID = socket.discordID;
             /**
              * on request player add: 
              * @param {Object} data 
              * @param {number} data.id -  Player id
              */
             socket.on(NetworkCommands.REQUEST_ADD_PLAYER, (data) => {       // handling organisation commands here; gameplay commands in socketUser
-                var newPlayerData = instance.mainLoop.addPlayer(socket, data);
+                var newPlayerData = instance.mainLoop.addPlayer(socket, data, discordID);
                 instance.broadcastToAllPlayers(NetworkCommands.ADD_PLAYER, newPlayerData);
                 socket.clientId = data.id;
             });

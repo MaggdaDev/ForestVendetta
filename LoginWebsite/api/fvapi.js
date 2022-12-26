@@ -60,7 +60,8 @@ class FVAPI {
                         logApi("Auth map is now: " + this.authMap.entries.toString());
                         resolve(res);
                     }).catch((clientRedirectRes)=> {
-                        logApi("API calls failed! Sending error redirect to client");
+                        logApi("API calls failed! Sending error redirect to client:");
+                        console.trace(clientRedirectRes);
                         resolve(clientRedirectRes);
                     });
                     return;

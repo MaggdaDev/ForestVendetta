@@ -10,6 +10,7 @@ const ServerNetworkManager = require('./network/serverNetworkManager');
 const RabbitConnection = require('../../shared/rabbitConnection.js');
 const ShardRabbitCommunicator = require('./rabbit/shardRabbitCommunicator.js');
 const ShardRabbitCommandHandler = require('./rabbit/shardRabbitCommandHandler.js');
+const AccessManager = require('./admin/accessManager.js');
 const io = new Server(server);
 
 const args = process.argv;
@@ -35,10 +36,11 @@ rabbitConnection.connectUntilSuccess(2000).then(()=> {
     res.sendFile(path.join(__dirname, '../index.html'));
   });
   
-  var playerList = new Map();
-  var mainLoop = new MainLoop(playerList, server);
-  var networkManager = new ServerNetworkManager(io, playerList, mainLoop);
-  const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, uri);
+  var playerMap = new Map();
+  var mainLoop = new MainLoop(playerMap, server);
+  var networkManager = new ServerNetworkManager(io, playerMap, mainLoop);
+  var accessManager = new AccessManager(playerMap);
+  const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, uri, accessManager);
   rabbitCommunicator.sendCreateSuccess(createMessageID, uri);
   mainLoop.init();
   mainLoop.start();

@@ -9,20 +9,24 @@ class ShardRabbitCommunicator {
      * @param {RabbitConnection} rabbitConnection - 
      * @param {string} gameID - should be from IDGenerator.instance().nextGameID()
      */
-    constructor(rabbitConnection, gameID, networkManager, shardUri) {
+    constructor(rabbitConnection, gameID, networkManager, shardUri, accessManager) {
         this.shardUri = shardUri;
         this.rabbitConnection = rabbitConnection;
         this.rabbitConnection.assertCustomQueue(gameID);
-        this.rabbitCommandHandler = new ShardRabbitCommandHandler(this, networkManager);
+        this.rabbitCommandHandler = new ShardRabbitCommandHandler(this, networkManager, accessManager);
         this.gameQueueName = gameID;
 
         this.rabbitConnection.onMessageToCustomQueue((message) => this.rabbitCommandHandler.handleCommand(message), this.gameQueueName)
     }
 
-    sendDeployPlayerSuccessToLogin(requestDeployMessageID, pw) {
+    sendDeployPlayerSuccessToLogin(requestDeployMessageID, pw, accessObject) {
         // create uri with password:
-        var retUri = this.shardUri + "?pw=" + pw;
-        this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, {status: 1, shardUri: retUri}));       // status: 1/0 success/not  retUri: uri?pw=123
+        accessObject.shardUri = this.shardUri + "?pw=" + pw;
+        this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));       // status: 1 success  retUri: uri?pw=123
+    }
+
+    sendDeployPlayerFailToLogin(requestDeployMessageID, accessObject) {
+        this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));    // status: 0 error (from AccessManager.REJECT_REASONS)
     }
 
     /**

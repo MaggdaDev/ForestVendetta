@@ -71,19 +71,20 @@ class RequestHandler {
                 return;
             }
 
-            this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, userData, (message) => {
+            this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, userData, (accessObjectMessage) => {
                 try {
-                    if (message.status === 1) {
-                        console.log("Deploy successful! Adress is " + message.shardUri);
+                    if (accessObjectMessage.status === 1) {
+                        console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
 
                         // tweak uri: add playerID
-                        var tweakedUri = message.shardUri + "&userID=" + userID;
+                        var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
+                        accessObjectMessage.shardUri = tweakedUri;
                         console.log("Tweaked uri to: " + tweakedUri);
-                        resolve(tweakedUri);
+                        resolve(accessObjectMessage);
                         return;
                     } else {
-                        console.error("Deploy not successful! Error is " + message.error);
-                        reject(message.error);
+                        console.error("Deploy not successful! Error is " + accessObjectMessage.error + ". Sending error to client");
+                        resolve(accessObjectMessage);
                     }
                 } catch (e) {
                     reject(e);
@@ -113,6 +114,7 @@ class RequestHandler {
                 if (error.startsWith("401")) {   // unauthorized
                     reject(RequestHandler.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
                 }
+                console.trace("Caught error: " + error);
             });
 
         });
