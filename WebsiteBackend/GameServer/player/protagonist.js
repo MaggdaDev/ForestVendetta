@@ -18,8 +18,17 @@ class Protagonist {
     static HP = 25;
     static DESIRED_SPEED = 300;
     static ACC_FORCE = 5000;
-    constructor(id, socket, world, mainLoop) {
-        this.id = id;
+
+    /**
+     * 
+     * @param {Object} playerData - discordAPI, accountLevel, hotbar      see loginwebsite-api-requestHandler createDeployObject
+     * @param {*} socket 
+     * @param {*} world 
+     * @param {*} mainLoop 
+     */
+    constructor(playerData, socket, world, mainLoop) {
+        this.discordData = playerData.discordAPI;
+        this.id = this.discordData.id;
         this.startPos = new Vector(500, 500);
 
         this.world = world;
@@ -31,7 +40,7 @@ class Protagonist {
         this.facingLeft = false;
 
         //physics
-        this.movableBody = new MovableBody(this.hitBox, 100, this, id);
+        this.movableBody = new MovableBody(this.hitBox, 100, this, this.id);
         this.movableBody.addGravity();
         this.movableBody.disableRotation();
 
@@ -63,10 +72,12 @@ class Protagonist {
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000), 1);
         });
 
+        // stats
+        this.accountLevel = playerData.accountLevel;
+
 
         // inventory
-        this.inventory = new Inventory();
-        this.inventory.loadItems(this);
+        this.inventory = new Inventory(playerData.hotbar, this);
 
     }
 

@@ -7,9 +7,9 @@ class Sword extends Weapon{
      * @param {string} typeData.subClass
      * @param {string} typeData.type
      */
-    constructor(typeData, owner) {
+    constructor(typeData, owner, weaponID) {
         typeData.class = "SWORD";
-        super(typeData, owner);
+        super(typeData, owner, weaponID);
     }
 }
 

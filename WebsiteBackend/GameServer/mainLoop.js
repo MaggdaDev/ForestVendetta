@@ -170,7 +170,9 @@ class MainLoop {
 
     addPlayer(socket, data, discordID) {
         console.log("Register: " + JSON.stringify(data));
-        var newPlayer = new Protagonist(discordID, socket, this.world, this);
+        const playerData = this.networkManager.getPlayerDataFor(discordID); // delivered when asking if may join
+        console.log("Retrieving playerdata successful.");
+        var newPlayer = new Protagonist(playerData, socket, this.world, this);
         newPlayer.showOldPlayers(this.players);
         newPlayer.showOldMobs(this.mobManager);
         this.players.set(discordID, newPlayer);

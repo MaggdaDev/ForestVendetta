@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const IDGenerator = require("../idGen/idGenerator");
 const MongoAccessor = require("./mongoAccessor");
 const ItemObject = require("./mongoObjects/itemObject");
 const PlayerObject = require("./mongoObjects/playerObject");
@@ -21,7 +22,7 @@ class ObjectFactory {
     }
 
     static createNewItem(itemName, ownerID) {
-        const addItem = new ItemObject(new ObjectId(), ownerID, itemName);
+        const addItem = new ItemObject(IDGenerator.instance().nextItemID(), ownerID, itemName);
         return addItem;
     }
 

@@ -19,7 +19,7 @@ class ServerNetworkManager {
         var instance = this;
 
         this.openPasswordAccesses = new Map();      // userID <-> pw
-        this.authenticatedPlayerIDs = [];
+        this.deliveredPlayerData = new Map();       // userID <-> playerData        will be read on player object create
 
         io.use((socket, next) => {      // authentication
             if(socket.handshake.auth === undefined || socket.handshake.auth === undefined) {
@@ -81,6 +81,21 @@ class ServerNetworkManager {
         this.openPasswordAccesses.set(userID, pw);
         console.log("Addes password access for " + userID + " with password " + pw);
         return pw;
+    }
+
+    addPlayerDataFor(userID, playerData) {
+        if(this.deliveredPlayerData.has(userID)) {
+            console.log("Overriding delivered player data of: " + userID);
+        }
+        this.deliveredPlayerData.set(userID, playerData);
+    }
+
+    getPlayerDataFor(userID) {      // should be only used on player object creation
+        if(this.deliveredPlayerData.has(userID)) {
+            return this.deliveredPlayerData.get(userID);
+        } else {
+            throw new Error("Trying to read player data that hasn't been delivered! UserID: " + userID);
+        }
     }
 
 

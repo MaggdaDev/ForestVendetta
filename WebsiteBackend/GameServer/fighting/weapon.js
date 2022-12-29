@@ -7,9 +7,9 @@ class Weapon {
      * @param {string} typeData.type
      */
     static currentId = 0;
-    constructor(typeData, owner) {
+    constructor(typeData, owner, weaponID) {
         this.typeData = typeData;
-        this.id = Weapon.nextWeaponId();
+        this.id = weaponID;
         this.fighter = owner.fightingObject;
         this.owner = owner;
     }
@@ -28,12 +28,6 @@ class Weapon {
             id: instance.id,
             typeData: instance.typeData
         }
-    }
-
-    static nextWeaponId() {
-        var temp = Weapon.currentId;
-        Weapon.currentId++;
-        return "W" + String(temp);
     }
 
     strike() {

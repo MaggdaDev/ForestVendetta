@@ -1,10 +1,15 @@
 const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
+const WeaponManager = require("../fighting/weaponManager");
 
 class Inventory {
-    constructor() {
-        this.backpack = [];
+    constructor(hotbarList, owner) {
         this.hotBar = Array(6);
         this.selected = 0;  
+
+        hotbarList.forEach((element, index) => {
+            this.hotBar[index] = WeaponManager.instance().fromMongoData(element, owner);
+        });
+
     }
 
     addDrop(item) {
@@ -14,11 +19,6 @@ class Inventory {
                 return;
             }
         }
-    }
-
-    loadItems(owner) {   // todo; maybe in constructor better
-        this.hotBar[0] = owner.mainLoop.weaponManager.createNewWeapon(RustySpade, owner);
-        this.hotBar[2] = owner.mainLoop.weaponManager.createNewWeapon(RustySpade, owner);
     }
 
     selectItem(index) {

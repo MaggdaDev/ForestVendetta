@@ -71,29 +71,43 @@ class RequestHandler {
                 return;
             }
 
-            this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, userData, (accessObjectMessage) => {
-                try {
-                    if (accessObjectMessage.status === 1) {
-                        console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
+            this.createDeployData(userID, userData).then((deployData) => {
 
-                        // tweak uri: add playerID
-                        var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
-                        accessObjectMessage.shardUri = tweakedUri;
-                        console.log("Tweaked uri to: " + tweakedUri);
-                        resolve(accessObjectMessage);
-                        return;
-                    } else {
-                        console.error("Deploy not successful! Error is " + accessObjectMessage.error + ". Sending error to client");
-                        resolve(accessObjectMessage);
+                this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, deployData, (accessObjectMessage) => {
+                    try {
+                        if (accessObjectMessage.status === 1) {
+                            console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
+
+                            // tweak uri: add playerID
+                            var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
+                            accessObjectMessage.shardUri = tweakedUri;
+                            console.log("Tweaked uri to: " + tweakedUri);
+                            resolve(accessObjectMessage);
+                            return;
+                        } else {
+                            console.error("Deploy not successful! Error is " + accessObjectMessage.error + ". Sending error to client");
+                            resolve(accessObjectMessage);
+                        }
+                    } catch (e) {
+                        reject(e);
                     }
-                } catch (e) {
-                    reject(e);
-                }
+                });
             });
 
 
         });
     }
+
+    async createDeployData(userID, userData) {
+        const hotbar = await this.mongoAccessor.createHotbarObject(userID, userData.mongo.inventory);
+        return {
+            discordAPI: userData.discordAPI,
+            hotbar: hotbar,
+            accountLevel: userData.mongo.accountLevel
+        }
+    }
+
+    // end: join game
 
     // start: requets join game data
     requestJoinGameData(query) {

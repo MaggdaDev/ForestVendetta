@@ -11,9 +11,9 @@ class HeavySword extends Sword {
      * @param {Object} typeData
      * @param {string} typeData.type 
      */
-    constructor(typeData, owner) {
+    constructor(typeData, owner, weaponID) {
         typeData.subClass = "HEAVY_SWORD";
-        super(typeData,owner);
+        super(typeData, owner, weaponID);
 
         this.setupHitBoxes();
 

@@ -4,7 +4,8 @@ class IDGenerator {
     constructor() {
         this.counters = {
             games: 0,
-            messages: 0
+            messages: 0,
+            items: 0
         }
     }
 
@@ -14,6 +15,10 @@ class IDGenerator {
 
     nextGameID() {
         return "G" + this._getAllParts("games");
+    }
+
+    nextItemID() {
+        return "I" + this._getAllParts("items");
     }
 
     _getAllParts(key) {

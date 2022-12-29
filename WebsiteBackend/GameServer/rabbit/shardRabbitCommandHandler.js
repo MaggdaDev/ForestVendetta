@@ -30,6 +30,7 @@ class ShardRabbitCommandHandler {
                     if (accessObject.status === 1) {
                         logCommandHandler("Access granted!");
                         const pw = this.networkManager.addPasswordAccessFor(userID);
+                        this.networkManager.addPlayerDataFor(userID, message.args.playerData);
                         this.rabbitCommunicator.sendDeployPlayerSuccessToLogin(message.correlationID, pw, accessObject);
                     } else {
                         logCommandHandler("Access denied to " + userID + " with reason " + accessObject.error);

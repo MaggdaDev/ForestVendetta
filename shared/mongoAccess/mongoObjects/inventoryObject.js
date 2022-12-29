@@ -11,6 +11,8 @@ class InventoryObject {
     constructor(defaultItem) {
         this.itemIDs = [];
         this.itemIDs.push(defaultItem._id);
+        this.hotbarIDs = [];
+        this.hotbarIDs.push(defaultItem._id);
         logInv("Constructed InventoryObject...");
     }
 

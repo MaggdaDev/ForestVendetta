@@ -1,4 +1,4 @@
-const InventoryObject = require("./inventoryObject,js");
+const InventoryObject = require("./inventoryObject.js");
 
 class PlayerObject {
     static START_ACCOUNT_LEVEL = 1;

@@ -27,7 +27,7 @@ console.log("Created collections: " + playersDBName);
 
 // create items collection
 const itemsDBName = "items";
-db.createCollection(playersDBName, {
+db.createCollection(itemsDBName, {
     validator: {
         $jsonSchema: {
             bsonType: "object",
@@ -44,4 +44,4 @@ db.createCollection(playersDBName, {
         }
     }
 });
-console.log("Created collections: " + playersDBName);
+console.log("Created collections: " + itemsDBName);

@@ -56,6 +56,24 @@ class MongoAccessor {
             return player;
         }
     }
+
+    /**
+     * 
+     * @param {string[]} itemIDs - item ids as array
+     */
+    async getItemObjectsFromIDs(itemIDs) {
+        logMongo("Get itemObjects from IDs...");
+        const query = {"_id": { "$in" : itemIDs}}
+        const cursor = await this.itemCollection.find(query);
+        const objects = await cursor.toArray();
+        logMongo("Got " + objects.length + " items from hotbar.");
+        return objects;
+    }
+
+    async updateHotbar(userID, hotbarIDs) {
+        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.hotbarIDs": hotbarIDs}});
+        console.log("Updated hotbar in db");
+    }
 }
 
 function logMongo(s) {
