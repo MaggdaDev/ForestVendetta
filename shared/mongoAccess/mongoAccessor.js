@@ -74,6 +74,11 @@ class MongoAccessor {
         await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.hotbarIDs": hotbarIDs}});
         console.log("Updated hotbar in db");
     }
+
+    async updateOwnedItems(ownedItemIDs, userID) {
+        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.itemIDs": ownedItemIDs}});
+        console.log("Updated owned items in db");
+    }
 }
 
 function logMongo(s) {

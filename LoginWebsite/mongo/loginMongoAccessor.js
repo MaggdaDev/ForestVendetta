@@ -5,10 +5,32 @@ class LoginMongoAccessor {
     }
 
     async createHotbarObject(userID, mongoInventoryObject) {
-        const hotbarIDs = await this.getCheckedHotbarIDs(userID, mongoInventoryObject);
+        mongoInventoryObject.itemIDs = await this.getCheckedOwnedItems(mongoInventoryObject, userID);   // check if owned items have this as owner
+        const hotbarIDs = await this.getCheckedHotbarIDs(userID, mongoInventoryObject);     // check if hotbar items are actually owned
         const hotbarItems = await this.getItemObjectsFromIDs(hotbarIDs);
         console.log("Created hotbar Object.");
         return hotbarItems;
+    }
+/**
+ * 
+ * @param {Object} mongoInventoryObject 
+ * @returns {string[]} ownedIDs
+ */
+    async getCheckedOwnedItems(mongoInventoryObject, userID) {    // check if owned items have this as owner
+        console.log("Checking for not owned items...");
+        const ownedIDsMongo = mongoInventoryObject.itemIDs;
+        const ownedItemObjects = await this.mongoAccessor.getItemObjectsFromIDs(ownedIDsMongo);
+        var checkedIDs = [];
+        ownedItemObjects.forEach((element, index) => {
+            if(element.ownerDiscordID !== userID) {
+                console.error("Found item with owner " + element.ownerDiscordID + " at " + userID + ". Deleting it.");
+            } else {
+                checkedIDs.push(element._id);
+            }
+        });
+        this.mongoAccessor.updateOwnedItems(checkedIDs, userID);
+        console.log("Removed " + (ownedIDsMongo.length - checkedIDs.length) + " illegally owned items");
+        return checkedIDs;
     }
 
     async getItemObjectsFromIDs(itemIDs) {      // for hotbar construction i.e.
