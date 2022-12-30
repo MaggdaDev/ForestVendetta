@@ -1,4 +1,5 @@
 const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
+const DropObject = require("../player/dropObject");
 
 class DropHandler {
     constructor(dropConfig, weaponManager) {
@@ -6,24 +7,18 @@ class DropHandler {
         this.dropConfig = dropConfig;
     }
 
-    createDrops(owner) {
+    /**
+     * 
+     * @returns {DropObject[]} dropped items
+     */
+    createDrops() {
         const droppedItems = [];
         this.dropConfig.drops.forEach((currObj)=> {
             this.performWithProb(()=> {
-                droppedItems.push(this.dropWeapon(currObj.item, owner));
+                droppedItems.push(new DropObject(currObj.item));
             }, currObj.chance);
         });
         return droppedItems;
-    }
-
-    dropWeapon(item, owner) {
-        switch(item) {
-            case "RUSTY_SPADE":
-            return this.weaponManager.createNewWeapon(RustySpade, owner)
-            break;
-            default:
-                throw ("Item not supported as drop yet: " + item);
-        }
     }
 
     performWithProb(func, prob) {

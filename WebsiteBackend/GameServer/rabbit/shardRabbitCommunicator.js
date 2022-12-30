@@ -29,6 +29,10 @@ class ShardRabbitCommunicator {
         this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));    // status: 0 error (from AccessManager.REJECT_REASONS)
     }
 
+    sendDropsToScheduler(userID, drops) {
+        this.rabbitConnection.sendToScheduler(RabbitMessage.RABBIT_COMMANDS.FROM_SHARDS.CONSTRUCT_DROPS, {userID: userID, drops: drops});
+    }
+
     /**
      * 
      * @param {string} createMessageID - messageID from IDGenerator. Should be correlationID of createShard message from scheduler to shardManager

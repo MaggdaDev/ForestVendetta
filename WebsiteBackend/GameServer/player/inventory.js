@@ -10,15 +10,19 @@ class Inventory {
             this.hotBar[index] = WeaponManager.instance().fromMongoData(element, owner);
         });
 
+        this.drops = [];    // list of new acquired drops {itemName: "RUSTY_SPADE"} i.e.
+
     }
 
-    addDrop(item) {
-        for(var i = 0; i < this.hotBar.length; i += 1) {
-            if(!this.hotBar[i]) {
-                this.hotBar[i] = item;
-                return;
-            }
-        }
+
+    /**
+     * 
+     * @param {DropObject} dropObject - detailled info about drop
+     * @returns 
+     */
+    addDrop(dropObject) {
+        this.drops.push(dropObject);
+        console.log("Added " + dropObject.itemName + " to drops");
     }
 
     selectItem(index) {

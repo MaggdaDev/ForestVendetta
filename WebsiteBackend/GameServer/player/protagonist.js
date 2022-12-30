@@ -8,6 +8,7 @@ const PolygonHitBox = require("../physics/polygonHitBox");
 const FightingObject = require("../fighting/fightingObject");
 const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
 const Inventory = require("./inventory");
+const ShardRabbitCommunicator = require("../rabbit/shardRabbitCommunicator");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -79,6 +80,21 @@ class Protagonist {
         // inventory
         this.inventory = new Inventory(playerData.hotbar, this);
 
+    }
+
+    /**
+     * 
+     * @param {ShardRabbitCommunicator} rabbitCommunicator 
+     */
+    goodbyeJojo(rabbitCommunicator) {       // on shard death/log out
+        console.log("Deconstructing player...");
+        // drops
+        if(this.inventory.drops.length === 0) {
+            console.log("No drops to send.");
+        } else {
+            console.log("Sending " + this.inventory.drops.length + " drops to scheduler");
+            rabbitCommunicator.sendDropsToScheduler(this.id, this.inventory.drops);
+        }
     }
 
     addDrop(item) {

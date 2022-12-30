@@ -42,7 +42,7 @@ rabbitConnection.connectUntilSuccess(2000).then(()=> {
   var accessManager = new AccessManager(playerMap);
   const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, uri, accessManager);
   rabbitCommunicator.sendCreateSuccess(createMessageID, uri);
-  mainLoop.init();
+  mainLoop.init(rabbitCommunicator);
   mainLoop.start();
 
   

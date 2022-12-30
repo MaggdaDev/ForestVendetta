@@ -35,11 +35,11 @@ class Mob {
         // drops
         this.dropHandler = new DropHandler(mobConfig.drop_config, weaponManager);
         this.addOnDeath(()=> {
-            var drops;
+            var dropObjects;    // []
             this.players.forEach((player)=>{
-                drops = this.dropHandler.createDrops(player);
-                drops.forEach((currDrop)=>{
-                    player.addDrop(currDrop);
+                dropObjects = this.dropHandler.createDrops();
+                dropObjects.forEach((currDropObject)=>{
+                    player.addDrop(currDropObject);
                 });
             })
         });  

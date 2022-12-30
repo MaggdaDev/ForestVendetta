@@ -26,7 +26,8 @@ class MainLoop {
 
     }
 
-    init() {        // after constructor before start; after network manager is created
+    init(rabbitCommunicator) {        // after constructor before start; after network manager is created
+        this.rabbitCommunicator = rabbitCommunicator;
         this.weaponManager = new WeaponManager();
         this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
         this.updateData = this.collectUpdateData();     // after mob manager is created
@@ -126,6 +127,10 @@ class MainLoop {
 
     end() {
         clearInterval(this.intervalID);
+
+        console.log("Disconnecting all players...");
+        this.players.keys.slice().forEach((element)=> this.handleDisconnect(element));
+
         console.log("F");
         this.server.close();
         process.exit(0);
@@ -176,10 +181,12 @@ class MainLoop {
         newPlayer.showOldPlayers(this.players);
         newPlayer.showOldMobs(this.mobManager);
         this.players.set(discordID, newPlayer);
+        this.end();
         return newPlayer;
     }
 
     handleDisconnect(clientId) {
+        this.players.get(clientId).goodbyeJojo(this.rabbitCommunicator);
         this.players.delete(clientId);
     }
 
