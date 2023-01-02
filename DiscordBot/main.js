@@ -23,7 +23,7 @@ if (config.testMode) {
 // wait for rabbit connection
 const rabbitConnection = new RabbitConnection();
 const mongoAccessor = new MongoAccessor();
-rabbitConnection.connectUntilSuccess(2000).then(()=>mongoAccessor.connect().then(()=> {
+rabbitConnection.connectUntilSuccess(2000).then(()=>mongoAccessor.connectUntilSuccess().then(()=> {
     // Create a new client instance
     logMain("Connecting to rabbit finished; creating bot discord client...");
     const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });

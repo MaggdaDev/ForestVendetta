@@ -70,7 +70,7 @@ class LoginMongoAccessor {
 
     async connect() {
         return new Promise((resolve, reject) => {
-            this.mongoAccessor.connect().then(resolve);
+            this.mongoAccessor.connectUntilSuccess().then(resolve);
         })
     }
 

@@ -1,5 +1,8 @@
+const MongoAccessor = require("../../shared/mongoAccess/mongoAccessor");
 const RabbitConnection = require("../../shared/rabbitConnection");
 const MainLoop = require("./mainLoop");
+const SchedulerMongoAccessor = require("./mongo/schedulerMongoAccessor");
+const DropConstructor = require("./partTimeJobs/dropConstructor");
 const RabbitCommandHandler = require("./rabbit/schedulerRabbitCommandHandler");
 const RabbitCommunicator = require("./rabbit/schedulerRabbitCommunicator");
 const GuildSpawnInfo = require("./spawning/guildSpawnInfo");
@@ -10,9 +13,12 @@ class Scheduler {
     /**
      * 
      * @param {RabbitConnection} rabbitConnection 
+     * @param {MongoAccessor} mongoAccessor
      */
-    constructor(rabbitConnection) {
-        this.rabbitCommandHandler = new RabbitCommandHandler(this);
+    constructor(rabbitConnection, mongoAccessor) {
+        this.schedulerMongoAccessor = new SchedulerMongoAccessor(mongoAccessor);
+        this.dropConstructor = new DropConstructor(this.schedulerMongoAccessor);
+        this.rabbitCommandHandler = new RabbitCommandHandler(this, this.dropConstructor);
         this.rabbitCommunicator = new RabbitCommunicator(rabbitConnection, this.rabbitCommandHandler);
         this.worldInitializer = new WorldInitializer(this.rabbitCommunicator);
         this.spawner = new Spawner(this.worldInitializer);

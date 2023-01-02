@@ -35,12 +35,72 @@ class MongoAccessor {
 
     }
 
-    connect() {
+    connectUntilSuccess() {
         logMongo("Trying to connect to mongo...");
         return this.connector.connectUntilSuccess(2000);
     }
 
     // requests
+
+    /**
+     * @description inserts items into player inventory and IDs to items list. Also puts item into hotbar if not already full (may be removed in future TODO)
+     * @param {string} userID - owner
+     * @param {Object[]} items - mongo objects from factory with already noted owner [{._id, ownerDiscordID}]
+     */
+    async insertOwnedItems(userID, items) {
+        const itemIDs = [];
+        items.forEach((element) => {
+            itemIDs.push(element._id);
+        })
+
+        if(itemIDs.length !== items.length) {
+            throw(new Error("Bruh something went wrong on insert owned items"));
+        }
+
+        // insert ids to item
+        await this.itemCollection.insertMany(items);
+        logMongo("Inserted " + items.length + " items to item table.");
+
+        // insert items to player inventory
+        const query = {_id: userID};
+        const currPlayer = await this.playerCollection.findOne(query);
+        const ownedItemIDs = currPlayer.inventory.itemIDs;
+        const hotbarItemIDs = currPlayer.inventory.hotbarIDs;
+        itemIDs.forEach((element) => {
+            if(ownedItemIDs.includes(element)) {
+                throw(new Error("Item with ID " + element + " already in inventory of " + userID + " on owned items insertion!"));
+            }
+            ownedItemIDs.push(element);
+            
+            if(hotbarItemIDs.length < 6) {
+                hotbarItemIDs.push(element);
+                logMongo("Added owned item " + element + " to inventory of " + userID + " and pushed it to hotbar");
+            } else {
+                logMongo("Added owned item " + element + " to inventory of " + userID);
+            }
+        });
+
+        await this.updateOwnedItems(ownedItemIDs, userID);
+        await this.updateHotbar(userID, hotbarItemIDs);
+    }
+
+    /**
+     * @description ONLY inserts item. Should not be used alone if you're not giga nigga
+     * @param {Object} itemMongoObject 
+     */
+    async _insertItem(itemMongoObject) {
+        logMongo("Insert 1 item into table");
+        return this.itemCollection.insertOne(itemMongoObject);
+    }
+
+    /**
+     * @description ONLY inserts player. Should not be used alone if you're not giga nigga
+     * @param {Object} playerMongoObject 
+     */
+     async _insertPlayer(playerMongoObject) {
+        logMongo("Insert 1 player into table");
+        return this.playerCollection.insertOne(playerMongoObject);
+    }
 
     async getPlayerOrCreate(userID) {
         logMongo("Get player or create if not existing...");
@@ -74,6 +134,7 @@ class MongoAccessor {
         await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.hotbarIDs": hotbarIDs}});
         console.log("Updated hotbar in db");
     }
+
 
     async updateOwnedItems(ownedItemIDs, userID) {
         await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.itemIDs": ownedItemIDs}});

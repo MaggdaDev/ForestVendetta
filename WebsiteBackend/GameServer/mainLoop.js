@@ -129,11 +129,17 @@ class MainLoop {
         clearInterval(this.intervalID);
 
         console.log("Disconnecting all players...");
-        this.players.keys.slice().forEach((element)=> this.handleDisconnect(element));
+        const playerKeys = Array.from(this.players.keys());
+        playerKeys.slice().forEach((element)=> this.handleDisconnect(element));
 
         console.log("F");
         this.server.close();
-        process.exit(0);
+        setTimeout(()=> {
+            console.log("Murdering process after 2s waiting for deconstruction.");
+            console.log("F");
+            process.exit(0);
+        }, 2000);
+        
     }
 
     /**
@@ -181,7 +187,6 @@ class MainLoop {
         newPlayer.showOldPlayers(this.players);
         newPlayer.showOldMobs(this.mobManager);
         this.players.set(discordID, newPlayer);
-        this.end();
         return newPlayer;
     }
 

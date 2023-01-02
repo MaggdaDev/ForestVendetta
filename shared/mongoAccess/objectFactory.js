@@ -16,8 +16,8 @@ class ObjectFactory {
 
     async addNewPlayer(discordID) {
         const constructed = ObjectFactory.constructPlayerAndWeapon(discordID);
-        this.accessor.itemCollection.insertOne(constructed.weapon);
-        this.accessor.playerCollection.insertOne(constructed.player);
+        this.accessor._insertItem(constructed.weapon);
+        this.accessor._insertPlayer(constructed.player);
         return constructed.player;
     }
 

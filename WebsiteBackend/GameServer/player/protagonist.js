@@ -9,6 +9,7 @@ const FightingObject = require("../fighting/fightingObject");
 const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
 const Inventory = require("./inventory");
 const ShardRabbitCommunicator = require("../rabbit/shardRabbitCommunicator");
+const DropObject = require("./dropObject");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -79,6 +80,12 @@ class Protagonist {
 
         // inventory
         this.inventory = new Inventory(playerData.hotbar, this);
+
+        // debug
+        if(false) {
+            console.log("ADDING TEST DROP TO INVENTORY");
+            this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
+        }
 
     }
 

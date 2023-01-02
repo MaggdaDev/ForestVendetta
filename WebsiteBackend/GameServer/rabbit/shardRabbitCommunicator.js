@@ -30,7 +30,7 @@ class ShardRabbitCommunicator {
     }
 
     sendDropsToScheduler(userID, drops) {
-        this.rabbitConnection.sendToScheduler(RabbitMessage.RABBIT_COMMANDS.FROM_SHARDS.CONSTRUCT_DROPS, {userID: userID, drops: drops});
+        this.rabbitConnection.sendToScheduler(new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SHARDS.CONSTRUCT_DROPS, {userID: userID, drops: drops}));
     }
 
     /**
