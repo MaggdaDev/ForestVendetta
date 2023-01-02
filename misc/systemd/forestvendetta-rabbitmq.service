@@ -9,7 +9,8 @@ Restart=always
 ExecStartPre=-/usr/bin/docker stop forestvendetta-rabbitmq
 ExecStartPre=-/usr/bin/docker rm forestvendetta-rabbitmq
 ExecStartPre=/usr/bin/docker pull rabbitmq:3.10-management
-ExecStart=/usr/bin/docker run --rm --name forestvendetta-rabbitmq --hostname forestvendetta-rabbitmq rabbitmq:3.10-management
+ExecStart=/usr/bin/docker run --rm --name forestvendetta-rabbitmq --hostname forestvendetta-rabbitmq -p 127.69.42.34:5672:5672 rabbitmq:3.10-management
+#old: ExecStart=/usr/bin/docker run --rm --name forestvendetta-rabbitmq --hostname forestvendetta-rabbitmq rabbitmq:3.10-management
 
 [Install]
 WantedBy=multi-user.target

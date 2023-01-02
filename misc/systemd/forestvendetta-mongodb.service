@@ -10,7 +10,8 @@ EnvironmentFile=/var/stuff/forestvendetta/ForestVendetta/config/mongodb-credenti
 ExecStartPre=-/usr/bin/docker stop forestvendetta-mongodb
 ExecStartPre=-/usr/bin/docker rm forestvendetta-mongodb
 ExecStartPre=/usr/bin/docker pull mongo:6
-ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb -v /var/stuff/forestvendetta/ForestVendetta/config/mongod.conf:/etc/mongo/mongod.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db -e MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER} -e MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS} mongo:6 --config /etc/mongo/mongod.conf
+ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb --hostname forestvendetta-mongodb -p 127.69.42.34:27017:27017 -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db -e MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER} -e MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS} mongo:6
+#old: ExecStart=/usr/bin/docker run --rm --name forestvendetta-mongodb -v /var/stuff/forestvendetta/ForestVendetta/config/mongod.conf:/etc/mongo/mongod.conf:ro -v /var/stuff/forestvendetta/ForestVendetta/storage/mongodb:/data/db -e MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER} -e MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS} mongo:6 --config /etc/mongo/mongod.conf
 
 [Install]
 WantedBy=multi-user.target
