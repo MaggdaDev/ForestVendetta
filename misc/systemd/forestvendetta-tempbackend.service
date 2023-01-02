@@ -1,12 +1,12 @@
 [Unit]
-Description=Forest Vendetta - server backend (temporary)
+Description=Forest Vendetta - server backend (temporary), starting port 3000 game ID testtest123
 RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
 After=network.target
 
 [Service]
 User=forestvendetta
 WorkingDirectory=/var/stuff/forestvendetta/ForestVendetta/WebsiteBackend
-ExecStart=/usr/bin/npm start
+ExecStart=/usr/bin/npm start --localhost --3000 --testtest123
 Restart=on-failure
 TimeoutStopSec=10
 RestartSec=5
