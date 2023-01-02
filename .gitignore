@@ -1,4 +1,4 @@
 config/
-#storage/
+storage/
 DiscordBot/_SECRET
 DiscordBot/_SECRET.json
