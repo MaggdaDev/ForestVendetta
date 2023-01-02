@@ -15,14 +15,15 @@ class Scheduler {
      * @param {RabbitConnection} rabbitConnection 
      * @param {MongoAccessor} mongoAccessor
      */
-    constructor(rabbitConnection, mongoAccessor) {
+    constructor(rabbitConnection, mongoAccessor, isTestMode) {
+        this.isTestMode = isTestMode;
         this.schedulerMongoAccessor = new SchedulerMongoAccessor(mongoAccessor);
         this.dropConstructor = new DropConstructor(this.schedulerMongoAccessor);
         this.rabbitCommandHandler = new RabbitCommandHandler(this, this.dropConstructor);
         this.rabbitCommunicator = new RabbitCommunicator(rabbitConnection, this.rabbitCommandHandler);
         this.worldInitializer = new WorldInitializer(this.rabbitCommunicator);
         this.spawner = new Spawner(this.worldInitializer);
-        this.mainLoop = new MainLoop(this, this.spawner);
+        this.mainLoop = new MainLoop(this, this.spawner, this.isTestMode);
         this.spawner.loadConfig();
 
         // todo: get guild info

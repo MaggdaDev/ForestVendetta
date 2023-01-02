@@ -1,6 +1,6 @@
 console.log("Client script started");
 
-const isTestMode = true;            // TODO: SOMETHING BETTER...
+const isTestMode = false;            // TODO: SOMETHING BETTER...
 const port = 2999;
 var host;
 if (isTestMode) {
@@ -29,20 +29,13 @@ window.onload = () => {
     }
 
     // setup login with discord
-    if (isTestMode) {
-        const redirectUri = "http://" + host + ":" + port + "/redirect.html";
-        const formObject = new FormObject("loginWithDiscordForm",       // form document ID
-            "https://discord.com/api/oauth2/authorize",                 // action
-            [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
-            { name: 'redirect_uri', value: redirectUri },
-            { name: 'response_type', value: "code" },
-            { name: 'scope', value: 'identify' },
-            { name: 'state', value: params.game }]);
-        formObject.register();
-        
-
-    } else {
-
-        throw "Only test mode implemented for redirect to oath2 link";
-    }
+    const redirectUri = "http://" + host + ":" + port + "/redirect.html";
+    const formObject = new FormObject("loginWithDiscordForm",       // form document ID
+        "https://discord.com/api/oauth2/authorize",                 // action
+        [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
+        { name: 'redirect_uri', value: redirectUri },
+        { name: 'response_type', value: "code" },
+        { name: 'scope', value: 'identify' },
+        { name: 'state', value: params.game }]);
+    formObject.register();
 }

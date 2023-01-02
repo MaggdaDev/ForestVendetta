@@ -6,7 +6,7 @@ const Platform = require('./world/platform');
 const World = require('./world/world');
 const WorldLoader = require('./world/worldLoader');
 class MainLoop {
-
+    static MAX_LIFE_TIME = Number.MAX_SAFE_INTEGER;
 
     constructor(playerMap, server) {
         this.server = server;
@@ -135,10 +135,10 @@ class MainLoop {
         console.log("F");
         this.server.close();
         setTimeout(()=> {
-            console.log("Murdering process after 2s waiting for deconstruction.");
+            console.log("Murdering process after 500ms waiting for deconstruction.");
             console.log("F");
             process.exit(0);
-        }, 2000);
+        }, 500);
         
     }
 
@@ -146,7 +146,7 @@ class MainLoop {
      * @description determines wether or not shard should shut down -   100s after birth
      */
     checkShardALive() {
-        if(Date.now() - this.birthTime > 1000 * 100 && this.players.size === 0) {
+        if(Date.now() - this.birthTime > MainLoop.MAX_LIFE_TIME * 100 && this.players.size === 0) {
             return false;
         } else {
             return true;

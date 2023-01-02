@@ -9,11 +9,12 @@ class MainLoop {
      * @param {Scheduler} scheduler 
      * @param {Spawner} spawner
      */
-    constructor(scheduler, spawner) {
+    constructor(scheduler, spawner, isTestMode) {
         this.loopCount = 0;
         this.startTime;
         this.scheduler = scheduler;
         this.spawner = spawner;
+        this.isTestMode = isTestMode;
     }
 
     /**
@@ -22,7 +23,12 @@ class MainLoop {
      */
      _loop(instance) {          // all loop logic
         instance.loopLogging();
-        instance.spawnTicksForEveryGuild();
+        if(this.isTestMode) {
+            instance.spawnTicksForEveryGuild();
+        } else {
+            console.log("Skipped spawning due to serious mode!");
+        }
+        
     }
 
     

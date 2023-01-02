@@ -1,8 +1,16 @@
 const amqp = require('amqplib/callback_api');
+const config = require("../../config-example/discordbot-config.json");
 const MongoAccessor = require('../../shared/mongoAccess/mongoAccessor');
 const RabbitConnection = require('../../shared/rabbitConnection');
 const Scheduler = require('./scheduler');
-
+var isTestMode;
+if(config.testMode) {
+    console.log("Activated test mode!");
+    isTestMode = true;
+} else {
+    console.log("Deactivated test mode!");
+    isTestMode = false;
+}
 console.log("Preparing to start scheduler...");
 
 //rabbit connection
@@ -14,7 +22,7 @@ rabbitConnection.connectUntilSuccess(2000).then(()=>{
     mongoAccessor.connectUntilSuccess().then(()=> {
         console.log("Connected to mongo => create scheduler");
         console.log("Creating scheduler...");
-        const scheduler = new Scheduler(rabbitConnection, mongoAccessor);
+        const scheduler = new Scheduler(rabbitConnection, mongoAccessor, isTestMode);
         scheduler.startMainLoop();
     })
     

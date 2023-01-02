@@ -6,7 +6,7 @@ After=network.target
 [Service]
 User=forestvendetta
 WorkingDirectory=/var/stuff/forestvendetta/ForestVendetta/WebsiteBackend
-ExecStart=/usr/bin/npm start --localhost --3000 --testtest123
+ExecStart=/usr/bin/npm start --minortom.net --3000 --testtest123
 Restart=on-failure
 TimeoutStopSec=10
 RestartSec=5
