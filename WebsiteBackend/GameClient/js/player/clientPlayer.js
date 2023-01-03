@@ -102,7 +102,7 @@ class ClientPlayer {
     }
 
     remove() {
-        this.sprite.deconstruct();
+        this.sprite.deconstruct(); // 
     }
 
     strikeAnimationFromServer(data) {
