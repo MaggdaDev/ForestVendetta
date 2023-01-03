@@ -34,7 +34,7 @@ class DiscordAPIAccessor {
                     console.log(json);
                     if (json.message !== undefined && json.message.startsWith("401")) {
                         console.error("401: Unauthorized, returning null");
-                        reject(json.message);
+                        resolve(null);
                     } else {
                         resolve(json.user);
                     }

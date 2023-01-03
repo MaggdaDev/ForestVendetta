@@ -8,23 +8,16 @@ class ClientProtagonist extends ClientPlayer {
     }
 
     /** OVERRIDE
-     * 
+     * @description overrides ClientPlayer.update! Always check differences
      * @param {Object} data 
      */
     update(data) {
         this.updateWeapon(data);
-        this.updateSpriteToData(data);
+        super.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
+        
         //this.updateInventory(data);
-    }
-
-    updateInventory(data) {
-        this.updateInventoryItems(data.inventory);
-    }
-
-    updateSpriteToLocal(data) {
-        this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp, this.sprite.facingLeft);
     }
 
     updateWalkingAnimationToLocal(data) {
@@ -78,6 +71,17 @@ class ClientProtagonist extends ClientPlayer {
         }
 
     }
+
+    // probably useless TODO remove
+    updateInventory(data) {
+        this.updateInventoryItems(data.inventory);
+    }
+
+    /*
+    updateSpriteToLocal(data) {
+        this.sprite.update(data.pos.x, data.pos.y, data.fightingObject.hp, this.sprite.facingLeft);
+    }
+    */
 
     
 }

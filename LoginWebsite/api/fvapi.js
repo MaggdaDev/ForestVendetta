@@ -61,7 +61,6 @@ class FVAPI {
                         resolve(res);
                     }).catch((clientRedirectRes)=> {
                         logApi("API calls failed! Sending error redirect to client:");
-                        console.trace(clientRedirectRes);
                         resolve(clientRedirectRes);
                     });
                     return;

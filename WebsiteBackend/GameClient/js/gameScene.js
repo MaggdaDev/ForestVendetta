@@ -27,7 +27,10 @@ class GameScene extends Phaser.Scene {
 
     // OVERRIDE
     update(time, delta) {           // CLIENTSIDE UPDATE LOOP
-        this.clientProtagonist.clientSideUpdate(time, delta);
+        this.players.forEach((currPlayer) => {
+            currPlayer.clientSideUpdate(time, delta);
+        });
+        this.mobManager.updateClientAllMobs(delta);
     }
 
     create() {

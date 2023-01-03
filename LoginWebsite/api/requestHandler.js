@@ -33,7 +33,7 @@ class RequestHandler {
         this.authMap = authMap;
     }
 
-    static getRejectObject(error) {
+    getRejectObject(error) {
         return {
             error: error,
             redirect: this.adressManager.getIndexURL({ "error": error })
@@ -57,17 +57,17 @@ class RequestHandler {
             const gameID = query.gameID;
             if (userData === null || userData === undefined) {
                 console.error("User is not at all in auth map! Throwing invalid session");
-                reject(RequestHandler.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
+                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
                 return;
             }
             if (userData.code !== query.code) {
                 console.error("Wrong user code!");
-                reject(RequestHandler.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
+                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
                 return;
             }
             if (gameID === null || gameID === undefined) {
                 console.error("Game to join not defined!");
-                reject(RequestHandler.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
+                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
                 return;
             }
 
@@ -115,20 +115,23 @@ class RequestHandler {
             console.log("Handling request for join match data...");
             //discord API data
             this.requestUserIdentifyData(query).then((discordData) => {
-                this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {
-                    resolve({
-                        discordAPI: discordData,
-                        mongo: mongoData
-                    })
-                });
+                if (discordData === null) {
+                    console.log("Received discord data is null, sending error to client...");
+                    reject(this.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
+                } else {
+                    this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {
+                        resolve({
+                            discordAPI: discordData,
+                            mongo: mongoData
+                        })
+                    });
+                }
                 // discordAPI returned null
 
 
             }).catch((error) => {
-                if (error.startsWith("401")) {   // unauthorized
-                    reject(RequestHandler.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
-                }
                 console.trace("Caught error: " + error);
+                reject(error);
             });
 
         });

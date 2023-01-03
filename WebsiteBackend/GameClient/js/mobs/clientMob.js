@@ -5,16 +5,22 @@ class ClientMob {
      * @param {Scene} scene 
      * @param {HealthBar} healthBar 
      */
-    constructor(id, scene, healthBar) {
+    constructor(id, scene, healthBar, pos) {
         this.id = id;
         this.mainScene = scene;
         
+        this.clientPrediction = new ClientPrediction(pos);
         //Init in subclass constructor:
         this.sprite = undefined;
         this.healthBar = healthBar;
+        this.currHP = this.healthBar.currentHealth;
         this.onServerUpdateList = [];
     }
 
+    updatePredictionClient(delta) {
+        this.pos = this.clientPrediction.getNextClientPos(delta);
+        this.healthBar.update(this.pos.x, this.pos.y, this.currHP);
+    }
 
 
     addOnServerUpdate(h) {
@@ -35,9 +41,16 @@ class ClientMob {
         this.sprite.y = p.y;
     }
 
+    //server update
     update(data) {
-        this.pos = data.pos;
-        this.healthBar.update(data.pos.x, data.pos.y, data.fightingObject.hp);
+        // update prediction server pos
+        this.clientPrediction.updateServer(data);
+
+        //this.pos = data.pos;
+
+        this.currHP = data.fightingObject.hp;
+
+        
         var instance = this;
         this.onServerUpdateList.forEach((curr)=>{
             curr(data, instance);

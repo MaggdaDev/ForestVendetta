@@ -14,6 +14,12 @@ class ClientPlayer {
         this.inventory = new ClientInventory(scene, isProtagonist);
         this.clientPrediction = new ClientPrediction({x:0, y:0});
     }
+
+    /**
+     * @description called by main loop at client, predicts new position and responsible for moving the object
+     * @param {*} time 
+     * @param {*} delta 
+     */
     clientSideUpdate(time, delta) {
         const pred = this.clientPrediction.getNextClientPos(delta);
         if (pred !== null && this.sprite !== undefined && this.sprite !== null) {
@@ -23,6 +29,10 @@ class ClientPlayer {
     }
 
 
+    /**
+     * @description general update method. Completely overridden by protagonist!
+     * @param {*} data 
+     */
     update(data) {
         this.updateWeapon(data);
         this.updateSpriteToData(data);

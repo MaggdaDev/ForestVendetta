@@ -77,15 +77,7 @@ class Mob {
      * OVERRIDE
      */
      toJSON() {
-        var instance = this;
-        return {
-            pos: instance.hitBox.pos,
-            spd: instance.movableBody.spd,
-            id: instance.id,
-            isContact: instance.movableBody.isContact,
-            type: instance.type,
-            fightingObject: this.fightingObject
-        }
+        throw new Error("To JSON not overridden for mob");
     }
 
     set pos(p) {

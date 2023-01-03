@@ -9,6 +9,16 @@ class ClientMobManager {
         this.mobs.set(mob.id, mob);
     }
 
+    /**
+     * @description called from client main loop; evaluate prediction; draw new pos
+     * @param {number} delta 
+     */
+    updateClientAllMobs(delta) {
+        this.mobs.forEach((currMob) => {
+            currMob.updatePredictionClient(delta);
+        });
+    }
+
     updateMobs(data) {
         var instance = this;
         data.forEach((currUpdateData)=>{
