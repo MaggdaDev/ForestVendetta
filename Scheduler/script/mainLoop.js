@@ -23,11 +23,11 @@ class MainLoop {
      */
      _loop(instance) {          // all loop logic
         instance.loopLogging();
-        if(this.isTestMode) {
+        //if(this.isTestMode) {
             instance.spawnTicksForEveryGuild();
-        } else {
-            console.log("Skipped spawning due to serious mode!");
-        }
+        //} else {
+            //console.log("Skipped spawning due to serious mode!");
+        //}
         
     }
 
