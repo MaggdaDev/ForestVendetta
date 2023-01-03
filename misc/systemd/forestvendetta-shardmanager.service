@@ -1,0 +1,15 @@
+[Unit]
+Description=Forest Vendetta - shardManager
+RequiresMountsFor=/var/stuff/forestvendetta/ForestVendetta
+After=network.target
+
+[Service]
+User=forestvendetta
+WorkingDirectory=/var/stuff/forestvendetta/ForestVendetta/shardManager
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+TimeoutStopSec=10
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
