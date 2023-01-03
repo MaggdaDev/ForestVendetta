@@ -93,7 +93,7 @@ class ClientPlayer {
         this.inventory.updateItems(data);
     }
 
-    generateSprite(x, y, w, h, maxHp, userName) {
+    generateSprite(x, y, maxHp, userName) {
         console.log("Generating protagonist sprite...");
         this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName);
 
@@ -102,7 +102,7 @@ class ClientPlayer {
     }
 
     remove() {
-        this.sprite.destroy(true);
+        this.sprite.deconstruct();
     }
 
     strikeAnimationFromServer(data) {

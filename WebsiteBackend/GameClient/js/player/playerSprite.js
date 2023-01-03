@@ -32,6 +32,11 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
     }
 
+    deconstruct() {
+        this.healthBar.destroy(true);
+        this.destroy(true);
+    }
+
     updatePredicted(x, y) {
         this.x = x;
         this.y = y;
