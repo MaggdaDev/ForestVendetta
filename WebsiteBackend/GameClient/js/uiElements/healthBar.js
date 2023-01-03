@@ -1,6 +1,7 @@
 class HealthBar extends Phaser.GameObjects.Container {
     static BAR_HEIGHT = 10;
     static BORDER_WIDTH = 1;
+    static DISPLAY_NAME_Y_OFFSET = 5;
     static HITBOX_COLORS = {
         player: 0xff3333,
         mob: 0x00b300
@@ -14,7 +15,7 @@ class HealthBar extends Phaser.GameObjects.Container {
      * @param {number} yOffset 
      * @param {string} type - "PLAYER" or "MOB" 
      */
-    constructor(scene, maxHealth, x, y, yOffset, type) {
+    constructor(scene, maxHealth, x, y, yOffset, type, displayName) {
         super(scene, x, y + yOffset);
         this.yOffset = yOffset;
         this.mainScene = scene;
@@ -38,8 +39,16 @@ class HealthBar extends Phaser.GameObjects.Container {
         this.fill.displayOriginX = 0;
         this.currentHealth = maxHealth;
 
+        // display name
+        const displayNamePos = HealthBar.BAR_HEIGHT/2 + HealthBar.BORDER_WIDTH + HealthBar.DISPLAY_NAME_Y_OFFSET;
+        this.displayName = displayName;
+        this.displayNameText = this.mainScene.add.text(0, -displayNamePos, this.displayName);
+        this.displayNameText.setOrigin(0.5, 1);
+        this.displayNameText.setColor(0xffffff);
+
         this.add(this.border);
         this.add(this.fill);
+        this.add(this.displayNameText);
 
         this.mainScene.add.existing(this);
     }

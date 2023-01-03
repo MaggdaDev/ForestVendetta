@@ -54,6 +54,10 @@ class ClientPlayer {
         console.log("Equip idx " + index);
     }
 
+    /**
+     * @description used by prot and others to update sprite position, health, username, etc
+     * @param {*} data 
+     */
     updateSpriteToData(data) {
         //if (Math.random() < 0.1) {
             this.clientPrediction.updateServer(data);
@@ -89,9 +93,9 @@ class ClientPlayer {
         this.inventory.updateItems(data);
     }
 
-    generateSprite(x, y, w, h, maxHp) {
+    generateSprite(x, y, w, h, maxHp, userName) {
         console.log("Generating protagonist sprite...");
-        this.sprite = new PlayerSprite(this.mainScene, x, y, w, h, maxHp);
+        this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName);
 
         // weapon
         this.mainScene.add.existing(this.sprite);

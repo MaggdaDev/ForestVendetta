@@ -31,6 +31,7 @@ class Protagonist {
     constructor(playerData, socket, world, mainLoop) {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
+        this.userName = this.discordData.username;
         this.startPos = new Vector(500, 500);
 
         this.world = world;
@@ -181,7 +182,8 @@ class Protagonist {
             inventory: this.inventory,
             fightingObject: this.fightingObject,
             facingLeft: this.facingLeft,
-            isWalking: this.isWalking
+            isWalking: this.isWalking,
+            userName: this.userName
         }
     }
 
