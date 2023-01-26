@@ -9,10 +9,10 @@ var userID = null;
 
 const errorInfoObject = new ErrorInfo();
 const joinGameBtnObject = new JoinGameBtn(code, gameID, httpCommunicator, errorInfoObject);
+const itemBrowser = new ItemBrowser();
 
 
-
-httpCommunicator.requestProfileDataAsync(code, (response) => {
+httpCommunicator.requestProfileDataAsync(code, (response) => {  // request profile data on window load
     response = JSON.parse(response);
     if (response.error !== undefined && response.error !== null) {
         console.log("Error: " + response.error);
@@ -21,6 +21,7 @@ httpCommunicator.requestProfileDataAsync(code, (response) => {
         userID = response.discordAPI.id;
         httpCommunicator.setUserID(userID);
         joinGameBtnObject.resolvePromise(userID);       // notify in case user has already clicked button before data arives
+        itemBrowser.setDisplayableInventoryData(response.displayableInventory);
     }
 })
 

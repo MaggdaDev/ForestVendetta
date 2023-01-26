@@ -4,6 +4,21 @@ class LoginMongoAccessor {
         this.mongoAccessor = new MongoAccessor();
     }
 
+    /**
+     * @description flow: Display inventory on redirect page load. User inventory object to get information about items in hotbar and inventory
+     * @param {string} userID
+     * @param {object} inventory 
+     * @param {string[]} inventory.hotbarIDs
+     * @param {string[]} inventory.itemIDs
+     * @returns {inventory: [], hotbar: []}
+     */
+    async getDisplayableInventoryData(userID, inventory) {
+        const hotbarObject = await this.createHotbarObject(userID, inventory)
+        const inventoryObject = await this.getItemObjectsFromIDs(inventory.itemIDs);
+        console.log("Retrieved hotbar object and inventory object for client display")
+        return {inventory: inventoryObject, hotbar: hotbarObject}
+    }
+
     async createHotbarObject(userID, mongoInventoryObject) {
         mongoInventoryObject.itemIDs = await this.getCheckedOwnedItems(mongoInventoryObject, userID);   // check if owned items have this as owner
         const hotbarIDs = await this.getCheckedHotbarIDs(userID, mongoInventoryObject);     // check if hotbar items are actually owned

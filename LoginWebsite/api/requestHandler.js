@@ -14,7 +14,8 @@ class RequestHandler {
     static ERRORS = {
         DISCORD_API_FAIL: "DISCORD_API_FAIL",
         INVALID_SESSION: "INVALID_SESSION",
-        INVALID_LINK: "INVALID_LINK"
+        INVALID_LINK: "INVALID_LINK",
+        MONGO_FAIL: "MONGO_FAIL"
     }
     /**
      * 
@@ -114,16 +115,25 @@ class RequestHandler {
         return new Promise((resolve, reject) => {
             console.log("Handling request for join match data...");
             //discord API data
-            this.requestUserIdentifyData(query).then((discordData) => {
+            this.requestUserIdentifyData(query).then((discordData) => {     // first: request identification via discord
                 if (discordData === null) {
                     console.log("Received discord data is null, sending error to client...");
                     reject(this.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
                 } else {
-                    this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {
-                        resolve({
-                            discordAPI: discordData,
-                            mongo: mongoData
-                        })
+                    this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {      // then: get data from mongo
+                        if (mongoData === null) {
+                            console.log("Received mongo data is null, sending error to client...");
+                            reject(this.getRejectObject(RequestHandler.ERRORS.MONGO_FAIL));
+                        } else {
+                            this.requestMongoDisplayableInventory(discordData.id, mongoData).then((displayableInventoryData) => {      // then: get visualizable data for client
+                                resolve({
+                                    discordAPI: discordData,
+                                    mongo: mongoData,
+                                    displayableInventory: displayableInventoryData
+                                })
+                            });
+                        }
+
                     });
                 }
                 // discordAPI returned null
@@ -136,6 +146,16 @@ class RequestHandler {
 
         });
     }
+/**
+ * @description flow: initial redirect page load data request. After: request mongo data. Requests displayable data of inventory objects
+ * @param {*} query 
+ * @param {*} mongoData 
+ */
+    async requestMongoDisplayableInventory(userID, mongoData) {
+        const inventory = mongoData.inventory;      // inventory: {hotbarIDs: [], itemIDs: []
+        return this.mongoAccessor.getDisplayableInventoryData(userID, inventory);
+    }
+    
 
     async requestMongoJoinGameData(query, discordID) {
         return this.mongoAccessor.getPlayerOrCreate(discordID);
