@@ -28,7 +28,8 @@ class Loader {
     }
 
     loadImages() {
-        this.scene.load.image('rustySpade', "GameClient/images/weapons/rustySpade.png");
+        // weapons
+        this.scene.load.image('rustySpade', "GameClient/images/weapons/RUSTY_SPADE.png");
 
         
     }
@@ -47,7 +48,7 @@ class Loader {
         this.scene.load.image('mobileStrikeButton', "GameClient/images/strikebutton.png");
 
         this.scene.load.css('ingameUiStyle', 'GameClient/css/ingameUiStyle.css');
-        this.scene.load.html('itemHoverInfo', 'GameClient/html/itemHoverInfo.html');
+        this.scene.load.html('itemHoverInfo', 'GameClient/html/inventory/itemHoverInfo.html');
         this.scene.load.json('ITEM_RARITY_CONFIG', "GameplayConfig/Items/itemRarity.json");
     }
 }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="./script/paramReader.js"></script>
+  <script src="./script/prepare/errorInfo.js"></script>
+  <script src="./script/prepare/inventory/itemFrame.js"></script>
+  <script src="./script/prepare/inventory/itemBrowser.js"></script>
+  <script src="./script/prepare/inventory/inventoryConstructor.js"></script>
+  <script src="./script/prepare/inventory/dragHandlers.js"></script>
+  <script src="./script/formObject.js"></script>
+  <script src="./script/httpCommunicator.js"></script>
+  <script src="./script/prepare/joinGameBtn.js"></script>
+
+
+  <script src="./script/prepare/prepare.js"></script>
+  <title>Forest Vendetta Accounts</title>
+</head>
+
+<body>
+  <h1>Prepare for battle</h1>
+  <div>
+
+
+    <div id="inventoryFlexDiv" class="inventoryFlexDiv">
+      <h2>Inventory</h2>
+      <br>
+      <br>
+    </div>
+  </div>
+  <button id="joinGameBtn">JOIN GAME</button>
+  <h3 id="errorInfo" hidden></h3>
+
+</body>
+
+<template id="itemFrameTemplate">
+
+  <div draggable=true class="itemFrameDiv" ondragstart="onItemFrameDragStarted(event)">
+  </div>
+</template>
+
+</html>

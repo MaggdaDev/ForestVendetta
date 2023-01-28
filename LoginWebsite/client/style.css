@@ -1,3 +1,22 @@
 .inventoryFlexDiv {
-    display: flex
+    display: flex;
+    margin: 5px;
+    padding: 5px;
+    border: thin solid black;
+}
+
+.itemFrameDiv {
+    display: inline-block;
+    border-color: black;
+    border-radius: 2px;
+    border-style: outset;
+    border-width: 1px;
+    margin: 5px;
+    padding: 5px;
+    pointer-events: all;
+}
+
+.itemFrameImg {
+    display: inline-block;
+    pointer-events: none;
 }

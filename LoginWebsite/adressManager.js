@@ -16,6 +16,11 @@ class AdressManager {
         }
         return ret;
     }
+
+
+    createRedirectToPrepareUri(userID, code, gameID) {
+        return this.baseAdress + `/prepare.html?userID=${userID}&code=${code}&state=${gameID}`;
+    }
 }
 
 module.exports = AdressManager;

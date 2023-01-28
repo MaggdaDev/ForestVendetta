@@ -3,8 +3,8 @@ const botConfig = require("../../config-example/discordbot-config.json");
 const fetch = require("node-fetch");
 
 class DiscordAPIAccessor {
-    static REDIRECT_URI = "http://minortom.net:2999/redirect.html";
-    static TEST_REDIRECT_URI = "http://localhost:2999/redirect.html";
+    static REDIRECT_URI = "http://minortom.net:2999/authentication.html";
+    static TEST_REDIRECT_URI = "http://localhost:2999/authentication.html";
     static API_ENDPOINT = 'https://discord.com/api/v10/';
     static API_TOKEN_URI = 'oauth2/token';
     static API_IDENTIFY_URI = 'oauth2/@me';
@@ -17,11 +17,16 @@ class DiscordAPIAccessor {
         }
     }
 
-    requestUserIdentifyData(token) {
+    /**
+     * 
+     * @param {string} code - one time code from discord.com to request token
+     * @returns {Object} {data: discordData, token: token}
+     */
+    requestUserIdentifyData(code) {
         const promise = new Promise((resolve, reject) => {
-            this.requestAuthToken(token).then((code) => {
+            this._requestAuthToken(code).then((token) => {
                 const headers = {
-                    Authorization: "Bearer " + code
+                    Authorization: "Bearer " + token
                 };
                 const getReqObject = {
                     method: "get",
@@ -36,7 +41,7 @@ class DiscordAPIAccessor {
                         console.error("401: Unauthorized, returning null");
                         resolve(null);
                     } else {
-                        resolve(json.user);
+                        resolve({data: json.user, token: token});
                     }
                 })
             });
@@ -44,7 +49,7 @@ class DiscordAPIAccessor {
         return promise;
     }
 
-    requestAuthToken(code) {
+    _requestAuthToken(code) {
         const promise = new Promise((resolve, reject) => {
             const data = {
                 'client_id': botConfig.clientID,         // always youse releaseAPP for auth!

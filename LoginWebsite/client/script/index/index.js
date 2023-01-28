@@ -1,6 +1,6 @@
 console.log("Client script started");
 
-const isTestMode = false;            // TODO: SOMETHING BETTER...
+const isTestMode = true;            // TODO: SOMETHING BETTER...
 const port = 2999;
 var host;
 if (isTestMode) {
@@ -29,7 +29,7 @@ window.onload = () => {
     }
 
     // setup login with discord
-    const redirectUri = "http://" + host + ":" + port + "/redirect.html";
+    const redirectUri = "http://" + host + ":" + port + "/authentication.html";
     const formObject = new FormObject("loginWithDiscordForm",       // form document ID
         "https://discord.com/api/oauth2/authorize",                 // action
         [{ name: 'client_id', value: '1014855311259078666' },       // hidden params

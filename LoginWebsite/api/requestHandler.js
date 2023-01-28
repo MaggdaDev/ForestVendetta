@@ -2,6 +2,7 @@
 const LoginMongoAccessor = require("../mongo/loginMongoAccessor");
 const LoginRabbitCommunicator = require("../rabbit/loginRabbitCommunicator");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
+const DiscordAuthenticator = require("./discordAuthenticator");
 
 class RequestHandler {
     /**
@@ -15,23 +16,25 @@ class RequestHandler {
         DISCORD_API_FAIL: "DISCORD_API_FAIL",
         INVALID_SESSION: "INVALID_SESSION",
         INVALID_LINK: "INVALID_LINK",
-        MONGO_FAIL: "MONGO_FAIL"
+        MONGO_FAIL: "MONGO_FAIL",
+        INVALID_PARAMS: "INVALID_PARAMS",
+        NOT_AUTHENTICATED: "NOT_AUTHENTICATED"
     }
     /**
      * 
      * @param {DiscordAPIAccessor} discordApiAccessor 
+     * @param {DiscordAuthenticator} discordAuthenticator
      * @param {LoginMongoAccessor} mongoAccessor 
      * @param {LoginRabbitCommunicator} rabbitCommunicator
      * @param {Object} adressManager 
-     * @param {Map} authMap - userid<->{mongo:, discordAPI:, code: }
      */
-    constructor(discordApiAccessor, mongoAccessor, rabbitCommunicator, adressManager, authMap) {
+    constructor(discordApiAccessor, discordAuthenticator, mongoAccessor, rabbitCommunicator, adressManager) {
         console.log("Constructing request handler");
         this.discordApiAccessor = discordApiAccessor;
+        this.discordAuthenticator = discordAuthenticator;
         this.mongoAccessor = mongoAccessor;
         this.rabbitCommunicator = rabbitCommunicator;
         this.adressManager = adressManager;
-        this.authMap = authMap;
     }
 
     getRejectObject(error) {
@@ -40,6 +43,90 @@ class RequestHandler {
             redirect: this.adressManager.getIndexURL({ "error": error })
         }
     }
+
+    // request discord auth
+
+    /**
+     * 
+     * @param {QueryObjet} query 
+     * 
+     * @returns id of user
+     */
+    requestDiscordAuth(query) { // expected query args: code, gameID
+        return new Promise((resolve, reject) => {
+            logRequestHandler("Handling request for discord auth...");
+            if (query.code === undefined || query.code === null || query.gameID === "" || query.gameID === null || query.gameID === undefined || query.state === "") {
+                reject(RequestHandler.ERRORS.INVALID_PARAMS);
+                return;
+            }
+            this.discordAuthenticator.authenticateUser(query.code).then((discordData) => {
+                logRequestHandler("User authenticated. Returning user ID");
+                return resolve(discordData.id);
+            }).catch((e) => {
+                console.error("Caught error while requesting discord auth: " + e + " Sending DISCORD_API error to client...");
+                reject(this.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
+                return;
+            });
+
+        });
+    }
+
+    // start: requets join game data
+    /**
+     * @description get user profile data to display on prepare page
+     * @param {QueryObject} query 
+     * @param {string} query.userID
+     * @param {string} query.code
+     * @returns {Object} {discordAPI: , mong: , displayableInventory: }
+     */
+    getProfileData(query) {     // first discord then mongo then displayable mongo
+        return new Promise((resolve, reject) => {
+            console.log("Handling request for profile data...");
+            const userID = query.userID;
+            const code = query.code;
+            if(code === undefined || userID === undefined || code === "" || userID === "" || code === null || userID === null) {
+                logRequestHandler("INVALID PARAMS!");
+                return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_PARAMS));
+            }
+            if(!this.discordAuthenticator.isAuthenticated(userID, code)) {
+                logRequestHandler("NOT AUTENTICATED!");
+                return reject(this.getRejectObject(RequestHandler.ERRORS.NOT_AUTHENTICATED));
+            } else {
+                const discordData = this.discordAuthenticator.getProfileData(userID, code);
+                this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {      // then: get data from mongo
+                    if (mongoData === null) {
+                        console.log("Received mongo data is null, sending error to client...");
+                        reject(this.getRejectObject(RequestHandler.ERRORS.MONGO_FAIL));
+                    } else {
+                        this.requestMongoDisplayableInventory(discordData.id, mongoData).then((displayableInventoryData) => {      // then: get visualizable data for client
+                            resolve({
+                                discordAPI: discordData,
+                                mongo: mongoData,
+                                displayableInventory: displayableInventoryData
+                            })
+                        });
+                    }
+                });
+            }
+        });
+    }
+    /**
+     * @description flow: initial redirect page load data request. After: request mongo data. Requests displayable data of inventory objects
+     * @param {*} query 
+     * @param {*} mongoData 
+     */
+    async requestMongoDisplayableInventory(userID, mongoData) {
+        const inventory = mongoData.inventory;      // inventory: {hotbarIDs: [], itemIDs: []
+        return this.mongoAccessor.getDisplayableInventoryData(userID, inventory);
+    }
+
+    async requestMongoJoinGameData(query, discordID) {
+        return this.mongoAccessor.getPlayerOrCreate(discordID);
+    }
+
+    // end: request join game data
+
+
 
     // start: join game
     /**
@@ -54,26 +141,22 @@ class RequestHandler {
         return new Promise((resolve, reject) => {
             console.log("Handling request for deploy to game if possible...");
             const userID = query.userID;
-            const userData = this.authMap.get(userID);
+            const code = query.code;
+            if(!this.discordAuthenticator.isAuthenticated(userID, code)) {
+                logRequestHandler("NOT AUTENTICATED!");
+                return reject(this.getRejectObject(RequestHandler.ERRORS.NOT_AUTHENTICATED));
+            }
+            const userData = this.discordAuthenticator.getProfileData(userID, code);
             const gameID = query.gameID;
             if (userData === null || userData === undefined) {
                 console.error("User is not at all in auth map! Throwing invalid session");
-                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
-                return;
-            }
-            if (userData.code !== query.code) {
-                console.error("Wrong user code!");
-                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
-                return;
-            }
-            if (gameID === null || gameID === undefined) {
+                return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
+            } else if (gameID === null || gameID === undefined) {
                 console.error("Game to join not defined!");
-                reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
-                return;
+                return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
             }
 
             this.createDeployData(userID, userData).then((deployData) => {
-
                 this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, deployData, (accessObjectMessage) => {
                     try {
                         if (accessObjectMessage.status === 1) {
@@ -94,8 +177,6 @@ class RequestHandler {
                     }
                 });
             });
-
-
         });
     }
 
@@ -109,67 +190,10 @@ class RequestHandler {
     }
 
     // end: join game
+}
 
-    // start: requets join game data
-    requestJoinGameData(query) {
-        return new Promise((resolve, reject) => {
-            console.log("Handling request for join match data...");
-            //discord API data
-            this.requestUserIdentifyData(query).then((discordData) => {     // first: request identification via discord
-                if (discordData === null) {
-                    console.log("Received discord data is null, sending error to client...");
-                    reject(this.getRejectObject(RequestHandler.ERRORS.DISCORD_API_FAIL));
-                } else {
-                    this.requestMongoJoinGameData(query, discordData.id).then((mongoData) => {      // then: get data from mongo
-                        if (mongoData === null) {
-                            console.log("Received mongo data is null, sending error to client...");
-                            reject(this.getRejectObject(RequestHandler.ERRORS.MONGO_FAIL));
-                        } else {
-                            this.requestMongoDisplayableInventory(discordData.id, mongoData).then((displayableInventoryData) => {      // then: get visualizable data for client
-                                resolve({
-                                    discordAPI: discordData,
-                                    mongo: mongoData,
-                                    displayableInventory: displayableInventoryData
-                                })
-                            });
-                        }
-
-                    });
-                }
-                // discordAPI returned null
-
-
-            }).catch((error) => {
-                console.trace("Caught error: " + error);
-                reject(error);
-            });
-
-        });
-    }
-/**
- * @description flow: initial redirect page load data request. After: request mongo data. Requests displayable data of inventory objects
- * @param {*} query 
- * @param {*} mongoData 
- */
-    async requestMongoDisplayableInventory(userID, mongoData) {
-        const inventory = mongoData.inventory;      // inventory: {hotbarIDs: [], itemIDs: []
-        return this.mongoAccessor.getDisplayableInventoryData(userID, inventory);
-    }
-    
-
-    async requestMongoJoinGameData(query, discordID) {
-        return this.mongoAccessor.getPlayerOrCreate(discordID);
-    }
-
-    async requestUserIdentifyData(query) {
-        if (query.code === undefined || query.code === null || query.code === "") {
-            console.error("Empty code when trying to get user identify data!");
-            return;
-        }
-        return this.discordApiAccessor.requestUserIdentifyData(query.code);
-    }
-
-    // end: request join game data
+function logRequestHandler(s) {
+    console.log("[RequestHandler] " + s);
 }
 
 module.exports = RequestHandler;

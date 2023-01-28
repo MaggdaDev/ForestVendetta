@@ -2,13 +2,15 @@ const url = require("url");
 const LoginMongoAccessor = require("../mongo/loginMongoAccessor");
 const LoginRabbitCommunicator = require("../rabbit/loginRabbitCommunicator");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
+const DiscordAuthenticator = require("./discordAuthenticator");
 const RequestHandler = require("./requestHandler");
 class FVAPI {
     static API_URI = "/api/";
 
     static API_REQUESTS = {     // lower case all
-        joinGameData: "joingamedata",       // request user profile data before joining a game
-        deployToGameIfPossible: "deploytogameifpossible"   
+        requestDiscordAuth: "requestdiscordauth",
+        getProfileData: "getprofiledata",       // request user profile data before joining a game
+        deployToGameIfPossible: "deploytogameifpossible"
     }
 
     /**
@@ -19,10 +21,11 @@ class FVAPI {
     constructor(mongoAccessor, rabbitCommunicator, adressManager) {
         logApi("API constructed");
         this.rabbitCommunicator = rabbitCommunicator;
-        this.authMap = new Map();       // DO NOT re-construct, request handler is using this object
         this.adressManager = adressManager;
         this.discordApiAccessor = new DiscordAPIAccessor();
-        this.requestHandler = new RequestHandler(this.discordApiAccessor, mongoAccessor, this.rabbitCommunicator, adressManager, this.authMap);
+        this.discordAuthenticator = new DiscordAuthenticator(this.discordApiAccessor);
+        this.requestHandler = new RequestHandler(this.discordApiAccessor, this.discordAuthenticator, mongoAccessor, this.rabbitCommunicator, adressManager);
+
     }
 
     apiRequestListenerHandler(req, res) {
@@ -37,38 +40,50 @@ class FVAPI {
             }
             const withoutAPI = pathName.substring(5);
             const query = parsed.query;
-            this.routeRequest(withoutAPI, query).then((result) => {
-                res.send(result);
+            this.handleRequest(withoutAPI, query, res).catch((e) => {
+                if (e.redirect !== "undefined") {
+                    res.status(302);
+                    return res.send(e.redirect);
+                }
+                else { throw e }
             });
         } catch (e) {
             console.error(e);
+            res.send(e);
         }
     }
 
-    routeRequest(path, query) {
+    handleRequest(path, query, expressRes) {
         const instance = this;
         const promise = new Promise((resolve, reject) => {
             logApi("Routing request: " + path);
             switch (path.toLowerCase()) {
-                case FVAPI.API_REQUESTS.joinGameData:       // data before joining game
-                    this.requestHandler.requestJoinGameData(query).then((res) => {
-                        res.code = query.code;
-                        logApi("Retrieved join game data: " + res);
-                        const userID = res.discordAPI.id;
-                        instance.authMap.set(userID, res);
-                        logApi("Now matching res with code (" + res.code + ") and userID (" + userID + ") to auth hash map.");
-                        logApi("Auth map is now: " + this.authMap.entries.toString());
-                        resolve(res);
-                    }).catch((clientRedirectRes)=> {
+                case FVAPI.API_REQUESTS.requestDiscordAuth:     // expected args: code and gameID
+                    logApi("Received request for discord auth");
+                    this.requestHandler.requestDiscordAuth(query).then((userID) => {
+                        const redirectAdress = this.adressManager.createRedirectToPrepareUri(userID, query.code, query.gameID);
+                        logApi("User authenticated. Redirecting to prepare page.");
+                        expressRes.status(302);
+                        return expressRes.send(redirectAdress);
+                    }).catch((clientRedirectRes) => {
+                        logApi("API calls failed! Sending error redirect to client: " + JSON.stringify(clientRedirectRes));
+                        reject(clientRedirectRes);
+                    })
+                    break;
+                case FVAPI.API_REQUESTS.getProfileData:       // data before joining game
+                    this.requestHandler.getProfileData(query).then((res) => {
+                        logApi("Retrieved join game data: " + res);  
+                        expressRes.send(res);
+                    }).catch((clientRedirectRes) => {
                         logApi("API calls failed! Sending error redirect to client:");
-                        resolve(clientRedirectRes);
+                        reject(clientRedirectRes);
                     });
                     return;
 
                 case FVAPI.API_REQUESTS.deployToGameIfPossible:
                     this.requestHandler.deployToGameIfPossible(query).then((res) => {
                         logApi("Handling deploy request finished! Returning to client: " + res);
-                        resolve(res);
+                        expressRes.send(res);
                     });
                     break;
                 default:
@@ -84,7 +99,7 @@ class FVAPI {
         logApi("Invalid api request: " + pathName);
     }
 
-    
+
 }
 function logApi(s) {
     console.log("[FVAPI] " + s);
