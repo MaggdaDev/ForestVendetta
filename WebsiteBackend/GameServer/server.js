@@ -20,13 +20,13 @@ if(host === undefined) {
   host = "minortom.net";
 }
 var port = args[3];   
-if(host === undefined) {
+if(post === undefined) {
   console.error("Port undefined. Using default: 3000");
   port = 3000;
 }
 const uri = "http://" + host + ":" + port;  
 var gameID = args[4];
-if(host === undefined) {
+if(gameID === undefined) {
   console.error("GameID undefined. Using default: testtest123");
   gameID = "testtest123";
 }
