@@ -20,7 +20,7 @@ if(host === undefined) {
   host = "minortom.net";
 }
 var port = args[3];   
-if(post === undefined) {
+if(port === undefined) {
   console.error("Port undefined. Using default: 3000");
   port = 3000;
 }
