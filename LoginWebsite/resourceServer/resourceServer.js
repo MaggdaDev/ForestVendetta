@@ -12,7 +12,9 @@ class ResourceServer {
 
         // load for redirect page
         this.weaponImagesBase64json = this.loader.loadWeaponImages();
-        this.inventoryHTMLsParamObject = this.loader.loadInventoryHTMLs();
+        this.inventoryHTMLjson = this.loader.loadInventoryHTMLs();
+        this.ingameUICSSjson = this.loader.loadIngameUICSS();
+        this.itemConfigjson = this.loader.loadItemsConfigJson();
     }
 
     handleResourceRequest(req, res) {
@@ -47,6 +49,15 @@ class ResourceServer {
             case "getweaponimages":
                 logResourceServer("Weapon images requested!");
                 return this.weaponImagesBase64json;
+            case "getingameuicss":
+                logResourceServer("Ingame UI css requested!");
+                return this.ingameUICSSjson;
+            case "getinventoryhtml":
+                logResourceServer("Inventory html requested!");
+                return this.inventoryHTMLjson;
+            case "getitemconfig":
+                logResourceServer("Item config requested!");
+                return this.itemConfigjson;
             default:
                 logResourceServer("Invalid request received: " + withoutResourceUri);
                 break;

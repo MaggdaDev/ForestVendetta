@@ -9,6 +9,9 @@ class HTTPCommunicator {
 
     // resources (always in json of map of base64 encoded; filename without extension as key)
     static GET_WEAPON_IMAGES = "getweaponimages";
+    static GET_INVENTORY_HTML = "getinventoryhtml";
+    static GET_INGAME_UI_CSS = "getingameuicss";
+    static GET_ITEM_CONFIG = "getitemconfig";
 
 
 
@@ -55,6 +58,24 @@ class HTTPCommunicator {
     requestWeaponImages(callback) {
         logHTTPCommunicator("Requesting weapon images...");
         const subAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_WEAPON_IMAGES);
+        this._requestResource(subAdress, callback);
+    }
+
+    requestInventoryHTML(callback) {
+        logHTTPCommunicator("Requesting inventory html...");
+        const subAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_INVENTORY_HTML);
+        this._requestResource(subAdress, callback);
+    }
+
+    requestIngameUICSS(callback) {
+        logHTTPCommunicator("Requesting ingame ui css...");
+        const subAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_INGAME_UI_CSS);
+        this._requestResource(subAdress, callback);
+    }
+
+    requestItemConfig(callback) {
+        logHTTPCommunicator("Requesting item config...");
+        const subAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_ITEM_CONFIG);
         this._requestResource(subAdress, callback);
     }
     // requests to resources end

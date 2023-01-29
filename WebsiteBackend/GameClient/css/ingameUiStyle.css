@@ -8,6 +8,7 @@
     border-width: 2px;
     padding: 5px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    position: relative;
 }
 
 .hoverInfoName {
@@ -30,8 +31,8 @@
 }
 
 .hoverInfoRarity {
-    position:absolute;
     bottom: 5px;
+    position: absolute;
     text-decoration: underlinde overline darkslategray;
     -webkit-text-stroke: 1px;
     -webkit-text-stroke-color: darkslategrey;

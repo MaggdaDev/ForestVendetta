@@ -26,6 +26,19 @@ httpCommunicator.requestWeaponImages((response) => {
     console.log("Got images!");
     itemBrowser.setImages(response);
 });
+httpCommunicator.requestInventoryHTML((response) => {
+    console.log("Got inventory html!");
+    itemBrowser.setInventoryHTML(response);
+});
+httpCommunicator.requestIngameUICSS((response) => {
+    console.log("Got css!");
+    itemBrowser.setIngameUICSS(response);
+    itemBrowser.applyUICSS();
+});
+httpCommunicator.requestItemConfig((response) => {
+    console.log("Got item config!");
+    itemBrowser.setItemConfig(response);
+});
 
 
 window.onload = () => {
