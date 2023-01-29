@@ -22,7 +22,7 @@ class Mob {
         this.shouldRemove = false;
 
         // fighting
-        this.fightingObject = new FightingObject(mobConfig.fighting_stats.damage, mobConfig.fighting_stats.max_hp, this.id);
+        this.fightingObject = new FightingObject(() => {return mobConfig.fighting_stats.damage}, mobConfig.fighting_stats.max_hp, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
             this.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 30000),1);
         });

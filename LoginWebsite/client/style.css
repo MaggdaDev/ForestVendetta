@@ -6,24 +6,34 @@
 }
 
 .itemFrameDiv {
-    display: inline-block;
+    display: flex;
+    justify-content: center;
     border-color: black;
-    border-radius: 2px;
+    border-radius: 5px;
     border-style: outset;
     border-width: 1px;
+    box-shadow: 2px 2px black;
     margin: 5px;
     padding: 5px;
     pointer-events: all;
+
+    position: relative;
+    width: 40px;
+    height: 40px;
+
 }
 
 .itemFrameImg {
-    display: inline-block;
+    display: block;
     pointer-events: none;
+    margin: auto;
+    
 }
 
 .hotbarDiv {
     display: flex;
     margin: 5px;
     padding: 5px;
+    position: relative;
     border: thin solid black;
 }

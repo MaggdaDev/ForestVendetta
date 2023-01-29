@@ -1,0 +1,12 @@
+{
+    "display": {
+        "name": "Obsidian Pine Needle",
+        "class_name": "Heavy Sword", 
+        "description": "Once, a possibly genious scientist sat under a pine. Would he have brought excellent knowledge to mankind if he hadn't been hit by this needle?"
+    },
+    "stats": {
+        "damage": 250,
+        "cooldown": 0.8
+    },
+    "rarity": "EPIC"
+}

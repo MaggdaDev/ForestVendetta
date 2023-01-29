@@ -14,6 +14,7 @@ class Loader {
     loadConfig() {
         // single weapons
         this.scene.load.json('RUSTY_SPADE_CONFIG', "GameplayConfig/Items/Weapons/SWORD/HEAVY_SWORD/RUSTY_SPADE.json");
+        this.scene.load.json('OBSIDIAN_PINE_NEEDLE_CONFIG', "GameplayConfig/Items/Weapons/SWORD/HEAVY_SWORD/OBSIDIAN_PINE_NEEDLE.json");
 
 
         // general
@@ -30,6 +31,7 @@ class Loader {
     loadImages() {
         // weapons
         this.scene.load.image('rustySpade', "GameClient/images/weapons/RUSTY_SPADE.png");
+        this.scene.load.image('obsidianPineNeedle', "GameClient/images/weapons/OBSIDIAN_PINE_NEEDLE.png");
 
         
     }

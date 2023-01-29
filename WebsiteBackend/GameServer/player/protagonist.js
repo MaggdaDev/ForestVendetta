@@ -65,7 +65,7 @@ class Protagonist {
 
         //Fighting
         this.currentStrike = null;
-        this.fightingObject = new FightingObject(Protagonist.DAMAGE, Protagonist.HP, this.id);
+        this.fightingObject = new FightingObject(() => this.calcDamage(), Protagonist.HP, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway) => {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { damage: damageTaken, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000), 1);
@@ -88,6 +88,10 @@ class Protagonist {
             this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
         }
 
+    }
+
+    calcDamage() {
+        return this.inventory.selectedItem.getDamage();
     }
 
     /**

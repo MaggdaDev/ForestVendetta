@@ -3,13 +3,23 @@ const Vector = require("../../GameStatic/js/maths/vector");
 
 class FightingObject {
 
-    constructor(dmg, hp, gameUniqueId) {
-        this.damage = dmg;
+    /**
+     * 
+     * @param {function} dmgGetter 
+     * @param {*} hp 
+     * @param {*} gameUniqueId 
+     */
+    constructor(dmgGetter, hp, gameUniqueId) {
+        this.dmgGetter = dmgGetter;
         this.hp = hp;
         this.maxHp = hp;
         this.id = gameUniqueId;
         this.onDamageTakenHandlers = [];
         this.onDamageDealtHandlers = [];
+    }
+
+    get damage() {
+        return this.dmgGetter();
     }
 
     /**

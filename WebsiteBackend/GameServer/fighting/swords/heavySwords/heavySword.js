@@ -86,6 +86,10 @@ class HeavySword extends Sword {
         var damageDone = FightingObject.aDamageB(this.fighter, fightingObject, this.owner.pos, otherPos, intersection.intersectionPoint);
     }
 
+    getDamage() {
+       return this.baseCombatStats.damage;
+    }
+
     /**
      * OVERRIDE
      */

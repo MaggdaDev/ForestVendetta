@@ -42,6 +42,10 @@ class Weapon {
         console.error("GET COOLDOWN METHOD NOT OVERRIDDEN: " + JSON.stringify(this.typeData));
     }
 
+    getDamage() {
+        console.error("GET DAMAGE METHOD NOT OVERRIDDEN: " + JSON.stringify(this.typeData));
+    }
+
     get now() {
         return Date.now() / 1000.0;
     }

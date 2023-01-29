@@ -59,7 +59,7 @@ item config:
         const className = itemConfig.display.class_name;
         var rarityHtml = "";
         if(colorchange) {
-            const colorChangeCss = "";
+            var colorChangeCss = "";
             if(rarityColor) {
                 colorChangeCss += "color:" + rarityColor + ";";
             }
