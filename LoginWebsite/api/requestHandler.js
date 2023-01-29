@@ -84,11 +84,11 @@ class RequestHandler {
             console.log("Handling request for profile data...");
             const userID = query.userID;
             const code = query.code;
-            if(code === undefined || userID === undefined || code === "" || userID === "" || code === null || userID === null) {
+            if (code === undefined || userID === undefined || code === "" || userID === "" || code === null || userID === null) {
                 logRequestHandler("INVALID PARAMS!");
                 return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_PARAMS));
             }
-            if(!this.discordAuthenticator.isAuthenticated(userID, code)) {
+            if (!this.discordAuthenticator.isAuthenticated(userID, code)) {
                 logRequestHandler("NOT AUTENTICATED!");
                 return reject(this.getRejectObject(RequestHandler.ERRORS.NOT_AUTHENTICATED));
             } else {
@@ -135,6 +135,7 @@ class RequestHandler {
      * @param {string} query.code
      * @param {string} query.gameID
      * @param {string} query.userID
+     * @param {optionals} query.hotbar123456
      * @returns 
      */
     deployToGameIfPossible(query) {
@@ -142,7 +143,7 @@ class RequestHandler {
             console.log("Handling request for deploy to game if possible...");
             const userID = query.userID;
             const code = query.code;
-            if(!this.discordAuthenticator.isAuthenticated(userID, code)) {
+            if (!this.discordAuthenticator.isAuthenticated(userID, code)) {
                 logRequestHandler("NOT AUTENTICATED!");
                 return reject(this.getRejectObject(RequestHandler.ERRORS.NOT_AUTHENTICATED));
             }
@@ -156,36 +157,49 @@ class RequestHandler {
                 return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
             }
 
-            this.createDeployData(userID, userData).then((deployData) => {
-                this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, deployData, (accessObjectMessage) => {
-                    try {
-                        if (accessObjectMessage.status === 1) {
-                            console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
+            this.updateHotbar(query, userID).then(() => {
+                this.createDeployData(userID, userData).then((deployData) => {
+                    this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, deployData, (accessObjectMessage) => {
+                        try {
+                            if (accessObjectMessage.status === 1) {
+                                console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
 
-                            // tweak uri: add playerID
-                            var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
-                            accessObjectMessage.shardUri = tweakedUri;
-                            console.log("Tweaked uri to: " + tweakedUri);
-                            resolve(accessObjectMessage);
-                            return;
-                        } else {
-                            console.error("Deploy not successful! Error is " + accessObjectMessage.error + ". Sending error to client");
-                            resolve(accessObjectMessage);
+                                // tweak uri: add playerID
+                                var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
+                                accessObjectMessage.shardUri = tweakedUri;
+                                console.log("Tweaked uri to: " + tweakedUri);
+                                resolve(accessObjectMessage);
+                                return;
+                            } else {
+                                console.error("Deploy not successful! Error is " + accessObjectMessage.error + ". Sending error to client");
+                                resolve(accessObjectMessage);
+                            }
+                        } catch (e) {
+                            reject(e);
                         }
-                    } catch (e) {
-                        reject(e);
-                    }
+                    });
                 });
             });
         });
     }
 
+    async updateHotbar(query, userID) {
+        var hotbarIDs = [];
+        for(var i = 0; i < 6; i+= 1) {
+            if(query["hotbar" + i] !== undefined && query["hotbar" + i] !== "" && query["hotbar" + i] !== null) {
+                hotbarIDs.push(query["hotbar" + i]);
+            }
+        }
+        await this.mongoAccessor.updateHotbar(hotbarIDs, userID);
+    }
+
     async createDeployData(userID, userData) {
-        const hotbar = await this.mongoAccessor.createHotbarObject(userID, userData.mongo.inventory);
+        const mongoData = await this.mongoAccessor.getPlayerOrCreate(userID);
+        const hotbar = await this.mongoAccessor.createHotbarObject(userID, mongoData.inventory);
         return {
-            discordAPI: userData.discordAPI,
+            discordAPI: userData,
             hotbar: hotbar,
-            accountLevel: userData.mongo.accountLevel
+            accountLevel: mongoData.accountLevel
         }
     }
 

@@ -5,16 +5,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <script src="./script/prepare/inventory/hotbar.js"></script>
+  <script src="./script/prepare/inventory/dragHandlers.js"></script>
   <script src="./script/paramReader.js"></script>
   <script src="./script/prepare/errorInfo.js"></script>
   <script src="./script/prepare/inventory/itemFrame.js"></script>
   <script src="./script/prepare/inventory/itemBrowser.js"></script>
   <script src="./script/prepare/inventory/inventoryConstructor.js"></script>
-  <script src="./script/prepare/inventory/dragHandlers.js"></script>
   <script src="./script/formObject.js"></script>
   <script src="./script/httpCommunicator.js"></script>
   <script src="./script/prepare/joinGameBtn.js"></script>
-
+  
 
   <script src="./script/prepare/prepare.js"></script>
   <title>Forest Vendetta Accounts</title>
@@ -25,13 +26,13 @@
   <div>
 
 
-    <div id="inventoryFlexDiv" class="inventoryFlexDiv">
+    <div id="inventoryFlexDiv" class="inventoryFlexDiv" ondragover="onDragOverInventory(event)" ondrop="onItemFrameDroppedToInventory(event)">
       <h2>Inventory</h2>
       <br>
       <br>
     </div>
 
-    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event)">
+    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondragover="onDragOverHotbar(event)" ondrop="onItemFrameDroppedToHotbar(event)">
       <h2>Hotbar</h2>
       <br>
       <br>

@@ -12,13 +12,11 @@ class InventoryConstructor {
         this.data = data;
         this.itemFrames = this._createItemFrames();
 
-        /*
-        var flexDivContent = ""
-        displayableInventoryData.inventory.forEach(element => {
-            flexDivContent += `<div>${element.itemName}</div>\n`
+        const hotbarContent = [];
+        data.hotbar.forEach((currItem)=> {
+            hotbarContent.push(currItem._id);
         });
-        document.getElementById(ItemBrowser.FLEX_DIV_ID).innerHTML = flexDivContent;
-        */
+        hotbar.setCurrContent(hotbarContent);
     }
 
     _createItemFrames() {
@@ -39,5 +37,7 @@ class InventoryConstructor {
             inventoryBox.appendChild(currFrame.htmlElement);
         });
         console.log("Rendered item frames!");
+
+        hotbar.takeContent();
     }
 }

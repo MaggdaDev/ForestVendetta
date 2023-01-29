@@ -28,12 +28,13 @@ class HTTPCommunicator {
         const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.REQUEST_DISCORD_AUTH, requestParams);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress);
     }
-    requestJoinGame(code, userID, gameID, callback) {
+    requestJoinGame(code, userID, gameID, hotbarIDsList, callback) {
         if (!(code && userID && gameID)) {
             console.error("Not all required for join game given! Code: " + code + " userID: " + userID + " gameID:" + gameID);
             return;
         }
-        var apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.JOIN_GAME_REQUEST, [{ name: "code", value: code }, { name: "userID", value: userID }, { name: "gameID", value: gameID }]);
+        const args = [{ name: "code", value: code }, { name: "userID", value: userID }, { name: "gameID", value: gameID }].concat(hotbarIDsList);
+        var apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.JOIN_GAME_REQUEST, args);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
     }
 
