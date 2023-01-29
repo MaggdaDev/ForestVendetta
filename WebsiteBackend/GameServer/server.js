@@ -14,10 +14,22 @@ const AccessManager = require('./admin/accessManager.js');
 const io = new Server(server);
 
 const args = process.argv;
-const host = args[2]; // first 2 elements internal
-const port = args[3];   
+var host = args[2]; // first 2 elements internal
+if(host === undefined) {
+  console.error("Host undefined. Using default: minortom.net");
+  host = "minortom.net";
+}
+var port = args[3];   
+if(host === undefined) {
+  console.error("Port undefined. Using default: 3000");
+  port = 3000;
+}
 const uri = "http://" + host + ":" + port;  
-const gameID = args[4];
+var gameID = args[4];
+if(host === undefined) {
+  console.error("GameID undefined. Using default: testtest123");
+  gameID = "testtest123";
+}
 const createMessageID = args[5];
 console.log("Hello world! Starting new shard with ID '" + gameID + "' and port: " + port);
 
