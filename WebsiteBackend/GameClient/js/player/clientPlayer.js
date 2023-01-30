@@ -89,6 +89,10 @@ class ClientPlayer {
         this.inventory.generateItems(data);
     }
 
+    getPos() {
+        return new Vector(this.sprite.x, this.sprite.y);
+    }
+
     updateInventoryItems(data) {
         this.inventory.updateItems(data);
     }

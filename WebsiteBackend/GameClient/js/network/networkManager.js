@@ -37,6 +37,7 @@ class NetworkManager {
         this.socket.on(NetworkCommands.STRIKE_ANIMATION, (data) => this.strikeAnimation(data));
         this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data) => this.damageAnimation(data));
         this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data) => this.removeGameObjects(data));
+        this.socket.on(NetworkCommands.ADD_ITEM_DROP, (data) => this.addItemDrop(data));
 
         // End: registering command handling
 
@@ -57,6 +58,20 @@ class NetworkManager {
     }
 
     // Start: Handling commands
+
+    /**
+     * 
+     * @param {Object} data 
+     * @param {string} data.id player id
+     * @param {string} data.weaponRarity
+     * @param {Object} data.originPos 
+     */
+    addItemDrop(data) {
+        const playerID = data.id;
+        const weaponRarity = data.weaponRarity;
+        const originPos = data.originPos;
+        this.mainScene.addItemDrop(playerID, weaponRarity, originPos);
+    }
 
     /**
      * 

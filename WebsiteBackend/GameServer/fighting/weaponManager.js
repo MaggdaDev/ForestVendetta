@@ -1,21 +1,24 @@
 const RustySpade = require("./swords/heavySwords/rustySpade");
 const ObsidianPineNeedle = require("./swords/heavySwords/obsidianPineNeedle");
+const fs = require("fs")
+const path = require("path")
 
 class WeaponManager {
     static _instance;
     constructor() {
-        this.configFiles = new Map();
+        this.configFiles = this.loadFilesRecursive("./GameplayConfig/Items/Weapons/");
     }
 
     createNewWeapon(classWeapon, owner, weaponID) {
         const ret = new classWeapon(owner, weaponID);
-        const key = ret.typeData.class + "/" + ret.typeData.subClass + "/" + ret.typeData.type;
-        if (!this.configFiles.has(key)) {
-            this.configFiles.set(key, require('../../GameplayConfig/Items/Weapons/' + key));
-        }
-        ret.applyConfig(this.configFiles.get(key));
+        ret.applyConfig(WeaponManager.getConfigFile(ret.typeData.type));
 
         return ret;
+    }
+
+    static getConfigFile(key) {
+        const inst = WeaponManager.instance();
+        return inst.configFiles.get(key);
     }
 
     /**
@@ -54,6 +57,28 @@ class WeaponManager {
             WeaponManager._instance = new WeaponManager();
         }
         return WeaponManager._instance;
+    }
+
+    loadFilesRecursive(dir, map) {
+        var isStart =  false;
+        if(map === undefined) {
+            isStart = true;
+            map = new Map();
+            console.log("Loading weapon config files recursively")
+        }
+        const fileNames = fs.readdirSync(path.resolve(dir));
+        fileNames.forEach(currFile => {
+            const splitted = currFile.split(".");
+            if(splitted.length !== 2) {
+                this.loadFilesRecursive(dir + "/" + currFile, map);
+            } else {
+                map.set(splitted[0], JSON.parse(fs.readFileSync(dir + "/" + currFile, {encoding: "utf8"})));
+            }
+        });
+
+        if(isStart) {
+            return map;
+        }
     }
 }
 

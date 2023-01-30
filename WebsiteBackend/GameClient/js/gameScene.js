@@ -47,6 +47,16 @@ class GameScene extends Phaser.Scene {
 
     /**
      * 
+     * @param {string} playerID 
+     * @param {string} weaponRarity 
+     */
+    addItemDrop(playerID, weaponRarity, originPos) {
+        const targetPlayer = this.players.get(playerID);
+        this.particleManager.emitDropParticle(playerID, weaponRarity, originPos, targetPlayer);
+    }
+
+    /**
+     * 
      * @param {Object} data
      * @param {number} data.pos.x
      * @param {number} data.pos.y 
@@ -58,6 +68,7 @@ class GameScene extends Phaser.Scene {
             this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName);
             console.log('Added local protagonist with server data.');
             this.cameras.main.startFollow(this.clientProtagonist.sprite);
+
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
             newPlayer.setInventoryItems(data.inventory);

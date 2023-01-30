@@ -2,7 +2,7 @@ class ItemBrowser {
     static FLEX_DIV_ID = "inventoryFlexDiv";
 
     static FILENAME_HOVERINFO = "itemHoverInfo";
-    
+
     constructor() {
         console.log("Item Browser constructed")
         this.data = null;       // set by http request from redirect in this.setDisplayableInventoryData
@@ -50,15 +50,16 @@ class ItemBrowser {
         this.cssMap = cssMap;
         this.checkReadyForDisplay();
     }
-    
+
     setItemConfig(itemConfigMap) {
         this.itemConfigMap = itemConfigMap;
-        this.checkReadyForDisplay();
+
         this.itemRarityConfig = JSON.parse(itemConfigMap.get("itemRarity"));
         this.itemConfigMap.forEach((currVal, currKey) => {
             this.itemConfigMap.set(currKey, JSON.parse(currVal));
         });
         console.log("Parsed item config to json");
+        this.checkReadyForDisplay();
     }
 
     applyUICSS() {
@@ -73,7 +74,7 @@ class ItemBrowser {
     }
 
     checkReadyForDisplay() {
-        if(this.images !== null && this.data !== null && this.cssMap !== null && this.htmlMap !== null && this.ingameUICSSapplied && this.itemConfigMap !== null) {
+        if (this.images !== null && this.data !== null && this.cssMap !== null && this.htmlMap !== null && this.ingameUICSSapplied && this.itemConfigMap !== null) {
             this.constructInventory();
         } else {
             console.log("Cant create inventory yet...");

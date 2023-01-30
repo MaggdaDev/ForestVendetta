@@ -39,7 +39,7 @@ class Mob {
             this.players.forEach((player)=>{
                 dropObjects = this.dropHandler.createDrops();
                 dropObjects.forEach((currDropObject)=>{
-                    player.addDrop(currDropObject);
+                    player.addDrop(currDropObject, this.movableBody.pos);
                 });
             })
         });  

@@ -109,9 +109,9 @@ class Protagonist {
         }
     }
 
-    addDrop(item) {
+    addDrop(item, originPos) {
         this.inventory.addDrop(item);
-        //this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, {id: this.id, weaponId: item.id});
+        this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, {id: this.id, weaponRarity: item.config.rarity, originPos: originPos});
     }
 
     selectItem(index) {
