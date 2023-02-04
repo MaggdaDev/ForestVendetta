@@ -18,7 +18,6 @@ class Loader {
 
 
         // general
-        
     }
 
     loadSpriteSheets() {
@@ -32,6 +31,11 @@ class Loader {
         // weapons
         this.scene.load.image('rustySpade', "GameClient/images/weapons/RUSTY_SPADE.png");
         this.scene.load.image('obsidianPineNeedle', "GameClient/images/weapons/OBSIDIAN_PINE_NEEDLE.png");
+
+        // animations
+        this.scene.load.image("dropIcon", "GameClient/images/animations/dropIcon.png");
+        this.scene.load.image("dropShade", "GameClient/images/animations/dropShade.png");
+        this.scene.load.image("dropParticles", "GameClient/images/animations/dropParticles.png");
 
         
     }

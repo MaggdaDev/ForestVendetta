@@ -24,7 +24,7 @@ class ClientPlayer {
         const pred = this.clientPrediction.getNextClientPos(delta);
         if (pred !== null && this.sprite !== undefined && this.sprite !== null) {
             this.sprite.updatePredicted(pred.x, pred.y);
-            console.log("setto");
+            //console.log("setto");
         }
     }
 

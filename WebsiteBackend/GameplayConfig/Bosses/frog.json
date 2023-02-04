@@ -14,10 +14,10 @@
     "drop_config": {
         "drops": [
             {
-                "item": "OBSIDIAN_PINE_NEEDLE", "chance": 0.2
+                "item": "OBSIDIAN_PINE_NEEDLE", "chance": 1
             },
             {
-                "item": "RUSTY_SPADE", "chance": 0.5
+                "item": "RUSTY_SPADE", "chance": 0
             }
         ]
     }

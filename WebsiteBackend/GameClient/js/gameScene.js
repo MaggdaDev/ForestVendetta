@@ -10,7 +10,7 @@ class GameScene extends Phaser.Scene {
         this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
         this.mouseManager = new MouseManager(this);     // important preload: will be accessed in create of overlay scene
-        this.particleManager = new ParticleManager(this);
+        
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
@@ -40,6 +40,13 @@ class GameScene extends Phaser.Scene {
         
         console.log("Sending register request add player...");
         this.networkManager.sendRequestAddPlayer();
+
+        
+    }
+
+    onOverlaySceneLoaded() {
+        console.log("Calling onOverlaySceneLoaded in main scene");
+        this.particleManager = new ParticleManager(this, this.overlayScene);
     }
 
 

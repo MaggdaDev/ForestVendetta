@@ -3,38 +3,68 @@
         "display": {
             "name": "COMMON",
             "color": "#d3d3d3"
+        },
+        "drop_animation": {
+            "pulltime": 1.5,
+            "mass": 60,
+            "trace": 0
         }
     },
     "UNCOMMON": {
         "display": {
             "name": "UNCOMMON",
             "color": "#90EE90"
+        },
+        "drop_animation": {
+            "pulltime": 1.7,
+            "mass": 80,
+            "trace": 0
         }
     },
     "RARE": {
         "display": {
             "name": "RARE",
-            "color": "#6495ED"
+            "color": "#6091eb"
+        },
+        "drop_animation": {
+            "pulltime": 2,
+            "mass": 100,
+            "trace": 1
         }
     },
     "SUPER_RARE": {
         "display": {
             "name": "SUPER RARE",
-            "color": "#00008B"
+            "color": "#000080"
+        },
+        "drop_animation": {
+            "pulltime": 2.5,
+            "mass": 120,
+            "trace": 1
         }
     },
     "EPIC": {
         "display": {
             "name": "EPIC",
-            "color": "blueviolet",
+            "color": "#8a2be2",
             "colorchange": "epicColorchange"
+        },
+        "drop_animation": {
+            "pulltime": 4,
+            "mass": 200,
+            "trace": 2
         }
     },
     "LEGENDARY": {
         "display": {
             "name": "LEGENDARY",
-            "color": "yellow",
+            "color": "#ff8c00",
             "colorchange": "legendaryColorchange"
+        },
+        "drop_animation": {
+            "pulltime": 5,
+            "mass": 300,
+            "trace": 2
         }
     }
 }

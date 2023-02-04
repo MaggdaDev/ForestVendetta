@@ -33,7 +33,7 @@ class OverlayScene extends Phaser.Scene {
             this.setupMobileControlls();
         }
 
-
+        this.gameScene.onOverlaySceneLoaded();
 
 
 
