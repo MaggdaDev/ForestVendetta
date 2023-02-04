@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <style> html, body { margin: 0px; padding: 0px; overflow: hidden; height: 100%; } </style>
+    <style>
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <script src="GameClient/Phaser/dist/phaser-arcade-physics.min.js"></script>
     <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
 
@@ -10,7 +21,7 @@
     <script src="GameClient/js/keyManager.js"></script>
     <script src="GameClient/js/mouseManager.js"></script>
     <script src="GameClient/js/physicsControlInfo.js"></script>
-    
+
     <script src="GameClient/js/particles/damageParticle.js"></script>
     <script src="GameClient/js/particles/dropParticle.js"></script>
     <script src="GameClient/js/particles/particleManager.js"></script>
@@ -18,7 +29,7 @@
     <script src="GameClient/js/world/clientPlatform.js"></script>
     <script src="GameClient/js/world/clientPolygonObject.js"></script>
     <script src="GameClient/js/world/clientWorld.js"></script>
-    
+
 
     <script src="GameClient/js/player/clientPlayer.js"></script>
     <script src="GameClient/js/player/playerSprite.js"></script>
@@ -51,13 +62,14 @@
     <script src="GameClient/js/uiElements/mobileControlls/mobileButton.js"></script>
     <script src="GameClient/js/uiElements/mobileControlls/jumpButton.js"></script>
     <script src="GameClient/js/uiElements/mobileControlls/strikeButton.js"></script>
-    
+
     <script src="GameClient/js/uiElements/mobileControlls/mobileEventEmitter.js"></script>
 
     <script src="GameStatic/js/network/networkCommands.js"></script>
     <script src="GameStatic/js/playerControls.js"></script>
     <script src="GameStatic/js/maths/vector.js"></script>
 </head>
+
 <body>
     <div id="parentDiv"></div>
     <script src="GameClient/js/main.js"></script>
