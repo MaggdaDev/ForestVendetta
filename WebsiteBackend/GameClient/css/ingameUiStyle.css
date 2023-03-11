@@ -93,3 +93,17 @@
         color: rgb(255, 0, 0)
     }
   }
+
+  /*Game Button*/
+  .gameButton {
+    background-color: lightgray;
+    border-radius: 8px;
+  }
+
+  .gameButton:active {
+    background-color: darkgray;
+  }
+
+  .gameButton:hover {
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  }

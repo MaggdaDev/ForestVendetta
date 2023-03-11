@@ -70,6 +70,17 @@ class RabbitConnection {
         }
     }
 
+    sendReplyTo(msg, args, queue) {
+        const corrID = msg.correlationID;
+        if(corrID === undefined) {
+            console.error("Cant reply to " + msg + " because correlationID is missing");
+            return;
+        } 
+        console.log("Sending reply");
+        const replyMsg = RabbitMessage.fromCorrelationID(corrID, args);
+        this._sendTo(queue, replyMsg);
+    }
+
     // assert custom queue, i.e. with name [gameID] to address specific shards
     assertCustomQueue(queue) {
         logRabbit("Asserting custom queue: " + queue);
@@ -206,7 +217,7 @@ class RabbitConnection {
         logRabbit("Registering handler for messages in queue '" + queue + "'...");
         this.channel.consume(queue, (message) => {
             logRabbit("Message received from queue '" + queue + "': '" + message.content.toString() + "'.");
-            var rabbitMessageObject = JSON.parse(message.content.toString());          // convert string to rabbit message json object (/shared/rabbitMessage.js)
+            var rabbitMessageObject = JSON.parse(message.content.toString());          // convert string to rabbit message json object (/shared/rabbitMessage.js)         
             if (rabbitMessageObject.command === "REPLY") {
                 logRabbit("Catching reply before handling! " + rabbitMessageObject.correlationID);
                 if (this.awaitedReplies.has(rabbitMessageObject.correlationID)) {

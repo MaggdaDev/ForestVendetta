@@ -15,10 +15,18 @@ class SocketUser {
         // START: register command handling         // handling gameplay commands here; organisation commands in server network manager
         this.socket.on(NetworkCommands.PLAYER_CONTROL, (data)=>this.playerControl(data));
         this.socket.on(NetworkCommands.REQUEST_SELECT_ITEM, (data)=>this.selectItem(data.index));
+        this.socket.on(NetworkCommands.REQUEST_LEAVE_GAME, (data)=>this.requestLeaveGame(data.id));
         // END: register command handling
     }
 
     // START: command handling
+
+    requestLeaveGame(id) {
+        console.log("Command received!");
+        this.owner.handleLeaveGameRequest();
+    }
+
+    
 
     /**
      * 
@@ -39,6 +47,16 @@ class SocketUser {
     // END: command handling
 
     // START: command sending
+
+    sendRedirectToHome() {
+        this.sendCommand(NetworkCommands.REDIRECT_TO_HOME, {id:this.owner.id, url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"});
+        console.log("Emitted redirect to home command");
+    }
+
+    sendShowSavingProgressScreen() {
+        this.sendCommand(NetworkCommands.SHOW_SAVING_PROGRESS_SCREEN);
+        console.log("Emitted show saving progress screen");
+    }
 
     sendWorldData(world) {
         this.sendCommand(NetworkCommands.SETUP_WORLD, world);

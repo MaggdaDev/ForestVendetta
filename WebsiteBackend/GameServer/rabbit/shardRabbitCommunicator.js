@@ -29,8 +29,22 @@ class ShardRabbitCommunicator {
         this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));    // status: 0 error (from AccessManager.REJECT_REASONS)
     }
 
-    sendDropsToScheduler(userID, drops) {
-        this.rabbitConnection.sendToScheduler(new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SHARDS.CONSTRUCT_DROPS, {userID: userID, drops: drops}));
+    /**
+     * 
+     * @param {string} userID 
+     * @param {Object[]} drops 
+     * @param {function} onFinished @optional
+     * @param {string} queueName name for reply queue
+     */
+    sendDropsToScheduler(userID, drops, onFinished, queueName) {
+        const msg = new RabbitMessage(RabbitMessage.RABBIT_COMMANDS.FROM_SHARDS.CONSTRUCT_DROPS, { userID: userID, drops: drops, shardQueue: queueName});
+        if (onFinished === undefined) {
+            this.rabbitConnection.sendToScheduler(msg);
+            console.log("Sent items to scheduler and NOT waiting.");
+        } else {
+            this.rabbitConnection.sendToQueueAndHandleReply(RabbitConnection.QUEUES.toScheduler, msg, (args) => onFinished(args));
+            console.log("Sent items to scheduler and awaiting response...");
+        }
     }
 
     /**
@@ -39,7 +53,7 @@ class ShardRabbitCommunicator {
      * @param {string} adress - http adress of shard
      */
     sendCreateSuccess(createMessageID, adress) {
-        this.rabbitConnection.sendToScheduler(RabbitMessage.fromCorrelationID(createMessageID, {adress: adress}));
+        this.rabbitConnection.sendToScheduler(RabbitMessage.fromCorrelationID(createMessageID, { adress: adress }));
     }
 }
 

@@ -17,7 +17,7 @@ class DropConstructor {
      * @param {DropObject[]} drops - dropObjects from WebsiteBackend/GameServer/player/dropObject
      * @param {string} userID 
      */
-    constructDrops(drops, userID) {
+    constructDrops(drops, userID, onFinished) {
         const mongoObjects = [];
         drops.forEach((element) => {
             const mongoItemObject = ObjectFactory.createNewItem(element.itemName, userID);
@@ -27,6 +27,7 @@ class DropConstructor {
         logDropConstructor("Constructed " + mongoObjects.length + " items for " + userID + ". Now trying to insert into database...");
         this.mongoAccessor.insertDropsFor(userID, mongoObjects).then(() => {
             logDropConstructor("Insertion of drops for " + userID + " successful.");
+            onFinished();
         }).catch((error) => {
             logDropConstructor("Insertion of drops for " + userID + " failed!");
             throw error;

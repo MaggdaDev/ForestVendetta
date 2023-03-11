@@ -26,6 +26,10 @@ class SchedulerRabbitCommunicator {
             thenFunc);
     }
 
+    sendSaveItemsConfirmation(msg) {
+        this.rabbitConnection.sendReplyTo(msg, {}, msg.args.shardQueue);
+    }
+
     /**
      * 
      * @param {string} displayName - name of the boss for discord chat

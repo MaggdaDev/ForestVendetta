@@ -32,6 +32,8 @@ class Protagonist {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
         this.userName = this.discordData.username;
+        this.isIngame = true;
+        this.alreadyExited = false;
         this.startPos = new Vector(500, 500);
 
         this.world = world;
@@ -83,7 +85,7 @@ class Protagonist {
         this.inventory = new Inventory(playerData.hotbar, this);
 
         // debug
-        if(false) {
+        if (true) {
             console.log("ADDING TEST DROP TO INVENTORY");
             this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
         }
@@ -98,24 +100,42 @@ class Protagonist {
      * 
      * @param {ShardRabbitCommunicator} rabbitCommunicator 
      */
-    goodbyeJojo(rabbitCommunicator) {       // on shard death/log out
+    goodbyeJojo(rabbitCommunicator, onFinished) {       // on shard death/log out
+        if(this.alreadyExited) {
+            console.log("Already exited");
+            return;
+        }
+        this.alreadyExited = true;
         console.log("Deconstructing player...");
+        this.setIsIngame(false);
         // drops
-        if(this.inventory.drops.length === 0) {
+        if (this.inventory.drops.length === 0) {
             console.log("No drops to send.");
+            if(onFinished !== undefined) {
+                onFinished();
+            }
         } else {
             console.log("Sending " + this.inventory.drops.length + " drops to scheduler");
-            rabbitCommunicator.sendDropsToScheduler(this.id, this.inventory.drops);
+            rabbitCommunicator.sendDropsToScheduler(this.id, this.inventory.drops, onFinished, this.mainLoop.rabbitCommunicator.gameQueueName);
         }
     }
 
     addDrop(item, originPos) {
         this.inventory.addDrop(item);
-        this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, {id: this.id, weaponRarity: item.config.rarity, originPos: originPos});
+        this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, { id: this.id, weaponRarity: item.config.rarity, originPos: originPos });
     }
 
     selectItem(index) {
         this.inventory.selectItem(index);
+    }
+
+    handleLeaveGameRequest() {
+        console.log("Starting handle leave game process...");
+        this.goodbyeJojo(this.mainLoop.rabbitCommunicator, () => {
+            console.log("Saving finished!");
+            this.socketUser.sendRedirectToHome();
+        });
+        this.socketUser.sendShowSavingProgressScreen();
     }
 
     get equippedWeapon() {
@@ -127,6 +147,10 @@ class Protagonist {
             return null;
         }
         return this.currentStrike.weapon;
+    }
+
+    setIsIngame(b) {
+        this.isIngame = b;
     }
 
     /**
@@ -154,10 +178,12 @@ class Protagonist {
      * @param {number} timeElapsed - timeElapsed since last update 
      */
     update(timeElapsed, worldObjects, mobs) {
-        this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
+        if (this.isIngame) {
+            this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
 
-        if (this.equippedWeapon) {
-            this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
+            if (this.equippedWeapon) {
+                this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
+            }
         }
     }
 
@@ -178,7 +204,7 @@ class Protagonist {
         return {
             pos: this.hitBox.pos,
             spd: this.movableBody.spd,
-            acc: Vector.multiply(this.movableBody.resultingForce, 1.0/this.movableBody.mass),
+            acc: Vector.multiply(this.movableBody.resultingForce, 1.0 / this.movableBody.mass),
             height: PLAYER_HITBOX_HEIGHT,
             width: PLAYER_HITBOX_WIDTH,
             id: this.id,
@@ -196,7 +222,9 @@ class Protagonist {
     }
 
     sendUpdate(updateData) {
-        this.socketUser.sendUpdate(updateData);
+        if (this.isIngame) {
+            this.socketUser.sendUpdate(updateData);
+        }
     }
 
     playerControl(control) {

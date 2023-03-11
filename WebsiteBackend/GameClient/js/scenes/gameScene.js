@@ -49,8 +49,19 @@ class GameScene extends Phaser.Scene {
         this.particleManager = new ParticleManager(this, this.overlayScene);
     }
 
+    onLoadingSceneLoaded() {
+        console.log("Calling loadingScene loaded in main scene");
+    }
+
 
     // Start: Executing incoming commands from network manager
+
+    switchToLoadingScene() {
+        this.networkManager.setIsIngame(false);
+        this.scene.start("LoadingScene");
+        this.scene.stop("OverlayScene");
+        console.log("Switched to loading scene");
+    }
 
     /**
      * 

@@ -53,6 +53,8 @@ class Loader {
         this.scene.load.image('mobileJumpButton', "GameClient/images/jumpbutton.png");
         this.scene.load.image('mobileStrikeButton', "GameClient/images/strikebutton.png");
 
+        this.scene.load.html('gameButton', 'GameClient/html/gameButton.html');
+
         this.scene.load.css('ingameUiStyle', 'GameClient/css/ingameUiStyle.css');
         this.scene.load.html('itemHoverInfo', 'GameClient/html/inventory/itemHoverInfo.html');
         this.scene.load.json('ITEM_RARITY_CONFIG', "GameplayConfig/Items/itemRarity.json");

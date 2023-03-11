@@ -15,12 +15,15 @@ const NetworkCommands = {
     REMOVE_GAMEOBJECTS: 'REMOVE_GAMEOBJECTS',   // data: type, id
     STRIKE_ANIMATION: 'STRIKE_ANIMATION',       // data: id (player), weaponId, cooldownTime
     ADD_ITEM_DROP: 'ADD_ITEM_DROP',             // data: id (player), weaponRarity, originPos
+    SHOW_SAVING_PROGRESS_SCREEN: "SHOW_SAVING_PROGRESS_SCREEN",  // data: id
+    REDIRECT_TO_HOME: "REDIRECT_TO_HOME",       // data: id, url
 
 
     // TO SERVER
     REQUEST_ADD_PLAYER: 'REQUEST_ADD_PLAYER',   // data: {string} data.id
     REQUEST_SELECT_ITEM: 'REQUEST_SELECT_ITEM', // data: {number} data.index
-    PLAYER_CONTROL: 'PLAYER_CONTROL'            // data: {string} player control !ONLY PlayerControls.X_Y_Z accepted!
+    PLAYER_CONTROL: 'PLAYER_CONTROL',            // data: {string} player control !ONLY PlayerControls.X_Y_Z accepted!
+    REQUEST_LEAVE_GAME: 'REQUEST_LEAVE_GAME'    // data: {string} data.id
 }
 
 if (typeof module !== 'undefined') {

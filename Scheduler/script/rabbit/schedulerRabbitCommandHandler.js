@@ -19,7 +19,9 @@ class SchedulerRabbitCommandHandler {
                 const userID = message.args.userID;
                 const drops = message.args.drops;
                 logCommandHandler("Handling request to construct " + drops.length + " drops for " + userID + ".");
-                this.dropConstructor.constructDrops(drops, userID);
+                this.dropConstructor.constructDrops(drops, userID, () => {
+                    this.scheduler.rabbitCommunicator.sendSaveItemsConfirmation(message);
+                });
             break;
             default:
                 throw "Unknown command received: " + message.command;

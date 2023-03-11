@@ -21,7 +21,7 @@ class RabbitMessage {
         },
 
         FROM_SHARDS: {
-            CONSTRUCT_DROPS: "CONSTRUCT_DROPS"                      // to scheduler; args: userID, {DropObject[]} drops
+            CONSTRUCT_DROPS: "CONSTRUCT_DROPS"                      // to scheduler; args: userID, {DropObject[]} drops, shardQueue 
         }
     }
 

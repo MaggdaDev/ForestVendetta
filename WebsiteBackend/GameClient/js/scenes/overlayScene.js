@@ -17,6 +17,8 @@ class OverlayScene extends Phaser.Scene {
         // loading
         var loader = new Loader(this);
         loader.loadOverlayStuff();
+
+        
     }
 
     create() {
@@ -32,6 +34,10 @@ class OverlayScene extends Phaser.Scene {
             this.input.addPointer(3);
             this.setupMobileControlls();
         }
+
+        // adding control elements
+        var leaveButton = new LeaveButton(this, this.gameScene.networkManager);
+        this.add.existing(leaveButton);
 
         this.gameScene.onOverlaySceneLoaded();
 

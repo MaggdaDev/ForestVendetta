@@ -1,4 +1,3 @@
-
 class NetworkManager {
     /**
      * 
@@ -6,6 +5,7 @@ class NetworkManager {
      */
     constructor(scene, mobManager) {
         console.log("Creating Network manager...");
+        this.isIngame = true;
         this.mainScene = scene;
 
         const authObj = this.extractUriParams();
@@ -24,24 +24,39 @@ class NetworkManager {
 
 
         // Start: registering command handling
-        this.socket.on(NetworkCommands.ADD_PLAYER, (data) => this.addPlayer(data));
-        this.socket.on(NetworkCommands.SETUP_WORLD, (data) => this.setupWorld(data));
-        this.socket.on(NetworkCommands.UPDATE_PLAYERS, (data) => this.updatePlayers(data));
-        this.socket.on(NetworkCommands.SHOW_OLD_PLAYERS, (data) => this.showOldPlayers(data));
-        this.socket.on(NetworkCommands.SHOW_OLD_MOBS, (data) => this.showOldMobs(data));
-        this.socket.on(NetworkCommands.DISCONNECT_PLAYER, (data) => this.disconnectPlayer(data));
-        this.socket.on(NetworkCommands.UPDATE_WORLD, (data) => this.updateWorld(data));
-        this.socket.on(NetworkCommands.UPDATE, (data) => this.update(data));
-        this.socket.on(NetworkCommands.CONTROL_DATA, (data) => this.controlData(data));
-        this.socket.on(NetworkCommands.SPAWN_MOB, (data) => this.spawnMob(data));
-        this.socket.on(NetworkCommands.STRIKE_ANIMATION, (data) => this.strikeAnimation(data));
-        this.socket.on(NetworkCommands.DAMAGE_ANIMATION, (data) => this.damageAnimation(data));
-        this.socket.on(NetworkCommands.REMOVE_GAMEOBJECTS, (data) => this.removeGameObjects(data));
-        this.socket.on(NetworkCommands.ADD_ITEM_DROP, (data) => this.addItemDrop(data));
+        this.registerIngameCommandHandling(NetworkCommands.ADD_PLAYER, (data) => this.addPlayer(data));
+        this.registerIngameCommandHandling(NetworkCommands.SETUP_WORLD, (data) => this.setupWorld(data));
+        this.registerIngameCommandHandling(NetworkCommands.UPDATE_PLAYERS, (data) => this.updatePlayers(data));
+        this.registerIngameCommandHandling(NetworkCommands.SHOW_OLD_PLAYERS, (data) => this.showOldPlayers(data));
+        this.registerIngameCommandHandling(NetworkCommands.SHOW_OLD_MOBS, (data) => this.showOldMobs(data));
+        this.registerIngameCommandHandling(NetworkCommands.DISCONNECT_PLAYER, (data) => this.disconnectPlayer(data));
+        this.registerIngameCommandHandling(NetworkCommands.UPDATE_WORLD, (data) => this.updateWorld(data));
+        this.registerIngameCommandHandling(NetworkCommands.UPDATE, (data) => this.update(data));
+        this.registerIngameCommandHandling(NetworkCommands.CONTROL_DATA, (data) => this.controlData(data));
+        this.registerIngameCommandHandling(NetworkCommands.SPAWN_MOB, (data) => this.spawnMob(data));
+        this.registerIngameCommandHandling(NetworkCommands.STRIKE_ANIMATION, (data) => this.strikeAnimation(data));
+        this.registerIngameCommandHandling(NetworkCommands.DAMAGE_ANIMATION, (data) => this.damageAnimation(data));
+        this.registerIngameCommandHandling(NetworkCommands.REMOVE_GAMEOBJECTS, (data) => this.removeGameObjects(data));
+        this.registerIngameCommandHandling(NetworkCommands.ADD_ITEM_DROP, (data) => this.addItemDrop(data));
+
+        this.socket.on(NetworkCommands.SHOW_SAVING_PROGRESS_SCREEN, (data) => this.showSavingProgressScreen(data));
+        this.socket.on(NetworkCommands.REDIRECT_TO_HOME, (data) => this.redirectToHome(data));
 
         // End: registering command handling
 
         console.log("NetworkManager created.")
+    }
+
+    setIsIngame(b) {
+        this.isIngame = b;
+    }
+
+    registerIngameCommandHandling(command, handler) {
+        this.socket.on(command, (data) => {
+            if (this.isIngame) {
+                handler(data);
+            }
+        });
     }
 
     extractUriParams() {
@@ -58,6 +73,17 @@ class NetworkManager {
     }
 
     // Start: Handling commands
+
+    redirectToHome(data) {
+        
+        console.log("Redirecting to home... (" + data.url + ")");
+        location.href = data.url;
+    }
+
+    showSavingProgressScreen(data) {
+        console.log("Handling show saving progress screen command...");
+        this.mainScene.switchToLoadingScene();
+    }
 
     /**
      * 
@@ -182,6 +208,10 @@ class NetworkManager {
 
 
     // Start: Sending commands
+    sendLeaveGameRequest() {
+        this.sendCommand(NetworkCommands.REQUEST_LEAVE_GAME, { id: this.clientId });
+    }
+
     sendRequestAddPlayer() {
         this.sendCommand(NetworkCommands.REQUEST_ADD_PLAYER, { id: this.clientId });
     }
