@@ -17,6 +17,7 @@ class DeathOverlay extends Phaser.GameObjects.Container {
     startRespawn(respawnDurationMillis) {
         this.setVisible(true);
         this.respawnDuration = respawnDurationMillis;
+        this.timer = 0;
     }
 
     updateRespawn(timeElaspedMillis) {
