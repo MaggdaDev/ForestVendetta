@@ -18,6 +18,10 @@ class FightingObject {
         this.onDamageDealtHandlers = [];
     }
 
+    reset() {
+        this.hp = this.maxHp;
+    }
+
     get damage() {
         return this.dmgGetter();
     }
@@ -62,7 +66,7 @@ class FightingObject {
     }
     
 
-    isAlive() {
+    get isAlive() {
         return this.hp > 0;
     }
 }

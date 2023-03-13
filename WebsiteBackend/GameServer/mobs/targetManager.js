@@ -13,10 +13,12 @@ class TargetManager {
         var bestAirLine = null;
         var currConn;
         this.players.forEach((currPlayer) => {
-            currConn = Vector.subtractFrom(currPlayer.pos, startPos);
-            if (bestAirLine === null || currConn.abs < bestAirLine.abs) {
-                if (!this.doesAirLineIntersect(currConn)) {
-                    bestAirLine = currConn;
+            if (currPlayer.isInteractable) {
+                currConn = Vector.subtractFrom(currPlayer.pos, startPos);
+                if (bestAirLine === null || currConn.abs < bestAirLine.abs) {
+                    if (!this.doesAirLineIntersect(currConn)) {
+                        bestAirLine = currConn;
+                    }
                 }
             }
         });

@@ -29,6 +29,11 @@ class OverlayScene extends Phaser.Scene {
         this.inventoryHUD = new InventoryHUD(this);
         this.input.topOnly = false;
 
+        // death overlay
+        this.deathOverlay = new DeathOverlay(this);
+        this.add.existing(this.deathOverlay);
+        this.alignNodeCenter(this.deathOverlay);
+
         // controls
         if (MobileController.isMobile(this)) {
             this.input.addPointer(3);
@@ -43,6 +48,25 @@ class OverlayScene extends Phaser.Scene {
 
 
 
+    }
+
+    initRespawn(respawnTime) {
+        this.deathOverlay.startRespawn(respawnTime);
+    }
+
+    /**
+     * 
+     * @param {number} delta time elapsed in millis
+     * @description called by game scene client update loop
+     */
+    clientUpdate(delta) {
+        if(this.deathOverlay.visible) {
+            this.deathOverlay.updateRespawn(delta);
+        }
+    }
+
+    alignNodeCenter(node) {
+        Phaser.Display.Align.In.Center(node, this.screenZone);
     }
 
     setupMobileControlls() {

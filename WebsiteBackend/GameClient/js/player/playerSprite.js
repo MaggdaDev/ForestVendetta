@@ -43,11 +43,12 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.healthBar.update(this.x, this.y, this.healthBar.currentHealth);
     }
 
-    updateServer(currHp, facingLeft) {
+    updateServer(currHp, facingLeft, isAlive) {
         this.healthBar.update(this.x, this.y, currHp);
         if (facingLeft !== undefined) {
             this.flipped = facingLeft;
         }
+        this.setVisible(isAlive);
     }
 
     onUpperAnimationUpdate(anim, frame) {
@@ -145,6 +146,11 @@ class PlayerSprite extends Phaser.GameObjects.Container {
                 curr.scaleX = -1 * Math.abs(curr.scaleX);
             });
         }
+    }
+
+    setVisible(b) {
+        super.setVisible(b);
+        this.healthBar.setVisible(b);
     }
 
     createAnimations() {

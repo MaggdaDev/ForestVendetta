@@ -111,6 +111,12 @@ class MovableBody {
         }
     }
 
+    reset() {
+        this.spd.x = 0;
+        this.spd.y = 0;
+        this.rotSpd = 0;
+    }
+
     /**
      * 
      * @param {function(player)} handler 

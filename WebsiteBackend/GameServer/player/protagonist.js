@@ -10,6 +10,7 @@ const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
 const Inventory = require("./inventory");
 const ShardRabbitCommunicator = require("../rabbit/shardRabbitCommunicator");
 const DropObject = require("./dropObject");
+const Timer = require("../../GameStatic/js/util/timer");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -20,6 +21,9 @@ class Protagonist {
     static HP = 25;
     static DESIRED_SPEED = 300;
     static ACC_FORCE = 5000;
+
+    static RESPAWN_TIME = 10000; // millis
+    static START_POS = new Vector(500,500);
 
     /**
      * 
@@ -32,10 +36,12 @@ class Protagonist {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
         this.userName = this.discordData.username;
+
         this.isIngame = true;
         this.alreadyExited = false;
-        this.startPos = new Vector(500, 500);
+        this.isAlive = true;;
 
+        this.startPos = Protagonist.START_POS.clone();
         this.world = world;
         this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
         this.socketUser = new SocketUser(socket, this);
@@ -84,17 +90,66 @@ class Protagonist {
         // inventory
         this.inventory = new Inventory(playerData.hotbar, this);
 
+        // respawning
+        this.respawnTimer = new Timer(Protagonist.RESPAWN_TIME, ()=> this.respawn());
+        mainLoop.addTimer(this.respawnTimer);
+
         // debug
-        if (true) {
+        if (false) {
             console.log("ADDING TEST DROP TO INVENTORY");
             this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
         }
 
     }
 
+    /**
+     * 
+     * @param {number} timeElapsed - timeElapsed since last update 
+     */
+     update(timeElapsed, worldObjects, mobs) {
+        if (this.isInteractable) {
+            this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
+
+            if (this.equippedWeapon) {
+                this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
+            }
+        }
+        this.updateAlive(timeElapsed);
+    }
+
+    // alive and dead
+    updateAlive(timeElasped) {
+        if(this.isAlive && (!this.fightingObject.isAlive)) {
+           this.die();
+        }
+    }
+
+    die() {
+        this.isAlive = false;
+        this.socketUser.sendDeathToClient(Protagonist.RESPAWN_TIME);
+        this.initRespawn();
+        console.log("Player " + this.id + " died.");
+    }
+
+    initRespawn() {
+        this.respawnTimer.start();
+    }
+
+    respawn() {
+        console.log("Player " + this.id + " respawned.");
+        this.fightingObject.reset();
+        this.movableBody.reset();
+        this.pos = Protagonist.START_POS.clone();
+        this.isAlive = true;
+    }
+
+    // end alive and dead
+
     calcDamage() {
         return this.inventory.selectedItem.getDamage();
     }
+
+
 
     /**
      * 
@@ -149,6 +204,11 @@ class Protagonist {
         return this.currentStrike.weapon;
     }
 
+
+    get isInteractable() {
+        return this.isAlive && this.isIngame && (!this.alreadyExited);
+    }
+
     setIsIngame(b) {
         this.isIngame = b;
     }
@@ -173,19 +233,7 @@ class Protagonist {
         this.socketUser.showOldMobs(mobManager.mobUpdateData);
     }
 
-    /**
-     * 
-     * @param {number} timeElapsed - timeElapsed since last update 
-     */
-    update(timeElapsed, worldObjects, mobs) {
-        if (this.isIngame) {
-            this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
-
-            if (this.equippedWeapon) {
-                this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
-            }
-        }
-    }
+    
 
     strike() {
         if (this.equippedWeapon) {
@@ -213,12 +261,17 @@ class Protagonist {
             fightingObject: this.fightingObject,
             facingLeft: this.facingLeft,
             isWalking: this.isWalking,
-            userName: this.userName
+            userName: this.userName,
+            isAlive: this.isAlive
         }
     }
 
     get pos() {
         return this.hitBox.pos;
+    }
+
+    set pos(pos) {
+        this.hitBox.pos = pos;
     }
 
     sendUpdate(updateData) {

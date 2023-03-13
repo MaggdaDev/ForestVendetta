@@ -48,6 +48,10 @@ class SocketUser {
 
     // START: command sending
 
+    sendDeathToClient(respawnTime) {
+        this.sendCommand(NetworkCommands.PLAYER_DEATH, {id:this.owner.id, respawnTime: respawnTime});
+    }
+
     sendRedirectToHome() {
         this.sendCommand(NetworkCommands.REDIRECT_TO_HOME, {id:this.owner.id, url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"});
         console.log("Emitted redirect to home command");

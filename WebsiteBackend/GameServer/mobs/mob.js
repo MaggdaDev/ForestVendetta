@@ -50,7 +50,7 @@ class Mob {
     }
 
     checkAlive() {
-        if(!this.fightingObject.isAlive()) {
+        if(!this.fightingObject.isAlive) {
             this.remove();
             this.onDeathHandlers.forEach((curr)=>{
                 curr();

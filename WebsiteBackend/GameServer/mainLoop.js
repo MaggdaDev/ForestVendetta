@@ -1,4 +1,5 @@
 const NetworkCommands = require('../GameStatic/js/network/networkCommands');
+const Timer = require('../GameStatic/js/util/timer');
 const WeaponManager = require('./fighting/weaponManager');
 const MobManager = require('./mobs/mobManager');
 const Protagonist = require('./player/protagonist');
@@ -7,9 +8,10 @@ const World = require('./world/world');
 const WorldLoader = require('./world/worldLoader');
 class MainLoop {
     static MAX_LIFE_TIME = Number.MAX_SAFE_INTEGER;
-
+    
     constructor(playerMap, server) {
         this.server = server;
+        
         console.log("Main Loop created!")
         this.oldTime = Date.now();
         this.birthTime = -1;
@@ -22,8 +24,7 @@ class MainLoop {
         this.world = this.worldLoader.loadWorld();
 
         this.networkManager = undefined;
-
-
+        this.timers = [];
     }
 
     init(rabbitCommunicator) {        // after constructor before start; after network manager is created
@@ -43,7 +44,7 @@ class MainLoop {
      */
 
     /*
-    @param {number} timeElapsed - Elapsed time in milliseconds
+    @param {number} timeElapsed - Elapsed time in seconds
     */
     update(timeElapsed) {
         var worldIntersectables = this.world.intersectables;
@@ -53,8 +54,11 @@ class MainLoop {
         this.updateAllPlayers(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.mobManager.updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.allPlayersSendUpdate(this.updateData);
+        this.updateAllTimers(timeElapsed);
 
     }
+
+
 
     updateWorld(timeElapsed, ws, ms, ps) {
         this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed, ws, ms, ps)));
@@ -91,6 +95,18 @@ class MainLoop {
         }
     }
 
+    updateAllTimers(timeElapsedSeconds) {
+        this.timers.forEach((timer) => timer.update(timeElapsedSeconds * 1000));
+    }
+
+    /**
+     * 
+     * @param {Timer} timer 
+     */
+    addTimer(timer) {
+        this.timers.push(timer);
+    }
+
     get sendablePlayerUpdateData() {
         var ret = [];
         this.players.forEach((curr) => {
@@ -100,7 +116,7 @@ class MainLoop {
     }
 
     get playerIntersectables() {
-        return Array.from(this.players.values());
+        return Array.from(this.players.values()).filter(player => player.isInteractable);
     }
 
 

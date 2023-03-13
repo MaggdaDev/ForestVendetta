@@ -31,6 +31,7 @@ class GameScene extends Phaser.Scene {
             currPlayer.clientSideUpdate(time, delta);
         });
         this.mobManager.updateClientAllMobs(delta);
+        this.overlayScene.clientUpdate(delta);
     }
 
     create() {
@@ -55,6 +56,10 @@ class GameScene extends Phaser.Scene {
 
 
     // Start: Executing incoming commands from network manager
+
+    playerDeath(id, respawnTime) {
+        this.overlayScene.initRespawn(respawnTime);
+    }
 
     switchToLoadingScene() {
         this.networkManager.setIsIngame(false);

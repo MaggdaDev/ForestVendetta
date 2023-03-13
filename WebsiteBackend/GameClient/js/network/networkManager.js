@@ -39,6 +39,7 @@ class NetworkManager {
         this.registerIngameCommandHandling(NetworkCommands.REMOVE_GAMEOBJECTS, (data) => this.removeGameObjects(data));
         this.registerIngameCommandHandling(NetworkCommands.ADD_ITEM_DROP, (data) => this.addItemDrop(data));
 
+        this.socket.on(NetworkCommands.PLAYER_DEATH, (data) => this.playerDeath(data));
         this.socket.on(NetworkCommands.SHOW_SAVING_PROGRESS_SCREEN, (data) => this.showSavingProgressScreen(data));
         this.socket.on(NetworkCommands.REDIRECT_TO_HOME, (data) => this.redirectToHome(data));
 
@@ -46,6 +47,7 @@ class NetworkManager {
 
         console.log("NetworkManager created.")
     }
+
 
     setIsIngame(b) {
         this.isIngame = b;
@@ -73,6 +75,12 @@ class NetworkManager {
     }
 
     // Start: Handling commands
+
+    playerDeath(data) {
+        const id = data.id;
+        const respawnTime = data.respawnTime;
+        this.mainScene.playerDeath(id, respawnTime);
+    }
 
     redirectToHome(data) {
         

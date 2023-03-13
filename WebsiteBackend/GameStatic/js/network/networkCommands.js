@@ -17,6 +17,7 @@ const NetworkCommands = {
     ADD_ITEM_DROP: 'ADD_ITEM_DROP',             // data: id (player), weaponRarity, originPos
     SHOW_SAVING_PROGRESS_SCREEN: "SHOW_SAVING_PROGRESS_SCREEN",  // data: id
     REDIRECT_TO_HOME: "REDIRECT_TO_HOME",       // data: id, url
+    PLAYER_DEATH: "PLAYER_DEATH",               // data: id, respawnTime
 
 
     // TO SERVER
