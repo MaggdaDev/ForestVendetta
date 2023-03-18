@@ -58,7 +58,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     setWeapon(weapon) { // weapon null for none equipped
-        if (this.weapon && (!weapon)) {  // from equipped to unequipped
+        if (this.weapon && (weapon === null || weapon === undefined)) {  // from equipped to unequipped
             this.upperSprite.stop();
             this.upperSprite.setFrame(0);
             this.weapon.update(0);

@@ -88,6 +88,8 @@ class ClientWeapon {
                 return new ClientRustySpade(scene, data);
             case "OBSIDIAN_PINE_NEEDLE":
                 return new ClientObsidianPineNeedle(scene, data);
+            case "SLIMY_SPADE":
+                return new ClientSlimySpade(scene, data);
             default:
                 console.error("UNSUPPORTED WEAPON TYPE: " + data.typeData.type);
                 break;

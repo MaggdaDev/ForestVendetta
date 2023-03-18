@@ -42,6 +42,15 @@ class ClientInventory {
         }
     }
 
+    set selectedIndex(idx) {
+        this.selected = idx;
+        this.hotBarItems.forEach((item, currIdx) => {
+            if(item !== null && item !== undefined) {
+                item.visible = idx === currIdx;
+            }
+        });
+    }
+
     get selectedItem() {
         return this.hotBarItems[this.selected];
     }

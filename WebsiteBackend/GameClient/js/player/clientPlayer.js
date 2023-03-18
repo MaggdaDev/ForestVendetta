@@ -49,7 +49,7 @@ class ClientPlayer {
     }
 
     equipItem(index) {
-        this.inventory.selected = index;
+        this.inventory.selectedIndex = index;
         this.sprite.setWeapon(this.inventory.selectedItem);
         console.log("Equip idx " + index);
     }

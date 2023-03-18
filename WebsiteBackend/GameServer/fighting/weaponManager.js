@@ -1,7 +1,8 @@
 const RustySpade = require("./swords/heavySwords/rustySpade");
 const ObsidianPineNeedle = require("./swords/heavySwords/obsidianPineNeedle");
 const fs = require("fs")
-const path = require("path")
+const path = require("path");
+const SlimySpade = require("./swords/heavySwords/slimySpade");
 
 class WeaponManager {
     static _instance;
@@ -39,6 +40,9 @@ class WeaponManager {
                 break;
             case "OBSIDIAN_PINE_NEEDLE":
                 ItemClass = ObsidianPineNeedle;
+                break;
+            case "SLIMY_SPADE":
+                ItemClass = SlimySpade;
                 break;
             default:
                 throw new Error("Unkown item type in fromMongoData, please implement");
