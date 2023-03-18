@@ -34,6 +34,11 @@ class OverlayScene extends Phaser.Scene {
         this.add.existing(this.deathOverlay);
         this.alignNodeCenter(this.deathOverlay);
 
+        // right panel
+        this.rightPanel = new RightPanel(this);
+        this.add.existing(this.rightPanel);
+        this.alignNodeRight(this.rightPanel);
+
         // controls
         if (MobileController.isMobile(this)) {
             this.input.addPointer(3);
@@ -48,6 +53,10 @@ class OverlayScene extends Phaser.Scene {
         this.created = true;
 
 
+    }
+
+    updateGrade(grade) {
+        this.rightPanel.setGrade(grade);
     }
 
     initRespawn(respawnTime) {
@@ -65,6 +74,10 @@ class OverlayScene extends Phaser.Scene {
                 this.deathOverlay.updateRespawn(delta);
             }
         }
+    }
+
+    alignNodeRight(node) {
+        Phaser.Display.Align.In.RightCenter(node, this.screenZone);
     }
 
     alignNodeCenter(node) {

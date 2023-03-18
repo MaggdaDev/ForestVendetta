@@ -54,8 +54,13 @@ class GameScene extends Phaser.Scene {
         console.log("Calling loadingScene loaded in main scene");
     }
 
+    updateGrade(grade) {
+        this.overlayScene.updateGrade(grade);
+    }
+
 
     // Start: Executing incoming commands from network manager
+
 
     playerDeath(id, respawnTime) {
         this.overlayScene.initRespawn(respawnTime);

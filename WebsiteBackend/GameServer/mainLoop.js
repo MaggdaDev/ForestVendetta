@@ -215,7 +215,13 @@ class MainLoop {
         this.networkManager.broadcastToAllPlayers(command, data);
     }
 
-
+    /**
+     * 
+     * @returns {MobManager} mobManager
+     */
+    getMobManager() {
+        return this.mobManager;
+    }
 
 
 

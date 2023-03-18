@@ -4,7 +4,7 @@ class ClientProtagonist extends ClientPlayer {
     constructor(scene, id) {
         super(scene, id, true);
         this.playerController = new PlayerController(this, MobileController.isMobile(scene));
-                
+        this.gameScene = scene;
     }
 
     /** OVERRIDE
@@ -16,7 +16,7 @@ class ClientProtagonist extends ClientPlayer {
         super.updateSpriteToData(data);
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
-        
+        this.gameScene.updateGrade(data.grade);
         //this.updateInventory(data);
     }
 

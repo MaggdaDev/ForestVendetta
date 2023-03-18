@@ -11,6 +11,8 @@ const Inventory = require("./inventory");
 const ShardRabbitCommunicator = require("../rabbit/shardRabbitCommunicator");
 const DropObject = require("./dropObject");
 const Timer = require("../../GameStatic/js/util/timer");
+const GradeHandler = require("./gradeHandler");
+const MainLoop = require("../mainLoop");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -30,12 +32,13 @@ class Protagonist {
      * @param {Object} playerData - discordAPI, accountLevel, hotbar      see loginwebsite-api-requestHandler createDeployObject
      * @param {*} socket 
      * @param {*} world 
-     * @param {*} mainLoop 
+     * @param {MainLoop} mainLoop 
      */
     constructor(playerData, socket, world, mainLoop) {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
         this.userName = this.discordData.username;
+
 
         this.isIngame = true;
         this.alreadyExited = false;
@@ -82,6 +85,10 @@ class Protagonist {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { weaponId: instance.currentHittingWeapon.id, damage: damageDealt, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000), 1);
         });
+
+        // grade
+        
+        this.gradeHandler = new GradeHandler(this.fightingObject, mainLoop.getMobManager());
 
         // stats
         this.accountLevel = playerData.accountLevel;
@@ -262,7 +269,8 @@ class Protagonist {
             facingLeft: this.facingLeft,
             isWalking: this.isWalking,
             userName: this.userName,
-            isAlive: this.isAlive
+            isAlive: this.isAlive,
+            grade: this.gradeHandler.grade
         }
     }
 

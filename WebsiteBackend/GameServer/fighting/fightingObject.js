@@ -16,6 +16,7 @@ class FightingObject {
         this.id = gameUniqueId;
         this.onDamageTakenHandlers = [];
         this.onDamageDealtHandlers = [];
+        this.onDeathHandlers = [];
     }
 
     reset() {
@@ -42,6 +43,14 @@ class FightingObject {
         this.onDamageDealtHandlers.push(handler);
     }
 
+    /**
+     * 
+     * @param {function(killerID)} handler 
+     */
+    addOnDeath(handler) {
+        this.onDeathHandlers.push(handler);
+    }
+
     canDamage(other) {
         return true;
     }
@@ -62,6 +71,13 @@ class FightingObject {
         a.onDamageDealtHandlers.forEach((currHandler)=>{
             currHandler(a.damage, damagePos, Vector.subtractFrom(aPos, damagePos).dirVec)
         });
+
+        if(b.hp <= 0) {
+            console.log("Death in fighting object " + this.id + " detected. Calling " + b.onDeathHandlers.length + " handlers.");
+            b.onDeathHandlers.forEach((currHandler) => {
+                currHandler(a.id);
+            });
+        }
         return a.damage;
     }
     

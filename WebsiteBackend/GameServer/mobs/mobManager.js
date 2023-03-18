@@ -11,6 +11,9 @@ class MobManager {
         this.world = world;
         this.mobsToRemove = [];
         this.weaponManager = weaponManager;
+
+        // events
+        this.onMobDeath = [];
     }
 
     get nextID() {
@@ -22,6 +25,13 @@ class MobManager {
         var frog = new Frog(x,y,this.nextID, this.players, this.world, frogConfig, this.weaponManager);
         this.mobs.set(frog.id, frog);
         this.networkManager.sendSpawnMobCommand(frog);
+
+        //@ToDo allgemein
+        frog.addOnKilled((killer) => {
+            this.onMobDeath.forEach((handler) => {
+                handler(frog, killer);
+            });
+        });
         return frog;
     }
 
@@ -56,12 +66,28 @@ class MobManager {
         }
     }
 
+    /**
+     * 
+     * @param {function(mob, killerID)} handler 
+     */
+    addOnMobDeath(handler) {
+        this.onMobDeath.push(handler);
+    }
+
     get mobArray() {
         return Array.from(this.mobs.values());
     }
 
     get mobUpdateData() {
         return Array.from(this.mobs.values());
+    }
+
+    get totalMaxHp() {
+        var hp = 0;
+        this.mobs.forEach((mob) => {
+            hp += mob.fightingObject.maxHp;
+        });
+        return hp;
     }
 }
 

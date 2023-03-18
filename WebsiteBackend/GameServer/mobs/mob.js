@@ -18,7 +18,6 @@ class Mob {
         this.type = type;
         this.onUpdateHandlers = [];
         this.onDeathHandlers = [];
-
         this.shouldRemove = false;
 
         // fighting
@@ -45,8 +44,20 @@ class Mob {
         });  
     }
 
+    /**
+     * @description called on first checkAlive negative
+     * @param {function()} handler 
+     */
     addOnDeath(handler) {
         this.onDeathHandlers.push(handler);
+    }
+
+    /**
+     * @description called in the moment HP sinks under 0
+     * @param {function(killerID)} handler 
+     */
+    addOnKilled(handler) {
+        this.fightingObject.addOnDeath(handler);
     }
 
     checkAlive() {
