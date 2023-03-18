@@ -45,7 +45,7 @@ class OverlayScene extends Phaser.Scene {
         this.add.existing(leaveButton);
 
         this.gameScene.onOverlaySceneLoaded();
-
+        this.created = true;
 
 
     }
@@ -60,8 +60,10 @@ class OverlayScene extends Phaser.Scene {
      * @description called by game scene client update loop
      */
     clientUpdate(delta) {
-        if(this.deathOverlay.visible) {
-            this.deathOverlay.updateRespawn(delta);
+        if(this.created) {
+            if(this.deathOverlay.visible) {
+                this.deathOverlay.updateRespawn(delta);
+            }
         }
     }
 
