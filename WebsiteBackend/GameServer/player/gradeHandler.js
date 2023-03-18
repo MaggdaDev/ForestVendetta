@@ -36,6 +36,12 @@ class GradeHandler {
     }
 
     calculateGrade() {
+        const points = this.calculatePoints();
+        const idx = Math.min(Math.floor(points/100), GradeHandler.GRADES.length-1);
+        return GradeHandler.GRADES[idx];
+    }
+
+    calculatePoints() {
         var points = 0.0;
 
         // 
@@ -51,8 +57,8 @@ class GradeHandler {
         // damage participation
         points += 100 * this.damageDealt / ((1 - GradeHandler.DAMAGE_PARTICIPATION_TOLERANCE) * this.mobManager.totalMaxHp);
 
-        const idx = Math.min(Math.floor(points/100), GradeHandler.GRADES.length-1);
-        return GradeHandler.GRADES[idx];
+
+        return points;
     }
 
     /**
@@ -60,6 +66,11 @@ class GradeHandler {
      */
     get grade() {
         return this.calculateGrade();
+    }
+
+    get dropProbabilityModifier() {
+        const points = this.calculatePoints();
+        const idx = Math.min(Math.floor(points/100), GradeHandler.GRADES.length-1);
     }
 }
 
