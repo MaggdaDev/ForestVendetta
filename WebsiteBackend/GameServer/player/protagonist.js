@@ -88,7 +88,14 @@ class Protagonist {
 
         // grade
         
-        this.gradeHandler = new GradeHandler(this.fightingObject, mainLoop.getMobManager());
+        this.gradeHandler = new GradeHandler(this.fightingObject, mainLoop.getMobManager(), () => this.deaths);
+        this.deaths = 0;
+        mainLoop.getMobManager().addOnFightReset(() => this.deaths = 0);
+        this.gradeData = {
+            deaths: this.deaths,
+            grade: this.gradeHandler.grade,
+            fightDuration: mainLoop.getFightDuration()
+        }
 
         // stats
         this.accountLevel = playerData.accountLevel;
@@ -133,6 +140,7 @@ class Protagonist {
 
     die() {
         this.isAlive = false;
+        this.deaths += 1;
         this.socketUser.sendDeathToClient(Protagonist.RESPAWN_TIME);
         this.initRespawn();
         console.log("Player " + this.id + " died.");
@@ -198,6 +206,10 @@ class Protagonist {
             this.socketUser.sendRedirectToHome();
         });
         this.socketUser.sendShowSavingProgressScreen();
+    }
+
+    getDropProbabilityModifier() {
+        return this.gradeHandler.dropProbabilityModifier;
     }
 
     get equippedWeapon() {
@@ -270,8 +282,15 @@ class Protagonist {
             isWalking: this.isWalking,
             userName: this.userName,
             isAlive: this.isAlive,
-            grade: this.gradeHandler.grade
+            gradeData: this.updateGradeData()
         }
+    }
+
+    updateGradeData() {
+        this.gradeData.grade = this.gradeHandler.grade;
+        this.gradeData.deaths = this.deaths;
+        this.gradeData.fightDuration = Math.round(this.mainLoop.getFightDuration());
+        return this.gradeData;
     }
 
     get pos() {

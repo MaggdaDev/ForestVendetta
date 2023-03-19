@@ -54,8 +54,8 @@ class GameScene extends Phaser.Scene {
         console.log("Calling loadingScene loaded in main scene");
     }
 
-    updateGrade(grade) {
-        this.overlayScene.updateGrade(grade);
+    updateGrade(gradeData) {
+        this.overlayScene.updateGrade(gradeData);
     }
 
 

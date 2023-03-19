@@ -3,7 +3,7 @@ const Mob = require("./mob");
 
 const frogConfig = require("../../GameplayConfig/Bosses/frog");
 class MobManager {
-    constructor(networkManager,players, world, weaponManager) {
+    constructor(networkManager, players, world, weaponManager) {
         this.currId = 0;
         this.mobs = new Map();
         this.networkManager = networkManager;
@@ -14,6 +14,7 @@ class MobManager {
 
         // events
         this.onMobDeath = [];
+        this.onFightReset = [];
     }
 
     get nextID() {
@@ -21,8 +22,8 @@ class MobManager {
         this.currId++;
         return "M" + String(temp);
     }
-    spawnFrog(x,y) {
-        var frog = new Frog(x,y,this.nextID, this.players, this.world, frogConfig, this.weaponManager);
+    spawnFrog(x, y) {
+        var frog = new Frog(x, y, this.nextID, this.players, this.world, frogConfig, this.weaponManager);
         this.mobs.set(frog.id, frog);
         this.networkManager.sendSpawnMobCommand(frog);
 
@@ -35,16 +36,20 @@ class MobManager {
         return frog;
     }
 
-    spawnRespawningFrog(x,y) {
-        var frog = this.spawnFrog(x,y);
+    spawnRespawningFrog(x, y) {
+        var frog = this.spawnFrog(x, y);
         var instance = this;
-        frog.addOnDeath(()=>{
-            instance.spawnRespawningFrog(x,y);
+        frog.addOnDeath(() => {
+            setTimeout(() => {
+                instance.reset();
+                instance.spawnRespawningFrog(x, y);
+            }, 5000);
+
         });
     }
 
     updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables) {
-        this.mobs.forEach((currMob)=>{
+        this.mobs.forEach((currMob) => {
             currMob.update(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         });
         this.checkRemoveMobs();
@@ -52,18 +57,22 @@ class MobManager {
 
     checkRemoveMobs() {
         this.mobsToRemove = [];
-        this.mobs.forEach((mob)=>{
-            if(mob.shouldRemove) {
-                this.mobsToRemove.push({id: mob.id, type: "MOB"});
+        this.mobs.forEach((mob) => {
+            if (mob.shouldRemove) {
+                this.mobsToRemove.push({ id: mob.id, type: "MOB" });
             }
         });
-        
-        this.mobsToRemove.forEach((mob)=>{
+
+        this.mobsToRemove.forEach((mob) => {
             this.mobs.delete(mob.id);
         });
-        if(this.mobsToRemove.length > 0) {
+        if (this.mobsToRemove.length > 0) {
             this.networkManager.sendRemoveMobsCommand(this.mobsToRemove);
         }
+    }
+
+    reset() {
+        this.onFightReset.forEach(currHandler => currHandler());
     }
 
     /**
@@ -72,6 +81,14 @@ class MobManager {
      */
     addOnMobDeath(handler) {
         this.onMobDeath.push(handler);
+    }
+
+    /**
+     * @description called on fight reset, currently: on frog respawn
+     * @param {function()} handler 
+     */
+    addOnFightReset(handler) {
+        this.onFightReset.push(handler);
     }
 
     get mobArray() {

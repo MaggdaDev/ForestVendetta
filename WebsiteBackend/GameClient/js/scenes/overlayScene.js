@@ -1,4 +1,5 @@
 class OverlayScene extends Phaser.Scene {
+    static rightDummy;
     constructor() {
         super({ key: 'OverlayScene', active: true });
     }
@@ -18,7 +19,7 @@ class OverlayScene extends Phaser.Scene {
         var loader = new Loader(this);
         loader.loadOverlayStuff();
 
-        
+
     }
 
     create() {
@@ -55,8 +56,8 @@ class OverlayScene extends Phaser.Scene {
 
     }
 
-    updateGrade(grade) {
-        this.rightPanel.setGrade(grade);
+    updateGrade(gradeData) {
+        this.rightPanel.updateGradeData(gradeData);
     }
 
     initRespawn(respawnTime) {
@@ -69,15 +70,20 @@ class OverlayScene extends Phaser.Scene {
      * @description called by game scene client update loop
      */
     clientUpdate(delta) {
-        if(this.created) {
-            if(this.deathOverlay.visible) {
+        if (this.created) {
+            if (this.deathOverlay.visible) {
                 this.deathOverlay.updateRespawn(delta);
             }
         }
     }
 
     alignNodeRight(node) {
-        Phaser.Display.Align.In.RightCenter(node, this.screenZone);
+        if (OverlayScene.rightDummy === undefined) {
+            OverlayScene.rightDummy = this.add.line(0,0,0,0,0,0);
+            Phaser.Display.Align.In.RightCenter(OverlayScene.rightDummy, this.screenZone);
+        }
+        node.setY(OverlayScene.rightDummy.y - node.getBounds().height/2);
+        node.setX(OverlayScene.rightDummy.x - node.getBounds().width);
     }
 
     alignNodeCenter(node) {

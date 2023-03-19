@@ -2,22 +2,21 @@ const FightingObject = require("../fighting/fightingObject");
 const MobManager = require("../mobs/mobManager");
 
 class GradeHandler {
-    static GRADES = ["D", "C", "B", "A", "S", "SS"];
+    static gradeConfig = require("../../GameplayConfig/Gameplay/grades.json");
 
     static DAMAGE_PARTICIPATION_TOLERANCE = 0.1;
+    static DEATH_PENALTY = 150;
     /**
      * 
      * @param {FightingObject} fightingObject 
      * @param {MobManager} mobManager 
      */
-    constructor(fightingObject, mobManager) {
+    constructor(fightingObject, mobManager, deathsGetter) {
         this.mobManager = mobManager;
         this.fightingObject = fightingObject;
-        this.gradePoints = 0;
-        this.damageDealt = 0;
-
+        this.deathsGetter = deathsGetter;
+        this.resetStates();
         // criteria
-        this.damageTaken = false;
         this.fightingObject.addOnDamageTaken(() => {
             this.damageTaken = true;
         });
@@ -25,52 +24,70 @@ class GradeHandler {
             this.damageDealt += dmg;
         });
 
-        this.lastHit = false;
         this.mobManager.addOnMobDeath((mob, killerID) => {
-            if(killerID === this.fightingObject.id) {
+            if (killerID === this.fightingObject.id) {
                 this.lastHit = true;
             } else {
                 this.lastHit = false;
             }
         });
+
+        // reset
+        this.mobManager.addOnFightReset(() => {
+            this.resetStates();
+        });
     }
 
-    calculateGrade() {
-        const points = this.calculatePoints();
-        const idx = Math.min(Math.floor(points/100), GradeHandler.GRADES.length-1);
-        return GradeHandler.GRADES[idx];
+    resetStates() {
+        this.damageTaken = false;
+        this.lastHit = false;
+        this.damageDealt = 0;
+        this.lastDamagePoints = 0;
     }
 
     calculatePoints() {
         var points = 0.0;
 
+        // death
+        points -= this.deathsGetter() * GradeHandler.DEATH_PENALTY;
+
         // 
-        if(!this.damageTaken) {
+        if (!this.damageTaken) {
             points += 100;
         }
 
         // last hit
-        if(this.lastHit) {
+        if (this.lastHit) {
             points += 100;
         }
 
         // damage participation
-        points += 100 * this.damageDealt / ((1 - GradeHandler.DAMAGE_PARTICIPATION_TOLERANCE) * this.mobManager.totalMaxHp);
+        const totalMaxHp = this.mobManager.totalMaxHp;
+        if (totalMaxHp > 0) {
+            this.lastDamagePoints = 100 * this.damageDealt / ((1 - GradeHandler.DAMAGE_PARTICIPATION_TOLERANCE) * this.mobManager.totalMaxHp);
+        }
+        points += this.lastDamagePoints;
 
 
         return points;
+    }
+
+    calculateIndex() {
+        const points = this.calculatePoints();
+        return Math.max(0,Math.min(Math.floor(points / 100), GradeHandler.gradeConfig.length - 1));
     }
 
     /**
      * @description use this to get the new grade
      */
     get grade() {
-        return this.calculateGrade();
+        const idx = this.calculateIndex();
+        return GradeHandler.gradeConfig[idx].name;
     }
 
     get dropProbabilityModifier() {
-        const points = this.calculatePoints();
-        const idx = Math.min(Math.floor(points/100), GradeHandler.GRADES.length-1);
+        const idx = this.calculateIndex();
+        return GradeHandler.gradeConfig[idx].probability_modifier;
     }
 }
 

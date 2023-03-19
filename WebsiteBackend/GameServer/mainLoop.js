@@ -20,6 +20,8 @@ class MainLoop {
         this.timeElapsed = 0;
         this.players = playerMap;  //Map
 
+        this.fightDuration = 0;     // displayed at client rightpanel
+
         this.worldLoader = new WorldLoader();
         this.world = this.worldLoader.loadWorld();
 
@@ -31,6 +33,7 @@ class MainLoop {
         this.rabbitCommunicator = rabbitCommunicator;
         this.weaponManager = new WeaponManager();
         this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
+        this.mobManager.addOnFightReset(() => this.fightDuration = 0);
         this.updateData = this.collectUpdateData();     // after mob manager is created
         this.mobManager.spawnRespawningFrog(900, 700);
 
@@ -55,7 +58,7 @@ class MainLoop {
         this.mobManager.updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.allPlayersSendUpdate(this.updateData);
         this.updateAllTimers(timeElapsed);
-
+        this.fightDuration += timeElapsed;
     }
 
 
@@ -105,6 +108,10 @@ class MainLoop {
      */
     addTimer(timer) {
         this.timers.push(timer);
+    }
+
+    getFightDuration() {
+        return this.fightDuration;
     }
 
     get sendablePlayerUpdateData() {

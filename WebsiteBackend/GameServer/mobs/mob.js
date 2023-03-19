@@ -36,7 +36,9 @@ class Mob {
         this.addOnDeath(()=> {
             var dropObjects;    // []
             this.players.forEach((player)=>{
-                dropObjects = this.dropHandler.createDrops();
+                const modifier = player.getDropProbabilityModifier();
+                console.log("Drop modifier: " + modifier);
+                dropObjects = this.dropHandler.createDrops(player.getDropProbabilityModifier());
                 dropObjects.forEach((currDropObject)=>{
                     player.addDrop(currDropObject, this.movableBody.pos);
                 });

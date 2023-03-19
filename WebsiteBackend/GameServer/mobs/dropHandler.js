@@ -8,15 +8,15 @@ class DropHandler {
     }
 
     /**
-     * 
+     * @param {number} modifier
      * @returns {DropObject[]} dropped items
      */
-    createDrops() {
+    createDrops(modifier) {
         const droppedItems = [];
         this.dropConfig.drops.forEach((currObj)=> {
             this.performWithProb(()=> {
                 droppedItems.push(new DropObject(currObj.item));
-            }, currObj.chance);
+            }, currObj.chance * modifier);
         });
         return droppedItems;
     }
