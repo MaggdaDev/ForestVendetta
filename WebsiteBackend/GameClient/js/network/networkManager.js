@@ -26,6 +26,7 @@ class NetworkManager {
         // Start: registering command handling
         this.registerIngameCommandHandling(NetworkCommands.ADD_PLAYER, (data) => this.addPlayer(data));
         this.registerIngameCommandHandling(NetworkCommands.SETUP_WORLD, (data) => this.setupWorld(data));
+        this.registerIngameCommandHandling(NetworkCommands.SETUP_MATCH, (data) => this.setupMatch(data));
         this.registerIngameCommandHandling(NetworkCommands.UPDATE_PLAYERS, (data) => this.updatePlayers(data));
         this.registerIngameCommandHandling(NetworkCommands.SHOW_OLD_PLAYERS, (data) => this.showOldPlayers(data));
         this.registerIngameCommandHandling(NetworkCommands.SHOW_OLD_MOBS, (data) => this.showOldMobs(data));
@@ -117,6 +118,16 @@ class NetworkManager {
     addPlayer(data) {
         console.log('Add player command received with data ' + JSON.stringify(data));
         this.mainScene.addPlayer(data);
+    }
+
+    /**
+     * 
+     * @param {Object} data
+     * @param {string} data.gradedMatchDuration
+     */
+     setupMatch(data) {
+        const gradedMatchDuration = data.graded_match_duration;
+        this.mainScene.setupMatch(gradedMatchDuration);
     }
 
     /**

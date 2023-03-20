@@ -8,6 +8,7 @@ const TargetManager = require("./targetManager");
 class Mob {
     constructor(hitBox, id, type, players,world, mobConfig, weaponManager) {
         this.hitBox = hitBox;
+        this.mobConfig = mobConfig;
         this.id = id;
         this.movableBody = new MovableBody(hitBox, mobConfig.physics_stats.mass, this, id);
         this.movableBody.wayOutPriority = 50;
@@ -84,6 +85,10 @@ class Mob {
 
     addOnUpdate(handler) {
         this.onUpdateHandlers.push(handler);
+    }
+
+    getMobConfig() {
+        return this.mobConfig;
     }
 
     /**

@@ -12,6 +12,8 @@ class MobManager {
         this.mobsToRemove = [];
         this.weaponManager = weaponManager;
 
+        this.match = null;
+
         // events
         this.onMobDeath = [];
         this.onFightReset = [];
@@ -22,17 +24,25 @@ class MobManager {
         this.currId++;
         return "M" + String(temp);
     }
-    spawnFrog(x, y) {
-        var frog = new Frog(x, y, this.nextID, this.players, this.world, frogConfig, this.weaponManager);
-        this.mobs.set(frog.id, frog);
-        this.networkManager.sendSpawnMobCommand(frog);
 
-        //@ToDo allgemein
-        frog.addOnKilled((killer) => {
+    /**
+     * 
+     * @param {Mob} mob 
+     */
+    spawn(mob) {
+        this.match = mob.getMobConfig().match_config;
+        this.mobs.set(mob.id, mob);
+        this.networkManager.sendSpawnMobCommand(mob);
+        mob.addOnKilled((killer) => {
             this.onMobDeath.forEach((handler) => {
-                handler(frog, killer);
+                handler(mob, killer);
             });
         });
+    }
+
+    spawnFrog(x, y) {
+        var frog = new Frog(x, y, this.nextID, this.players, this.world, frogConfig, this.weaponManager);
+        this.spawn(frog);
         return frog;
     }
 
@@ -73,6 +83,10 @@ class MobManager {
 
     reset() {
         this.onFightReset.forEach(currHandler => currHandler());
+    }
+
+    getCurrentMatchConfig() {
+        return this.match;
     }
 
     /**

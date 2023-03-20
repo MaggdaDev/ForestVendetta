@@ -32,15 +32,18 @@ class Protagonist {
      * @param {Object} playerData - discordAPI, accountLevel, hotbar      see loginwebsite-api-requestHandler createDeployObject
      * @param {*} socket 
      * @param {*} world 
+     * @param {Object} match - current match_config from boss
      * @param {MainLoop} mainLoop 
      */
-    constructor(playerData, socket, world, mainLoop) {
+    constructor(playerData, socket, world, match, mainLoop) {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
         this.userName = this.discordData.username;
 
 
         this.isIngame = true;
+        this.stopwatchIngameSeconds = 0;
+        mainLoop.getMobManager().addOnFightReset(() => this.stopwatchIngameSeconds = 0);
         this.alreadyExited = false;
         this.isAlive = true;;
 
@@ -60,6 +63,9 @@ class Protagonist {
 
         //send world data
         this.socketUser.sendWorldData(world);
+
+        //send match data
+        this.socketUser.sendMatchData(match);
 
         // moving
         this.wantGo = "NONE";
@@ -88,13 +94,17 @@ class Protagonist {
 
         // grade
         
-        this.gradeHandler = new GradeHandler(this.fightingObject, mainLoop.getMobManager(), () => this.deaths);
+        this.gradeHandler = new GradeHandler(this.fightingObject, 
+            mainLoop.getMobManager(), 
+            () => this.deaths, 
+            () => this.stopwatchIngameSeconds, 
+            () => mainLoop.getStopwatchFightDuration());
         this.deaths = 0;
         mainLoop.getMobManager().addOnFightReset(() => this.deaths = 0);
         this.gradeData = {
             deaths: this.deaths,
             grade: this.gradeHandler.grade,
-            fightDuration: mainLoop.getFightDuration()
+            fightDuration: mainLoop.getStopwatchFightDuration()
         }
 
         // stats
@@ -121,6 +131,7 @@ class Protagonist {
      * @param {number} timeElapsed - timeElapsed since last update 
      */
      update(timeElapsed, worldObjects, mobs) {
+        this.stopwatchIngameSeconds += timeElapsed;
         if (this.isInteractable) {
             this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
 
@@ -289,7 +300,7 @@ class Protagonist {
     updateGradeData() {
         this.gradeData.grade = this.gradeHandler.grade;
         this.gradeData.deaths = this.deaths;
-        this.gradeData.fightDuration = Math.round(this.mainLoop.getFightDuration());
+        this.gradeData.fightDuration = Math.round(this.mainLoop.getStopwatchFightDuration());
         return this.gradeData;
     }
 

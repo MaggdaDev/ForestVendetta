@@ -64,6 +64,10 @@ class OverlayScene extends Phaser.Scene {
         this.deathOverlay.startRespawn(respawnTime);
     }
 
+    setMatchConfig(gradedMatchDuration) {
+        this.rightPanel.setGradedMatchDuration(gradedMatchDuration);
+    }
+
     /**
      * 
      * @param {number} delta time elapsed in millis

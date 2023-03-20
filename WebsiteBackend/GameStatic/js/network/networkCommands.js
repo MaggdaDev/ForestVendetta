@@ -2,6 +2,7 @@ const NetworkCommands = {
 
     // TO CLIENT
     SETUP_WORLD: 'SETUP_WORLD',                 // data: world object
+    SETUP_MATCH: 'SETUP_MATCH',                 // data: gradedMatchDuration
     ADD_PLAYER: 'ADD_PLAYER',                   // data: pos{pos.x, pos.y}, id
     UPDATE: 'UPDATE',                           // data: [world: data, players: data]
     UPDATE_PLAYERS: 'UPDATE_PLAYERS',           // data: [data1, data2, data3] with playerdatas

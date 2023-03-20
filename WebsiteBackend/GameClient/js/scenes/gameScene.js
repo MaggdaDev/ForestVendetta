@@ -116,6 +116,11 @@ class GameScene extends Phaser.Scene {
 
     }
 
+    setupMatch(gradedMatchDuration) {
+        console.log('Setting up match...');
+        this.overlayScene.setMatchConfig(gradedMatchDuration);
+    }
+
     updatePlayers(data) {
         var instance = this;
         data.forEach((currData) => {

@@ -15,4 +15,15 @@ class Info extends Phaser.GameObjects.Container {
     setInfo(info) {
         this.info.setText(info);
     }
+
+    setError() {
+        this.info.setColor("red");
+        this.info.setStroke("black", 1);
+    }
+
+    setWarning() {
+        this.info.setColor("yellow");
+        this.info.setStroke("black", 1);
+    }
+
 }

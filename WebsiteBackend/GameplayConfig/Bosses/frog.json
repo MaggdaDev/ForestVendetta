@@ -11,6 +11,9 @@
         "max_hp": 750,
         "damage": 5
     },
+    "match_config":{
+        "graded_match_duration": 10
+    },
     "drop_config": {
         "drops": [
             {

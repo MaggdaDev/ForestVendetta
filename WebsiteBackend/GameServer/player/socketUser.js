@@ -67,6 +67,11 @@ class SocketUser {
         console.log('Emitted world object.')
     }
 
+    sendMatchData(match) {
+        this.sendCommand(NetworkCommands.SETUP_MATCH, match);
+        console.log("Emitted match object.");
+    }
+
     /**
      * 
      * @param {Object[]} updateData - all update data, see networkCommands#UPDATE for more 
