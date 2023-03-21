@@ -84,11 +84,11 @@ class Mob {
     static pickRandomType(types) {
         const ran = Math.random();
         for(var i = 0; i < types.length; i += 1) {
-            if(ran < i/types.length) {
+            if(ran <= (1+i)/(types.length)) {
                 return types[i];
             }
         }
-        return types[types.length-1];
+        throw "Random type major not working"
     }
 
     /**
