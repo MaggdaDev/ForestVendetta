@@ -1,7 +1,7 @@
 class PlayerSprite extends Phaser.GameObjects.Container {
     static PROT_DISPLAY_SIZE = 100;
     static HEALTH_BAR_Y_OFFSET = -65;
-    constructor(mainScene, x, y, maxHp, userName) {
+    constructor(mainScene, x, y, maxHp, userName, id) {
         super(mainScene, x, y);
         this.targetScene = mainScene;
         this.excludeFromFlip = [];
@@ -28,7 +28,11 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.upperSprite.on('animationupdate', (anim, frame) => this.onUpperAnimationUpdate(anim, frame));
 
         // hp bar
-        this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER", userName);
+        var rarity = undefined;
+        if(id === "468786219258740756") {
+            rarity = "LEGENDARY";
+        }
+        this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER", userName, rarity);
 
     }
 

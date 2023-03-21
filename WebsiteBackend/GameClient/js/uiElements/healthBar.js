@@ -15,7 +15,7 @@ class HealthBar extends Phaser.GameObjects.Container {
      * @param {number} yOffset 
      * @param {string} type - "PLAYER" or "MOB" 
      */
-    constructor(scene, maxHealth, x, y, yOffset, type, displayName) {
+    constructor(scene, maxHealth, x, y, yOffset, type, displayName, rarity) {
         super(scene, x, y + yOffset);
         this.yOffset = yOffset;
         this.mainScene = scene;
@@ -40,15 +40,14 @@ class HealthBar extends Phaser.GameObjects.Container {
         this.currentHealth = maxHealth;
 
         // display name
-        const displayNamePos = HealthBar.BAR_HEIGHT/2 + HealthBar.BORDER_WIDTH + HealthBar.DISPLAY_NAME_Y_OFFSET;
         this.displayName = displayName;
-        this.displayNameText = this.mainScene.add.text(0, -displayNamePos, this.displayName);
-        this.displayNameText.setOrigin(0.5, 1);
-        this.displayNameText.setColor(0xffffff);
+        this.nameDisplay = new NameDisplay(this.mainScene, displayName, rarity);
+        this.mainScene.add.existing(this.nameDisplay);
+
 
         this.add(this.border);
         this.add(this.fill);
-        this.add(this.displayNameText);
+        this.add(this.nameDisplay);
 
         this.mainScene.add.existing(this);
     }

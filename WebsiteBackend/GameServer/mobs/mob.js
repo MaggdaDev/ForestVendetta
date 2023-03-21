@@ -4,9 +4,24 @@ const PolygonHitBox = require("../physics/polygonHitBox");
 const Vector = require("../../GameStatic/js/maths/vector");
 const DropHandler = require("./dropHandler");
 const TargetManager = require("./targetManager");
+const HitBox = require("../physics/hitbox");
 
 class Mob {
-    constructor(hitBox, id, type, players,world, mobConfig, weaponManager) {
+    /**
+     * 
+     * @param {HitBox} hitBox 
+     * @param {string} id 
+     * @param {*} type 
+     * @param {*} players 
+     * @param {*} world 
+     * @param {*} mobConfig 
+     * @param {*} weaponManager 
+     * @param {string} variant - variant from gameplay config
+     */
+    constructor(hitBox, id, type, players,world, mobConfig, weaponManager, variant) {
+        // apply variant
+        mobConfig = this.insertVariantIntoConfig(type, mobConfig, variant)
+        
         this.hitBox = hitBox;
         this.mobConfig = mobConfig;
         this.id = id;
@@ -45,6 +60,35 @@ class Mob {
                 });
             })
         });  
+    }
+
+    insertVariantIntoConfig(type, mobConfig, variant) {
+        if(variant === undefined) {
+            variant = Mob.pickRandomType(Object.getOwnPropertyNames(mobConfig.variants));
+            console.log("No variant given; spawning " + type + " with random variant: " + variant);
+        }
+        if(mobConfig.variants[variant] === undefined) {
+            throw "Unsupported variant '" + variant + "' for " + type;
+        }
+
+        return Object.assign(mobConfig, mobConfig.variants[variant]);
+    }
+
+    getRarity() {
+        if(this.mobConfig.rarity === undefined) {
+            throw "Mob rarity for " + this.type + " not defined in config!";
+        }
+        return this.mobConfig.rarity;
+    }
+
+    static pickRandomType(types) {
+        const ran = Math.random();
+        for(var i = 0; i < types.length; i += 1) {
+            if(ran < i/types.length) {
+                return types[i];
+            }
+        }
+        return types[types.length-1];
     }
 
     /**

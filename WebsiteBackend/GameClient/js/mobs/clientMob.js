@@ -60,7 +60,7 @@ class ClientMob {
     static fromSpawnCommand(data, scene) {
         switch(data.type) {
             case "FROG":
-                var frog = new ClientFrog(data.id, data.pos, data.width, data.height, scene, data.fightingObject.hp);
+                var frog = new ClientFrog(data.id, data.pos, data.width, data.height, scene, data.fightingObject.hp, data.rarity);
                 return frog;
             default:
                 console.error("Unknown mob type to spawn: " + data.type);

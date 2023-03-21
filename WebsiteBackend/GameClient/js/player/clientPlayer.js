@@ -99,7 +99,7 @@ class ClientPlayer {
 
     generateSprite(x, y, maxHp, userName) {
         console.log("Generating protagonist sprite...");
-        this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName);
+        this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName, this.id);
 
         // weapon
         this.mainScene.add.existing(this.sprite);

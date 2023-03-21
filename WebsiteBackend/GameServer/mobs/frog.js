@@ -14,8 +14,8 @@ class Frog extends Mob{
     //fighting
     static DAMAGE = 5;
     static HP = 50;
-    constructor(x,y,id,players,world, frogConfig, weaponManager) {
-        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, weaponManager,);
+    constructor(x,y,id,players,world, frogConfig, weaponManager, variant) {
+        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, weaponManager,variant);
         this.movableBody.addGravity();
         
 
@@ -76,7 +76,8 @@ class Frog extends Mob{
             type: instance.type,
             width: Frog.WIDTH,
             height: Frog.HEIGHT,
-            fightingObject: this.fightingObject
+            fightingObject: this.fightingObject,
+            rarity: this.mobConfig.rarity
         }
     }
 }

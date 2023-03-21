@@ -44,7 +44,7 @@ class Loader {
     }
 
     loadHtml() {
-       
+        this.scene.load.html('nameDisplay', 'GameClient/html/nameDisplay.html');
     }
 
     loadCss() {

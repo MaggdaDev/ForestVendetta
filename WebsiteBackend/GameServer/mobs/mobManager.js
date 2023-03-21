@@ -32,7 +32,7 @@ class MobManager {
     spawn(mob) {
         this.match = mob.getMobConfig().match_config;
         this.mobs.set(mob.id, mob);
-        this.networkManager.sendSpawnMobCommand(mob);
+        this.networkManager.sendSpawnMobCommand(mob.toJSON());
         mob.addOnKilled((killer) => {
             this.onMobDeath.forEach((handler) => {
                 handler(mob, killer);
@@ -110,7 +110,11 @@ class MobManager {
     }
 
     get mobUpdateData() {
-        return Array.from(this.mobs.values());
+        const ret = [];
+        this.mobs.forEach((mob) => {
+            ret.push(mob.toJSON());
+        })
+        return ret;
     }
 
     get totalMaxHp() {
