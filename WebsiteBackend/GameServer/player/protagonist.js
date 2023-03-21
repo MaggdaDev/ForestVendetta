@@ -149,6 +149,7 @@ class Protagonist {
         }
         if(this.pos.y > 5000) {
             this.die();
+            this.pos.y = Protagonist.START_POS.y;
         }
     }
 
