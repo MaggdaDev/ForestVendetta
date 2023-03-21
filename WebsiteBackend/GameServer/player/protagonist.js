@@ -147,6 +147,9 @@ class Protagonist {
         if(this.isAlive && (!this.fightingObject.isAlive)) {
            this.die();
         }
+        if(this.pos.y > 5000) {
+            this.die();
+        }
     }
 
     die() {

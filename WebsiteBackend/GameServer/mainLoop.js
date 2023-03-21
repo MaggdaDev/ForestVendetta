@@ -35,7 +35,7 @@ class MainLoop {
         this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
         this.mobManager.addOnFightReset(() => this.stopwatchFightDuration = 0);
         this.updateData = this.collectUpdateData();     // after mob manager is created
-        this.mobManager.spawnRespawningFrog(900, 700);
+        this.mobManager.spawnRespawningFrog(900, 300);
 
     }
 
