@@ -138,8 +138,9 @@ class Protagonist {
             if (this.equippedWeapon) {
                 this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
             }
-        }
+            
         this.updateAlive(timeElapsed);
+        }
     }
 
     // alive and dead
