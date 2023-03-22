@@ -2,3 +2,4 @@ config/
 storage/
 DiscordBot/_SECRET
 DiscordBot/_SECRET.json
+WebsiteBackend/node_modules

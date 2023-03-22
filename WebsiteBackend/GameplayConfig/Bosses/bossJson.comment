@@ -1,0 +1,2 @@
+- properties of 1 variant will be overridden into object
+- if ability has rarity, it automatically applies to all rarities equal/less to it

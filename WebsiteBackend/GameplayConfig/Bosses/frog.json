@@ -7,8 +7,14 @@
     "physics_stats": {
         "mass": 200
     },
+    "ability_pool": {
+        "JUMP": {
+            "cooldown": 3,
+            "rarity": "COMMON"
+        }
+    },
     "variants": {
-        "_0": {
+        "COMMON": {
             "rarity": "COMMON",
             "fighting_stats": {
                 "max_hp": 750,
@@ -25,7 +31,7 @@
                 ]
             }
         },
-        "_1": {
+        "UNCOMMON": {
             "rarity": "UNCOMMON",
             "fighting_stats": {
                 "max_hp": 1000,
@@ -45,7 +51,7 @@
                 ]
             }
         },
-        "_2": {
+        "RARE": {
             "rarity": "RARE",
             "fighting_stats": {
                 "max_hp": 1500,
@@ -65,7 +71,7 @@
                 ]
             }
         },
-        "_3": {
+        "SUPER_RARE": {
             "rarity": "SUPER_RARE",
             "fighting_stats": {
                 "max_hp": 1500,
@@ -85,7 +91,7 @@
                 ]
             }
         },
-        "_4": {
+        "EPIC": {
             "rarity": "EPIC",
             "fighting_stats": {
                 "max_hp": 2500,
@@ -108,7 +114,7 @@
                 ]
             }
         },
-        "_5": {
+        "LEGENDARY": {
             "rarity": "LEGENDARY",
             "fighting_stats": {
                 "max_hp": 5000,
