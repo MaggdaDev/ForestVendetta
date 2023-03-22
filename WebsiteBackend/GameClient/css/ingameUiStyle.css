@@ -120,6 +120,7 @@
   }
 
   .nameDisplayCenter {
+    user-select: none;
     width: fit-content;
     height: fit-content;
     display: block;

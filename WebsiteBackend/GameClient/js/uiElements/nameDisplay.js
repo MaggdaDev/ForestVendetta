@@ -34,10 +34,21 @@ class NameDisplay extends Phaser.GameObjects.DOMElement{
         this.raritySpan = this.getChildByID("raritySpan");
         this.nameSpan = this.getChildByID("nameSpan");
         this.nameSpan.innerHTML = displayName;
+        
         if(rarity !== undefined && rarity !== "" && rarity !== null) {
             const rarityConfig = this.mainScene.cache.json.get("ITEM_RARITY_CONFIG")[rarity];
+            const colorChange = rarityConfig.display.colorchange;
+            var rarityStyle = "";
+            if(colorChange) {
+                if(this.color) {
+                    rarityStyle += "color:" + this.color + ";";
+                }
+                rarityStyle += "-webkit-animation:" + colorChange + " 2s infinite alternate";
+            } else {
+                rarityStyle = 'color:' + rarityConfig.display.color;
+            }
             this.raritySpan.innerHTML = rarityConfig.display.name + " ";
-            this.raritySpan.style = "color: " + rarityConfig.display.color;
+            this.raritySpan.style = rarityStyle;
         }       
         
     }
