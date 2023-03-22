@@ -18,7 +18,7 @@ class Mob {
      * @param {*} weaponManager 
      * @param {string} variant - variant from gameplay config
      */
-    constructor(hitBox, id, type, players,world, mobConfig, weaponManager, variant) {
+    constructor(hitBox, id, type, players,world, mobConfig, weaponManager, variant, AbilityPerformerClass) {
         // apply variant
         mobConfig = this.insertVariantIntoConfig(type, mobConfig, variant)
         
@@ -60,6 +60,9 @@ class Mob {
                 });
             })
         });  
+
+        // abilities
+        this.abilityPerformer = new AbilityPerformerClass(this, this.mobConfig.ability_pool, this.mobConfig.abilities, variant);
     }
 
     insertVariantIntoConfig(type, mobConfig, variant) {

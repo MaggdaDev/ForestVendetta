@@ -8,11 +8,15 @@
         "mass": 200
     },
     "ability_pool": {
-        "JUMP": {
-            "cooldown": 3,
-            "rarity": "COMMON"
+        "JUMP_ABILITY": {
+            "cooldown": 1,
+            "rarity": "COMMON",
+            "execution_time": 3
         }
     },
+    "abilities": [
+        "JUMP_ABILITY"
+    ],
     "variants": {
         "COMMON": {
             "rarity": "COMMON",
