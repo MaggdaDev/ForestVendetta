@@ -15,10 +15,9 @@ class Mob {
      * @param {*} players 
      * @param {*} world 
      * @param {*} mobConfig 
-     * @param {*} weaponManager 
      * @param {string} variant - variant from gameplay config
      */
-    constructor(hitBox, id, type, players,world, mobConfig, weaponManager, variant, AbilityPerformerClass) {
+    constructor(hitBox, id, type, players,world, mobConfig, variant, AbilityPerformerClass) {
         // apply variant
         mobConfig = this.insertVariantIntoConfig(type, mobConfig, variant)
         
@@ -48,7 +47,7 @@ class Mob {
         });
 
         // drops
-        this.dropHandler = new DropHandler(mobConfig.drop_config, weaponManager);
+        this.dropHandler = new DropHandler(mobConfig.drop_config);
         this.addOnDeath(()=> {
             var dropObjects;    // []
             this.players.forEach((player)=>{

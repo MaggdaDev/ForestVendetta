@@ -26,13 +26,13 @@ class ClientWeapon {
         this.createItemIcon();
         this.update(0);
 
-        this.staticConfig = this.mainScene.cache.json.get(data.typeData.type + "_CONFIG");  // auto name guessing: loading i.e. "RUSTY_SPADE_CONFIG" from cache (see game config loader)
+        this.staticConfig = this.mainScene.cache.json.get(data.typeData.name + "_CONFIG");  // auto name guessing: loading i.e. "RUSTY_SPADE_CONFIG" from cache (see game config loader)
         if(this.staticConfig === undefined || this.staticConfig === null) {
             throw new Error("Unknown item config file. Please load config file");
         }
         try {
             this.rarityInfo = this.mainScene.cache.json.get("ITEM_RARITY_CONFIG")[this.staticConfig.rarity];        // for displaying the rarity
-            if (this.rarityInfo === undefined || this.rarityInfo === null) throw ("rarity info is null/undefined for weapon " + data.type);
+            if (this.rarityInfo === undefined || this.rarityInfo === null) throw ("rarity info is null/undefined for weapon " + data.name);
         } catch (error) {
             console.error(error);
         }
@@ -83,7 +83,7 @@ class ClientWeapon {
     }
 
     static fromData(scene, data) {
-        switch (data.typeData.type) {
+        switch (data.typeData.name) {
             case "RUSTY_SPADE":
                 return new ClientRustySpade(scene, data);
             case "OBSIDIAN_PINE_NEEDLE":
@@ -91,7 +91,7 @@ class ClientWeapon {
             case "SLIMY_SPADE":
                 return new ClientSlimySpade(scene, data);
             default:
-                console.error("UNSUPPORTED WEAPON TYPE: " + data.typeData.type);
+                console.error("UNSUPPORTED WEAPON TYPE: " + data.typeData.name);
                 break;
         }
     }

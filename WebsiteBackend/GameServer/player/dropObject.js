@@ -1,9 +1,9 @@
-const WeaponManager = require("../fighting/weaponManager");
+const ItemFactory = require("../items/ItemFactory");
 
 class DropObject {
     constructor(itemName) {
         this.itemName = itemName;
-        this.config = WeaponManager.getConfigFile(itemName);
+        this.config = ItemFactory.getInstance().getConfig(itemName);
     }
 }
 

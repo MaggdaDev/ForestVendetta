@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('path');
 class ResourceLoader {
     static WEAPONS_DIR_PATH = "../WebsiteBackend/GameClient/images/weapons";
+    static ARMOR_DIR_PATH = "../WebsiteBackend/GameClient/images/armor";
     static INVENTORY_HTMLS_PATH = "../WebsiteBackend/GameClient/html/inventory";
     static INGAME_UI_CSS_PATH = "../WebsiteBackend/GameClient/css";
     static ITEMS_CONFIG_PATH = "../WebsiteBackend/GameplayConfig/Items";
@@ -10,10 +11,12 @@ class ResourceLoader {
      * 
      * @returns {URLSearchParams} weapon images as form data
      */
-    loadWeaponImages() {
-        const retJson = this._loadFilesFromDirBase64json(ResourceLoader.WEAPONS_DIR_PATH);
+    loadItemImages() {
+        const weaponsJson = JSON.parse(this._loadFilesFromDirBase64json(ResourceLoader.WEAPONS_DIR_PATH));
+        const armorJson = JSON.parse(this._loadFilesFromDirBase64json(ResourceLoader.ARMOR_DIR_PATH));
         logResourceLoader("Loaded weapon images from " + ResourceLoader.WEAPONS_DIR_PATH);
-        return retJson;
+        logResourceLoader("Loaded armor images from " + ResourceLoader.ARMOR_DIR_PATH);
+        return Object.assign(weaponsJson, armorJson);
     }
 
     loadInventoryHTMLs() {

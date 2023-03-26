@@ -39,5 +39,4 @@ test("frog AI working", () => {
     expect(jumps).toBe(2);
     abilityPerformer.update(0.1);   // execute queue
     expect(jumps).toBe(3);
-
 });

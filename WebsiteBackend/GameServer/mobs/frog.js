@@ -14,8 +14,8 @@ class Frog extends Mob{
     //fighting
     static DAMAGE = 5;
     static HP = 50;
-    constructor(x,y,id,players,world, frogConfig, weaponManager, variant) {
-        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, weaponManager,variant, FrogAbilityPerformer);
+    constructor(x,y,id,players,world, frogConfig, variant) {
+        super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, variant, FrogAbilityPerformer);
         this.movableBody.addGravity();
         
         this.movableBody.adjustJumpData({jumpForce: Frog.JUMP_FORCE, angleAdjust: Frog.JUMP_ANGLE});

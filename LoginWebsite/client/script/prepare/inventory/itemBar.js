@@ -1,8 +1,22 @@
-class Hotbar {
+class ItemBar {
     static MAX_ITEMS = 6;
+    constructor(htmlID) {
+        this.htmlID = htmlID;
+        this.children = document.getElementById(htmlID).children;
+        this.htmlObject = document.getElementById(htmlID);
+    }
+
+    static isEmpty(toTest) {
+        return toTest.children.length > 0
+    }
+
+    getSlot(idx) {
+        return document.getElementById("hotbarSlot" + idx);
+    }
+
     takeContent() {
-        this.contentIDs.forEach((currID) => {
-            document.getElementById("hotbarDiv").appendChild(document.getElementById(currID));
+        this.contentIDs.forEach((currID, idx) => {
+            this.insertIDIntoSlot(currID, idx);
         });
     }
 
@@ -10,11 +24,17 @@ class Hotbar {
         this.contentIDs = ids;
     }
 
-    addID(id) {
-        if (this.contentIDs.length+1 <= Hotbar.MAX_ITEMS) {
+    insertIDIntoSlot(id, slotIdx) {
+        this.getSlot(slotIdx).appendChild(document.getElementById(id));
+    }
+
+    addID(id, idx) {
+    
+        if (this.contentIDs.length+1 <= ItemBar.MAX_ITEMS) {
             this.contentIDs.push(id);
             console.log("Added ID " + id + " to hotbar.");
-            document.getElementById("hotbarDiv").appendChild(document.getElementById(id));
+            //document.getElementById("hotbarDiv").appendChild(document.getElementById(id));
+            this.insertIDIntoSlot(id, idx);
         } else {
             console.log("Too many items in hotbar already!");
         }

@@ -1,0 +1,11 @@
+{
+    "display": {
+        "name": "Frog-Boots",
+        "class_name": "Boots", 
+        "description": "Bro didn't skip legday"
+    },
+    "stats": {
+        "jumpboost": 2
+    },
+    "rarity": "UNCOMMON"
+}

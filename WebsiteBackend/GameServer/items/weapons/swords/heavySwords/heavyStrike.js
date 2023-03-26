@@ -6,7 +6,6 @@ class HeavyStrike {
         this.timer = 0;
         this.strikeTime = strikeTime;
         this.delay = delay;
-
         this.onInitiateStrike = null;
         this.onStartDelay = null;
         this.onEndDelay = null;

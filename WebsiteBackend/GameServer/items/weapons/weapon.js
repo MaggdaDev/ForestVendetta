@@ -1,4 +1,6 @@
-class Weapon {
+const Item = require("../item");
+
+class Weapon extends Item{
     /**
      * 
      * @param {Object} typeData 
@@ -7,8 +9,9 @@ class Weapon {
      * @param {string} typeData.type
      */
     static currentId = 0;
-    constructor(typeData, owner, weaponID) {
-        this.typeData = typeData;
+    constructor(owner, weaponID) {
+        super(weaponID);
+        super.setCathegory("WEAPON");
         this.id = weaponID;
         this.fighter = owner.fightingObject;
         this.owner = owner;

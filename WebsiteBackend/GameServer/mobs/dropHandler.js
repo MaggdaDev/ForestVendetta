@@ -1,9 +1,8 @@
-const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
+const RustySpade = require("../items/weapons/swords/heavySwords/rustySpade");
 const DropObject = require("../player/dropObject");
 
 class DropHandler {
-    constructor(dropConfig, weaponManager) {
-        this.weaponManager = weaponManager;
+    constructor(dropConfig) {
         this.dropConfig = dropConfig;
     }
 

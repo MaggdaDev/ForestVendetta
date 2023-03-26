@@ -11,7 +11,7 @@ class ResourceServer {
         this.loader = new ResourceLoader();
 
         // load for redirect page
-        this.weaponImagesBase64json = this.loader.loadWeaponImages();
+        this.itemImagesBase64json = this.loader.loadItemImages();
         this.inventoryHTMLjson = this.loader.loadInventoryHTMLs();
         this.ingameUICSSjson = this.loader.loadIngameUICSS();
         this.itemConfigjson = this.loader.loadItemsConfigJson();
@@ -48,7 +48,7 @@ class ResourceServer {
         switch (withoutResourceUri.toLowerCase()) {
             case "getweaponimages":
                 logResourceServer("Weapon images requested!");
-                return this.weaponImagesBase64json;
+                return this.itemImagesBase64json;
             case "getingameuicss":
                 logResourceServer("Ingame UI css requested!");
                 return this.ingameUICSSjson;

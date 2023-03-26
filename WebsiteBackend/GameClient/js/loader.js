@@ -35,6 +35,9 @@ class Loader {
         this.scene.load.image('slimySpade', "GameClient/images/weapons/SLIMY_SPADE.png");
         this.scene.load.image('obsidianPineNeedle', "GameClient/images/weapons/OBSIDIAN_PINE_NEEDLE.png");
 
+        // armor
+        this.scene.load.image('obsidianPineNeedle', "GameClient/images/armor/FROG_BOOTS.png");
+
         // animations
         this.scene.load.image("dropIcon", "GameClient/images/animations/dropIcon.png");
         this.scene.load.image("dropShade", "GameClient/images/animations/dropShade.png");

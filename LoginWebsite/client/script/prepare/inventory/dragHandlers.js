@@ -1,4 +1,4 @@
-var hotbar = new Hotbar();
+var hotbar = new ItemBar("hotbarDiv");
 var hoverInfos = [];
 
 function onItemFrameDragStarted(event) {
@@ -11,10 +11,10 @@ function onItemFrameDragStarted(event) {
     })
 }
 
-function onItemFrameDroppedToHotbar(event) {
+function onItemFrameDroppedToHotbar(event, idx) {
     event.preventDefault();
     const transDataID = event.dataTransfer.getData("text/plain");
-    hotbar.addID(transDataID);
+    hotbar.addID(transDataID, idx);
 }
 
 function onDragOverHotbar(event) {

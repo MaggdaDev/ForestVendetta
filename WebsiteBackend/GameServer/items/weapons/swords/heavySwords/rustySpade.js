@@ -2,7 +2,8 @@ const HeavySword = require("./heavySword");
 
 class RustySpade extends HeavySword {
     constructor(owner, weaponID) {
-        super({type: "RUSTY_SPADE"}, owner, weaponID);
+        super(owner, weaponID);
+        super.setName("RUSTY_SPADE");
     }
 }   
 

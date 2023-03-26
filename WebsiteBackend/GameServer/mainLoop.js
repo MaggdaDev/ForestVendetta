@@ -1,6 +1,5 @@
 const NetworkCommands = require('../GameStatic/js/network/networkCommands');
 const Timer = require('../GameStatic/js/util/timer');
-const WeaponManager = require('./fighting/weaponManager');
 const MobManager = require('./mobs/mobManager');
 const Protagonist = require('./player/protagonist');
 const Platform = require('./world/platform');
@@ -31,8 +30,7 @@ class MainLoop {
 
     init(rabbitCommunicator) {        // after constructor before start; after network manager is created
         this.rabbitCommunicator = rabbitCommunicator;
-        this.weaponManager = new WeaponManager();
-        this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.weaponManager);  // after network manager is created
+        this.mobManager = new MobManager(this.networkManager, this.players, this.world);  // after network manager is created
         this.mobManager.addOnFightReset(() => this.stopwatchFightDuration = 0);
         this.updateData = this.collectUpdateData();     // after mob manager is created
         this.mobManager.spawnRespawningFrog(900, 300);

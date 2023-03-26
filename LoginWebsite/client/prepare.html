@@ -5,7 +5,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <script src="./script/prepare/inventory/hotbar.js"></script>
+  <title>Forest Vendetta Accounts</title>
+</head>
+
+<body style="overflow-x: hidden;"">
+  <h1>Prepare for battle</h1>
+  <div class="gridWrapper">
+
+
+    <div id="inventoryFlexDiv" class="inventoryFlexDiv" ondragover="onDragOverInventory(event)" ondrop="onItemFrameDroppedToInventory(event)">
+      <h2>Inventory</h2>
+      <br>
+      <br>
+        </div>
+
+    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondragover="onDragOverHotbar(event)">
+      <h2>Hotbar</h2>
+      <br>
+      <br>
+      <div id="hotbarSlot0" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 0)"></div>
+      <div id="hotbarSlot1" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 1)"></div>
+      <div id="hotbarSlot2" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 2)"></div>
+      <div id="hotbarSlot3" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 3)"></div>
+      <div id="hotbarSlot4" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 4)"></div>
+      <div id="hotbarSlot5" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 5)"></div>
+    </div>
+
+    <div id="armorDiv" class="armorDiv" dropzone="move" ondragover="onDragOverHotbar(event)" ondrop="onItemFrameDroppedToHotbar(event)">
+      <h2>Armor</h2>
+      <br>
+      <br>
+    </div>
+  </div>
+  <button id="joinGameBtn">JOIN GAME</button>
+  <h3 id="errorInfo" hidden></h3>
+
+</body>
+
+<footer>
+  <script src="./script/prepare/inventory/itemBar.js"></script>
   <script src="./script/prepare/inventory/dragHandlers.js"></script>
   <script src="./script/paramReader.js"></script>
   <script src="./script/prepare/errorInfo.js"></script>
@@ -17,32 +55,9 @@
   <script src="./script/prepare/joinGameBtn.js"></script>
   <script src="./script/prepare/inventory/itemHoverInfo.js"></script>
   
+  
+  <script src="./script/prepare/prepare.js"></script></footer>
 
-  <script src="./script/prepare/prepare.js"></script>
-  <title>Forest Vendetta Accounts</title>
-</head>
-
-<body>
-  <h1>Prepare for battle</h1>
-  <div>
-
-
-    <div id="inventoryFlexDiv" class="inventoryFlexDiv" ondragover="onDragOverInventory(event)" ondrop="onItemFrameDroppedToInventory(event)">
-      <h2>Inventory</h2>
-      <br>
-      <br>
-    </div>
-
-    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondragover="onDragOverHotbar(event)" ondrop="onItemFrameDroppedToHotbar(event)">
-      <h2>Hotbar</h2>
-      <br>
-      <br>
-    </div>
-  </div>
-  <button id="joinGameBtn">JOIN GAME</button>
-  <h3 id="errorInfo" hidden></h3>
-
-</body>
 
 <template id="itemFrameTemplate">
 

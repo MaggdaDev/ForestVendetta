@@ -1,19 +1,17 @@
 const Sword = require("../sword");
-const PolygonHitBox = require("../../../physics/polygonHitBox");
+const PolygonHitBox = require("../../../../physics/polygonHitBox");
 const HeavyStrike = require("./heavyStrike");
-const HitBox = require("../../../physics/hitbox");
-const FightingObject = require("../../fightingObject");
+const HitBox = require("../../../../physics/hitbox");
+const FightingObject = require("../../../../fighting/fightingObject");
 
 class HeavySword extends Sword {
 
     /**
      * 
-     * @param {Object} typeData
-     * @param {string} typeData.type 
      */
-    constructor(typeData, owner, weaponID) {
-        typeData.subClass = "HEAVY_SWORD";
-        super(typeData, owner, weaponID);
+    constructor(owner, weaponID) {
+        super(owner, weaponID);
+        super.setSubClass("HEAVY_SWORD");
 
         this.setupHitBoxes();
 

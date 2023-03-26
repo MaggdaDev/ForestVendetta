@@ -1,0 +1,22 @@
+{
+    "types": {
+        "BOOTS": {
+            "name": "BOOTS"
+        },
+        "LEGGINGS": {
+            "name": "LEGGINGS"
+        },
+        "CHESTPLATE": {
+            "name": "CHESTPLATE"
+        },
+        "HELMET": {
+            "name": "NAME"
+        },
+        "ARMGUARD": {
+            "name": "ARMGUARD"
+        },
+        "GLOVES": {
+            "name": "GLOVES"
+        }
+    }
+}

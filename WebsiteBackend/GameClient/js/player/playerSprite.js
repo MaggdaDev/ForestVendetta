@@ -160,7 +160,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     createAnimations() {
         const legWalk = {
             key: 'legWalk',
-            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzLegs', { frames: [2, 3, 4, 5, 6, 7, 8, 9] }),
+            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzLegs', { frames: [2, 3, 4, 5, 6, 7] }),
             frameRate: 8,
             repeat: -1
         };

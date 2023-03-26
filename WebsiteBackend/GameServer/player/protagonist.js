@@ -6,7 +6,6 @@ const Vector = require("../../GameStatic/js/maths/vector");
 const SocketUser = require("./socketUser");
 const PolygonHitBox = require("../physics/polygonHitBox");
 const FightingObject = require("../fighting/fightingObject");
-const RustySpade = require("../fighting/swords/heavySwords/rustySpade");
 const Inventory = require("./inventory");
 const ShardRabbitCommunicator = require("../rabbit/shardRabbitCommunicator");
 const DropObject = require("./dropObject");
