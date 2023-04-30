@@ -81,6 +81,7 @@ class FVAPI {
                     return;
 
                 case FVAPI.API_REQUESTS.deployToGameIfPossible:
+                    logApi("-----------DeployToGameIfPossible:");
                     this.requestHandler.deployToGameIfPossible(query).then((res) => {
                         logApi("Handling deploy request finished! Returning to client: " + res);
                         expressRes.send(res);

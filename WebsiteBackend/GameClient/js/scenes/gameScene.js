@@ -91,16 +91,17 @@ class GameScene extends Phaser.Scene {
      * @param {number} id
      */
     addPlayer(data) {
+        const armorBarAdd = data.armorBar;
         if (data.id == this.networkManager.clientId) {
             this.clientProtagonist.setInventoryItems(data.inventory);
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName);
+            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd);
             console.log('Added local protagonist with server data.');
             this.cameras.main.startFollow(this.clientProtagonist.sprite);
 
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
             newPlayer.setInventoryItems(data.inventory);
-            newPlayer.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName)
+            newPlayer.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd)
             this.players.set(data.id, newPlayer);
             console.log('Added new player with id: ' + data.id);
         }
@@ -129,12 +130,13 @@ class GameScene extends Phaser.Scene {
     }
 
     showOldPlayers(data) {
+        const armorBarAdd = data.armorBar;
         console.log('Adding old players to the game with data: ' + JSON.stringify(data));
         var instance = this;
         data.forEach((currData) => {
             var newPlayer = new ClientPlayer(instance, currData.id, false);
             newPlayer.setInventoryItems(currData.inventory)
-            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.fightingObject.hp, currData.userName);
+            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.fightingObject.hp, currData.userName, armorBarAdd);
             instance.players.set(currData.id, newPlayer);
         });
         console.log('Added ' + data.length + ' old players to the game.');

@@ -13,7 +13,7 @@ class InventoryObject {
         this.itemIDs.push(defaultItem._id);
         this.hotbarIDs = [];
         this.hotbarIDs.push(defaultItem._id);
-        this.armorIDs = [];
+        this.armorBarIDs = [];
         
         logInv("Constructed InventoryObject...");
     }

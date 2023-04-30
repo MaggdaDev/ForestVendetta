@@ -1,11 +1,14 @@
 {
+    "cathegory": "ARMOR",
+    "class": "BOOTS",
     "display": {
         "name": "Frog-Boots",
         "class_name": "Boots", 
         "description": "Bro didn't skip legday"
     },
     "stats": {
-        "jumpboost": 2
+        "jumpboost": 2,
+        "defense": 10000
     },
     "rarity": "UNCOMMON"
 }

@@ -11,18 +11,36 @@ class InventoryConstructor {
         this.images = images;
         this.data = data;
         this.rarityConfig = rarityConfig;
+
+        // fill container map
+        this.data.inventory.forEach((currItem) => {
+            setInItemToContainerMap(currItem._id, CONTAINERS.INVENTORY);
+        });
         
         this.itemConfigMap = itemConfigMap;
         this.hoverInfoHtml = hoverInfoHtml;
 
-        
-        const hotbarContent = [];
-        data.hotbar.forEach((currItem)=> {
-            hotbarContent.push(currItem._id);
+        globalItemConfigMap = itemConfigMap;
+
+        // general
+        data.inventory.forEach((curr) => {
+            itemData.set(curr._id, curr);
         });
-        hotbar.setCurrContent(hotbarContent);
+        // hotbar
+        hotbar.setCurrContent(this._getIDsFrom(data.hotbar));
+
+        // armorbar
+        armorBar.setCurrContent(this._getIDsFrom(data.armorBar));
 
         this.itemFrames = this._createItemFrames();
+    }
+
+    _getIDsFrom(itemList) {
+        const ret = [];
+        itemList.forEach((currItem) => {
+            ret.push(currItem._id);
+        })
+        return ret;
     }
 
     _createItemFrames() {
@@ -45,5 +63,6 @@ class InventoryConstructor {
         console.log("Rendered item frames!");
 
         hotbar.takeContent();
+        armorBar.takeContent();
     }
 }

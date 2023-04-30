@@ -13,28 +13,34 @@
   <div class="gridWrapper">
 
 
-    <div id="inventoryFlexDiv" class="inventoryFlexDiv" ondragover="onDragOverInventory(event)" ondrop="onItemFrameDroppedToInventory(event)">
+    <div id="inventoryFlexDiv" class="inventoryFlexDiv" ondragleave="resetDropOks()" ondragover="onDragOverInventory(event)" ondrop="onItemFrameDroppedToInventory(event)">
       <h2>Inventory</h2>
       <br>
       <br>
         </div>
 
-    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondragover="onDragOverHotbar(event)">
+    <div id="hotbarDiv" class="hotbarDiv" dropzone="move" ondragleave="resetDropOks()" ondragover="onDragOverContainer(event,CONTAINERS.HOTBAR)">
       <h2>Hotbar</h2>
       <br>
       <br>
-      <div id="hotbarSlot0" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 0)"></div>
-      <div id="hotbarSlot1" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 1)"></div>
-      <div id="hotbarSlot2" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 2)"></div>
-      <div id="hotbarSlot3" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 3)"></div>
-      <div id="hotbarSlot4" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 4)"></div>
-      <div id="hotbarSlot5" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 5)"></div>
+      <div id="hotbarDiv_SLOT0" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 0)"></div>
+      <div id="hotbarDiv_SLOT1" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 1)"></div>
+      <div id="hotbarDiv_SLOT2" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 2)"></div>
+      <div id="hotbarDiv_SLOT3" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 3)"></div>
+      <div id="hotbarDiv_SLOT4" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 4)"></div>
+      <div id="hotbarDiv_SLOT5" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToHotbar(event, 5)"></div>
     </div>
 
-    <div id="armorDiv" class="armorDiv" dropzone="move" ondragover="onDragOverHotbar(event)" ondrop="onItemFrameDroppedToHotbar(event)">
+    <div id="armorDiv" class="armorDiv" dropzone="move" ondragleave="resetDropOks()" ondragover="onDragOverContainer(event,CONTAINERS.ARMORBAR)">
       <h2>Armor</h2>
       <br>
       <br>
+      <div id="armorDiv_SLOT0" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 0)"></div>
+      <div id="armorDiv_SLOT1" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 1)"></div>
+      <div id="armorDiv_SLOT2" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 2)"></div>
+      <div id="armorDiv_SLOT3" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 3)"></div>
+      <div id="armorDiv_SLOT4" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 4)"></div>
+      <div id="armorDiv_SLOT5" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 5)"></div>
     </div>
   </div>
   <button id="joinGameBtn">JOIN GAME</button>

@@ -1,4 +1,5 @@
 const ItemFactory = require("../items/ItemFactory");
+const Weapon = require("../items/weapons/weapon");
 
 class Inventory {
     constructor(hotbarList, owner) {
@@ -21,6 +22,10 @@ class Inventory {
     addDrop(dropObject) {
         this.drops.push(dropObject);
         console.log("Added " + dropObject.itemName + " to drops");
+    }
+
+    isWeaponSelected() {
+        return this.selectedItem instanceof Weapon;
     }
 
     selectItem(index) {

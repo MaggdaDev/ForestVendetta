@@ -12,6 +12,9 @@ const DropObject = require("./dropObject");
 const Timer = require("../../GameStatic/js/util/timer");
 const GradeHandler = require("./gradeHandler");
 const MainLoop = require("../mainLoop");
+const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
+const DamageVisitor = require("../fighting/damageProcessing/damageVisitors/damageVisitor");
+const ArmorHolder = require("../items/armor/armorHolder");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -81,7 +84,11 @@ class Protagonist {
 
         //Fighting
         this.currentStrike = null;
-        this.fightingObject = new FightingObject(() => this.calcDamage(), Protagonist.HP, this.id);
+        const fightingObjectFacade = new FacadeForFightingObject();
+        fightingObjectFacade.getOwnerPosition = ()=> {
+            return this.pos;
+        };
+        this.fightingObject = new FightingObject(fightingObjectFacade, this.getBaseDamage(), Protagonist.HP, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway) => {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { damage: damageTaken, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000), 1);
@@ -112,6 +119,7 @@ class Protagonist {
 
         // inventory
         this.inventory = new Inventory(playerData.hotbar, this);
+        this.armorHolder = new ArmorHolder(playerData.armorBar);
 
         // respawning
         this.respawnTimer = new Timer(Protagonist.RESPAWN_TIME, ()=> this.respawn());
@@ -123,6 +131,33 @@ class Protagonist {
             this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
         }
 
+        // last
+        this.setupDamageVisitors();
+
+    }
+
+    /**
+     * @description care that everything needed is already defined!
+     */
+    setupDamageVisitors() {
+        // main weapon visitor
+        const mainWeaponVisitor = new DamageVisitor();
+        mainWeaponVisitor.visitDamageObject = (damageObject) => {
+            if(this.inventory.isWeaponSelected()) {
+                damageObject.addFlatDamage(this.inventory.selectedItem.getDamage());
+            }
+        };
+        this.fightingObject.addDamageDealtVisitor(mainWeaponVisitor);
+        
+        // armor visitors
+        this.armorHolder.getDamageDealtVisitors().forEach((currVisitor) => {
+            this.fightingObject.addDamageDealtVisitor(currVisitor);
+            console.log("Added damage dealt visitor from armor");
+        });
+        this.armorHolder.getDamageReceivedVisitors().forEach((currVisitor) => {
+            this.fightingObject.addDamageReceivedVisitor(currVisitor);
+            console.log("Added damage received visitor from armor");
+        });
     }
 
     /**
@@ -144,7 +179,7 @@ class Protagonist {
 
     // alive and dead
     updateAlive(timeElasped) {
-        if(this.isAlive && (!this.fightingObject.isAlive)) {
+        if(this.isAlive && (!this.fightingObject.isAlive())) {
            this.die();
         }
         if(this.pos.y > 5000) {
@@ -175,8 +210,8 @@ class Protagonist {
 
     // end alive and dead
 
-    calcDamage() {
-        return this.inventory.selectedItem.getDamage();
+    getBaseDamage() {
+        return 0;
     }
 
 
@@ -292,6 +327,7 @@ class Protagonist {
             id: this.id,
             isContact: this.movableBody.isContact,
             inventory: this.inventory,
+            armorBar: this.armorHolder,
             fightingObject: this.fightingObject,
             facingLeft: this.facingLeft,
             isWalking: this.isWalking,

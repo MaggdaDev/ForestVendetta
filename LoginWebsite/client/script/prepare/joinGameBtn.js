@@ -27,7 +27,7 @@ class JoinGameBtn {
             }
             this.alreadyFired = true;
             logJoinGameBtn("Retrieved user ID for join game call: " + this.userID);
-            this.httpCommunicator.requestJoinGame(this.code, this.userID, this.gameID, hotbar.toURLParamObjetList(), ((accessObject) => {
+            this.httpCommunicator.requestJoinGame(this.code, this.userID, this.gameID, hotbar.toURLParamObjectList(), armorBar.toURLParamObjectList(), ((accessObject) => {
                 accessObject = JSON.parse(accessObject);
                 console.log("Got response to join game request: " + accessObject);
                 if (accessObject.status === 1) {

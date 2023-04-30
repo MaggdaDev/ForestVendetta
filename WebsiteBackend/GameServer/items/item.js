@@ -1,5 +1,11 @@
+
 class Item {
-    constructor(id) {
+
+    /**
+     * @param {Protagonist} owner
+     * @param {string} id
+     */
+    constructor(owner, id) {
         this.id = id;
         this.typeData = {
             name: null,
@@ -7,6 +13,11 @@ class Item {
             class: null,
             cathegory: null
         };
+        this.owner = owner;
+    }
+
+    applyConfig(config) {
+        throw "Apply config not overridden!";
     }
 
     setName(n) {
@@ -30,6 +41,10 @@ class Item {
 
     getName() {
         return this.typeData.name;
+    }
+
+    getClass() {
+        return this.typeData.class;
     }
 
 }

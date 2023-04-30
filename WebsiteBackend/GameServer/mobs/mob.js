@@ -5,6 +5,7 @@ const Vector = require("../../GameStatic/js/maths/vector");
 const DropHandler = require("./dropHandler");
 const TargetManager = require("./targetManager");
 const HitBox = require("../physics/hitbox");
+const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
 
 class Mob {
     /**
@@ -36,7 +37,11 @@ class Mob {
         this.shouldRemove = false;
 
         // fighting
-        this.fightingObject = new FightingObject(() => {return mobConfig.fighting_stats.damage}, mobConfig.fighting_stats.max_hp, this.id);
+        const fightingObjectFacade = new FacadeForFightingObject();
+        fightingObjectFacade.getOwnerPosition = ()=> {
+            return this.pos;
+        };
+        this.fightingObject = new FightingObject(fightingObjectFacade, mobConfig.fighting_stats.damage, mobConfig.fighting_stats.max_hp, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{
             this.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 30000),1);
         });
@@ -110,7 +115,7 @@ class Mob {
     }
 
     checkAlive() {
-        if(!this.fightingObject.isAlive) {
+        if(!this.fightingObject.isAlive()) {
             this.remove();
             this.onDeathHandlers.forEach((curr)=>{
                 curr();

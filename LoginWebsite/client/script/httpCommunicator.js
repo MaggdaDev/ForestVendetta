@@ -31,12 +31,13 @@ class HTTPCommunicator {
         const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.REQUEST_DISCORD_AUTH, requestParams);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress);
     }
-    requestJoinGame(code, userID, gameID, hotbarIDsList, callback) {
+
+    requestJoinGame(code, userID, gameID, hotbarIDsList, armorBarIDsList, callback) {
         if (!(code && userID && gameID)) {
             console.error("Not all required for join game given! Code: " + code + " userID: " + userID + " gameID:" + gameID);
             return;
         }
-        const args = [{ name: "code", value: code }, { name: "userID", value: userID }, { name: "gameID", value: gameID }].concat(hotbarIDsList);
+        const args = [{ name: "code", value: code }, { name: "userID", value: userID }, { name: "gameID", value: gameID }].concat(hotbarIDsList).concat(armorBarIDsList);
         var apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.JOIN_GAME_REQUEST, args);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
     }

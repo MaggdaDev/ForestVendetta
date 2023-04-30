@@ -97,9 +97,9 @@ class ClientPlayer {
         this.inventory.updateItems(data);
     }
 
-    generateSprite(x, y, maxHp, userName) {
+    generateSprite(x, y, maxHp, userName, armorBar) {
         console.log("Generating protagonist sprite...");
-        this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName, this.id);
+        this.sprite = new PlayerSprite(this.mainScene, x, y, maxHp, userName, this.id, armorBar);
 
         // weapon
         this.mainScene.add.existing(this.sprite);

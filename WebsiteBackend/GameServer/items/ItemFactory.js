@@ -2,13 +2,22 @@ const FileLoader = require("../util/fileLoader");
 const ObsidianPineNeedle = require("./weapons/swords/heavySwords/obsidianPineNeedle");
 const RustySpade = require("./weapons/swords/heavySwords/rustySpade");
 const SlimySpade = require("./weapons/swords/heavySwords/slimySpade");
+const FrogBoots = require("./armor/frog/frogBoots")
 
 class ItemFactory {
     static instance;
     constructor() {
+        
+        this.config = new Map();
         const weaponConfig = FileLoader.loadFilesRecursive("./GameplayConfig/Items/Weapons/");
         const armorConfig = FileLoader.loadFilesRecursive("./GameplayConfig/Items/Armor/");
-        this.config = new Map(weaponConfig, armorConfig);
+        weaponConfig.forEach((weapon, id) => {
+            this.config.set(id, weapon);
+        });
+        armorConfig.forEach((armor, id) => {
+            this.config.set(id, armor);
+        });
+        
     }
 
     /**

@@ -6,6 +6,11 @@ class MongoAccessor {
     static DATABASE_NAME = "forestvendetta";
     static PLAYER_COLLECTION_NAME = "players";
     static ITEM_COLLECTION_NAME = "items";
+
+    static ITEM_CONTAINERS = {
+        HOTBAR: "HOTBAR",
+        ARMORBAR: "ARMORBAR"
+    }
     constructor() {
         logMongo("Initializing mongo connection...")
 
@@ -126,13 +131,37 @@ class MongoAccessor {
         const query = {"_id": { "$in" : itemIDs}}
         const cursor = await this.itemCollection.find(query);
         const objects = await cursor.toArray();
-        logMongo("Got " + objects.length + " items from hotbar.");
+        logMongo("Got " + objects.length + " items as objects.");
         return objects;
     }
 
     async updateHotbar(userID, hotbarIDs) {
         await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.hotbarIDs": hotbarIDs}});
         console.log("Updated hotbar in db");
+    }
+
+    async updateArmorBar(userID, armorBarIDs) {
+        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.armorBarIDs": armorBarIDs}});
+        console.log("Updated armorbar in db: " + armorBarIDs.length + " armoritems now.");
+    }
+
+    /**
+     * 
+     * @param {string} userID 
+     * @param {string[]} containerIDs items to set as content of container
+     * @param {string} itemContainer MUST be from MongoAccessor.ITEM_CONTAINERS: Hotbar/armorbar/...
+     * @description UNCHECKED set and override container
+     * @returns 
+     */
+    async updateItemContainer(userID, containerIDs, itemContainer) {
+        switch(itemContainer) {
+            case MongoAccessor.ITEM_CONTAINERS.ARMORBAR:
+                return this.updateArmorBar(userID, containerIDs);
+            case MongoAccessor.ITEM_CONTAINERS.HOTBAR:
+                return this.updateHotbar(userID, containerIDs);
+            default:
+                throw "Item container type not implemented: " + itemContainer
+        }
     }
 
 

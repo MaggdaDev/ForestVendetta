@@ -1,7 +1,7 @@
 class PlayerSprite extends Phaser.GameObjects.Container {
     static PROT_DISPLAY_SIZE = 100;
     static HEALTH_BAR_Y_OFFSET = -65;
-    constructor(mainScene, x, y, maxHp, userName, id) {
+    constructor(mainScene, x, y, maxHp, userName, id, armorBarData) {
         super(mainScene, x, y);
         this.targetScene = mainScene;
         this.excludeFromFlip = [];
@@ -34,6 +34,10 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         }
         this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER", userName, rarity);
 
+        // armor overlay
+        this.armorBarData = armorBarData;
+        this.armorOverlay = new ArmorOverlay(mainScene, armorBarData);
+        this.add(this.armorOverlay);
     }
 
     deconstruct() {
@@ -114,10 +118,12 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         this.legSprite.play('startLegWalk');
         this.legSprite.playAfterRepeat('legWalk');
         this.legSprite.on('animationrepeat', () => {
+            this.armorOverlay.playWalkAnimations();
             if (this.weapon === null) {
                 this.upperSprite.play('upperWalk');
             }
         });
+        this.armorOverlay.playStartWalkAnimations();
 
         if (this.weapon === null) {
             this.upperSprite.play('startUpperWalk');
@@ -125,9 +131,10 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     stopWalk() {
+        
+        this.armorOverlay.stopAnimations();
         this.legSprite.playAfterRepeat(null);
         this.legSprite.stop();
-
         this.legSprite.setFrame(0);
 
         if (this.weapon === null) {
@@ -175,7 +182,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         const upperWalk = {
             key: 'upperWalk',
-            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzUpper', { frames: [2, 3, 4, 5, 6, 7, 8, 9] }),
+            frames: this.mainScene.anims.generateFrameNumbers('hotzenplotzUpper', { frames: [2, 3, 4, 5, 6, 7] }),
             frameRate: 8,
             repeat: -1
         };

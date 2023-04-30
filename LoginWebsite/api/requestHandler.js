@@ -147,9 +147,9 @@ class RequestHandler {
                 logRequestHandler("NOT AUTENTICATED!");
                 return reject(this.getRejectObject(RequestHandler.ERRORS.NOT_AUTHENTICATED));
             }
-            const userData = this.discordAuthenticator.getProfileData(userID, code);
+            const userDiscordData = this.discordAuthenticator.getProfileData(userID, code);
             const gameID = query.gameID;
-            if (userData === null || userData === undefined) {
+            if (userDiscordData === null || userDiscordData === undefined) {
                 console.error("User is not at all in auth map! Throwing invalid session");
                 return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_SESSION));
             } else if (gameID === null || gameID === undefined) {
@@ -157,13 +157,13 @@ class RequestHandler {
                 return reject(this.getRejectObject(RequestHandler.ERRORS.INVALID_LINK));
             }
 
-            this.updateHotbar(query, userID).then(() => {
-                this.createDeployData(userID, userData).then((deployData) => {
+            this.updateBars(query, userID).then(() => {
+                this.createDeployData(userID, userDiscordData).then((deployData) => {
                     this.rabbitCommunicator.deployToGameIfPossibleAndHandleReply(gameID, deployData, (accessObjectMessage) => {
                         try {
                             if (accessObjectMessage.status === 1) {
                                 console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
-
+                                
                                 // tweak uri: add playerID
                                 var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
                                 accessObjectMessage.shardUri = tweakedUri;
@@ -183,22 +183,31 @@ class RequestHandler {
         });
     }
 
-    async updateHotbar(query, userID) {
+    async updateBars(query, userID) {
         var hotbarIDs = [];
+        var armorBarIDs = [];
         for(var i = 0; i < 6; i+= 1) {
-            if(query["hotbar" + i] !== undefined && query["hotbar" + i] !== "" && query["hotbar" + i] !== null) {
-                hotbarIDs.push(query["hotbar" + i]);
+            const hotbarIndex = "HOTBAR" + i;
+            const armorBarIndex = "ARMORBAR" + i;
+            if(query[hotbarIndex] !== undefined && query[hotbarIndex] !== "" && query[hotbarIndex] !== null) {
+                hotbarIDs.push(query[hotbarIndex]);
+            }
+            if(query[armorBarIndex] !== undefined && query[armorBarIndex] !== "" && query[armorBarIndex] !== null) {
+                armorBarIDs.push(query[armorBarIndex]);
             }
         }
-        await this.mongoAccessor.updateHotbar(hotbarIDs, userID);
+        await this.mongoAccessor.updateBars(hotbarIDs, armorBarIDs, userID);
     }
 
     async createDeployData(userID, userData) {
         const mongoData = await this.mongoAccessor.getPlayerOrCreate(userID);
         const hotbar = await this.mongoAccessor.createHotbarObject(userID, mongoData.inventory);
+        const armorBar = await this.mongoAccessor.createArmorBarObject(userID, mongoData.inventory);
+        
         return {
             discordAPI: userData,
             hotbar: hotbar,
+            armorBar: armorBar,
             accountLevel: mongoData.accountLevel
         }
     }

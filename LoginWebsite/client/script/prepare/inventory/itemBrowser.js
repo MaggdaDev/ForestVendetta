@@ -18,6 +18,7 @@ class ItemBrowser {
      * @param {Object} displayableInventoryData 
      * @param {Object[]} displayableInventoryData.inventory i.e. {_id: 'I0T1672682812809R15880', ownerDiscordID: '995658223434604669', itemName: 'RUSTY_SPADE'}
      * @param {Object[]} displayableInventoryData.hotbar
+     * @param {Object[]} displayableInventoryData.armorBar
      */
     setDisplayableInventoryData(displayableInventoryData) {
         console.log("Received displayable inventory data from server at item browser")

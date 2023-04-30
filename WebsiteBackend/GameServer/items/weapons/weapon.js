@@ -1,3 +1,4 @@
+const SimpleAdditionalFlatDamageVisitor = require("../../fighting/damageProcessing/damageVisitors/simpleAdditionalFlatDamageVisitor");
 const Item = require("../item");
 
 class Weapon extends Item{
@@ -10,11 +11,10 @@ class Weapon extends Item{
      */
     static currentId = 0;
     constructor(owner, weaponID) {
-        super(weaponID);
+        super(owner, weaponID);
         super.setCathegory("WEAPON");
         this.id = weaponID;
         this.fighter = owner.fightingObject;
-        this.owner = owner;
     }
 
     applyConfig(config) {       // loading all attributes

@@ -69,3 +69,5 @@ if len(masksFolder) != len(outputArray):
 for counter in range(len(masksFolder)):
     currArr = outputArray[counter]
     iio.imwrite("output/" + "animated_" + masksFolder[counter], currArr)
+
+# %%

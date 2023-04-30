@@ -1,4 +1,7 @@
+
 {
+    "cathegory": "WEAPON",
+    "class": "HEAVY_SWORD",
     "display": {
         "name": "Obsidian Pine Needle",
         "class_name": "Heavy Sword", 

@@ -1,5 +1,6 @@
 const MongoAccessor = require("../../shared/mongoAccess/mongoAccessor");
 class LoginMongoAccessor {
+    
     constructor() {
         this.mongoAccessor = new MongoAccessor();
     }
@@ -13,23 +14,34 @@ class LoginMongoAccessor {
      * @returns {inventory: [], hotbar: []}
      */
     async getDisplayableInventoryData(userID, inventory) {
-        const hotbarObject = await this.createHotbarObject(userID, inventory)
+        const hotbarObject = await this.createHotbarObject(userID, inventory);
+        const armorBarObject = await this.createArmorBarObject(userID, inventory);
         const inventoryObject = await this.getItemObjectsFromIDs(inventory.itemIDs);
         console.log("Retrieved hotbar object and inventory object for client display")
-        return {inventory: inventoryObject, hotbar: hotbarObject}
+        return { inventory: inventoryObject, hotbar: hotbarObject, armorBar: armorBarObject }
     }
 
     async createHotbarObject(userID, mongoInventoryObject) {
         mongoInventoryObject.itemIDs = await this.getAndUpdatePlayerInventory(mongoInventoryObject, userID);   // check if owned items have this as owner
-        const hotbarIDs = await this.getCheckedHotbarIDs(userID, mongoInventoryObject);     // check if hotbar items are actually owned
+        const hotbarIDs = await this.getCheckedContainerIDs(userID, mongoInventoryObject, MongoAccessor.ITEM_CONTAINERS.HOTBAR);     // check if hotbar items are actually owned
         const hotbarItems = await this.getItemObjectsFromIDs(hotbarIDs);
         console.log("Created hotbar Object.");
         return hotbarItems;
     }
 
-    async updateHotbar(hotbarIDs, userID) {
+    async createArmorBarObject(userID, mongoInventoryObject) {
+        mongoInventoryObject.itemIDs = await this.getAndUpdatePlayerInventory(mongoInventoryObject, userID);   // check if owned items have this as owner
+        const armorBarIDs = await this.getCheckedContainerIDs(userID, mongoInventoryObject, MongoAccessor.ITEM_CONTAINERS.ARMORBAR);     // check if armorbar items are actually owned
+        const armorBarItems = await this.getItemObjectsFromIDs(armorBarIDs);
+        console.log("Created armor bar Object.");
+        return armorBarItems;
+    }
+
+    async updateBars(hotbarIDs, armorBarIDs, userID) {
         const ownedHotbarItems = await this.filterOwnedItems(hotbarIDs, userID);
+        const ownedArmorBarItems = await this.filterOwnedItems(armorBarIDs, userID);
         this.mongoAccessor.updateHotbar(userID, ownedHotbarItems);
+        this.mongoAccessor.updateArmorBar(userID, ownedArmorBarItems);
     }
 
     async filterOwnedItems(items, userID) {
@@ -37,7 +49,7 @@ class LoginMongoAccessor {
         const itemObjectsToCheck = await this.mongoAccessor.getItemObjectsFromIDs(items);
         var checkedIDs = [];
         itemObjectsToCheck.forEach((element, index) => {
-            if(element.ownerDiscordID !== userID) {
+            if (element.ownerDiscordID !== userID) {
                 console.error("Found item with owner " + element.ownerDiscordID + " at " + userID + ". Filtering out.");
             } else {
                 checkedIDs.push(element._id);
@@ -46,11 +58,11 @@ class LoginMongoAccessor {
         console.log("Filtered out " + (items.length - checkedIDs.length) + " illegally owned items");
         return checkedIDs;
     }
-/**
- * 
- * @param {Object} mongoInventoryObject 
- * @returns {string[]} ownedIDs
- */
+    /**
+     * 
+     * @param {Object} mongoInventoryObject 
+     * @returns {string[]} ownedIDs
+     */
     async getAndUpdatePlayerInventory(mongoInventoryObject, userID) {    // check if owned items have this as owner
         console.log("Checking for not owned items...");
         const ownedIDsMongo = mongoInventoryObject.itemIDs;
@@ -64,31 +76,49 @@ class LoginMongoAccessor {
         return await this.mongoAccessor.getItemObjectsFromIDs(itemIDs);
     }
 
-    async getCheckedHotbarIDs(userID, mongoInventoryObject) {
-        const hotbarIDs = mongoInventoryObject.hotbarIDs;
+    /**
+     * 
+     * @param {*} userID 
+     * @param {*} mongoInventoryObject 
+     * @param {string} itemContainer HOTBAR or ARMORBAR
+     * @returns 
+     */
+    async getCheckedContainerIDs(userID, mongoInventoryObject, itemContainer) {
+        var containerIDs;
+        switch (itemContainer) {
+            case MongoAccessor.ITEM_CONTAINERS.HOTBAR:
+                containerIDs = mongoInventoryObject.hotbarIDs;
+                break;
+            case MongoAccessor.ITEM_CONTAINERS.ARMORBAR:
+                containerIDs = mongoInventoryObject.armorBarIDs;
+                break;
+            default:
+                throw "Unsupported container type: " + itemContainer
+        }
+        if(containerIDs === undefined) containerIDs = []
         const ownedIDs = mongoInventoryObject.itemIDs;
         var modified = false;
         const idxToRemove = [];
-        hotbarIDs.forEach((element, index) => {
+        containerIDs.forEach((element, index) => {
             if (!ownedIDs.includes(element)) {
                 idxToRemove.push(index);
-                console.log("Found ERROR! Following item is in hotbar but not owned: " + element);
+                console.log("Found ERROR! Following item is in " + itemContainer + " but not owned: " + element);
             }
         });
         idxToRemove.forEach((idx) => {
-            hotbarIDs.splice(idx, 1);
+            containerIDs.splice(idx, 1);
             modified = true;
         });
 
         if (modified) {          // DATABASE ACCESS: REWRITE WITHOUT ERROR
-            await this.mongoAccessor.updateHotbar(userID, hotbarIDs);
+            await this.mongoAccessor.updateItemContainer(userID, containerIDs, itemContainer);
         } else {
 
-            console.log("Checked hotbar; no error");
-            
+            console.log("Checked " + itemContainer + "; no error");
+
         }
 
-        return hotbarIDs;
+        return containerIDs;
     }
 
     async getPlayerOrCreate(userID) {

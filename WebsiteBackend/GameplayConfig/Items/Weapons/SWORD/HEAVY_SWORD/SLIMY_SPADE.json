@@ -1,4 +1,6 @@
 {
+    "cathegory": "WEAPON",
+    "class": "HEAVY_SWORD",
     "display": {
         "name": "Slimy Spade",
         "class_name": "Heavy Sword", 
