@@ -8,10 +8,6 @@
         "socket.io": "^4.5.1"
     },
     "scripts": {
-        "start": "node GameServer/server.js",
-        "test": "jest"
-    },
-    "devDependencies": {
-        "jest": "^29.5.0"
+        "start": "node GameServer/server.js"
     }
 }

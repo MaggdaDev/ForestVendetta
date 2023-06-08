@@ -58,8 +58,8 @@ class MongoAccessor {
             itemIDs.push(element._id);
         })
 
-        if(itemIDs.length !== items.length) {
-            throw(new Error("Bruh something went wrong on insert owned items"));
+        if (itemIDs.length !== items.length) {
+            throw (new Error("Bruh something went wrong on insert owned items"));
         }
 
         // insert ids to item
@@ -67,17 +67,17 @@ class MongoAccessor {
         logMongo("Inserted " + items.length + " items to item table.");
 
         // insert items to player inventory
-        const query = {_id: userID};
+        const query = { _id: userID };
         const currPlayer = await this.playerCollection.findOne(query);
         const ownedItemIDs = currPlayer.inventory.itemIDs;
         const hotbarItemIDs = currPlayer.inventory.hotbarIDs;
         itemIDs.forEach((element) => {
-            if(ownedItemIDs.includes(element)) {
-                throw(new Error("Item with ID " + element + " already in inventory of " + userID + " on owned items insertion!"));
+            if (ownedItemIDs.includes(element)) {
+                throw (new Error("Item with ID " + element + " already in inventory of " + userID + " on owned items insertion!"));
             }
             ownedItemIDs.push(element);
-            
-            if(hotbarItemIDs.length < 6) {
+
+            if (hotbarItemIDs.length < 6) {
                 hotbarItemIDs.push(element);
                 logMongo("Added owned item " + element + " to inventory of " + userID + " and pushed it to hotbar");
             } else {
@@ -102,25 +102,47 @@ class MongoAccessor {
      * @description ONLY inserts player. Should not be used alone if you're not giga nigga
      * @param {Object} playerMongoObject 
      */
-     async _insertPlayer(playerMongoObject) {
+    async _insertPlayer(playerMongoObject) {
         logMongo("Insert 1 player into table");
         return this.playerCollection.insertOne(playerMongoObject);
     }
 
     async getPlayerOrCreate(userID) {
         logMongo("Get player or create if not existing...");
-        const query = {_id: userID};
+        const query = { _id: userID };
         const player = await this.playerCollection.findOne(query);
-        if(player === null) {   // not existing
+        if (player === null) {   // not existing
             logMongo("Player not existing; now being created...");
             var newplayer = this.objectFactory.addNewPlayer(userID);
             logMongo("Player created.");
+            this.giveStarterItemIfInventoryEmpty(newplayer);
             return newplayer;
         } else {
             logMongo("Player existing.");
+            this.giveStarterItemIfInventoryEmpty(player);
             return player;
         }
     }
+
+    async giveStarterItemIfInventoryEmpty(mongoPlayerObject) {
+        const itemIds = mongoPlayerObject.inventory.itemIDs;
+        if (itemIds === undefined || itemIds === null || itemIds.length === 0) {
+            console.log("Player inventory is EMPTY, starter item has to be given!");
+            await this.giveStarterItemTo(mongoPlayerObject);
+        } else {
+            console.log("Player inventory is not empty; no starter item has to be given.");
+        }
+    }
+
+    async giveStarterItemTo(mongoPlayerObject) {
+        const defaultWeapon = ObjectFactory.createDefaultItem(mongoPlayerObject._id);
+        await this._insertItem(defaultWeapon);
+        mongoPlayerObject.inventory.itemIDs.push(defaultWeapon._id);
+        await this.updateOwnedItems(mongoPlayerObject.inventory.itemIDs, mongoPlayerObject._id);
+
+        console.log("Created new default item and gave it to " + mongoPlayerObject._id);
+    }
+
 
     /**
      * 
@@ -128,7 +150,7 @@ class MongoAccessor {
      */
     async getItemObjectsFromIDs(itemIDs) {
         logMongo("Get itemObjects from IDs...");
-        const query = {"_id": { "$in" : itemIDs}}
+        const query =                                                           { "_id": { "$in": itemIDs } }
         const cursor = await this.itemCollection.find(query);
         const objects = await cursor.toArray();
         logMongo("Got " + objects.length + " items as objects.");
@@ -136,12 +158,12 @@ class MongoAccessor {
     }
 
     async updateHotbar(userID, hotbarIDs) {
-        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.hotbarIDs": hotbarIDs}});
+        await this.playerCollection.updateOne({ _id: userID }, { $set: { "inventory.hotbarIDs": hotbarIDs } });
         console.log("Updated hotbar in db");
     }
 
     async updateArmorBar(userID, armorBarIDs) {
-        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.armorBarIDs": armorBarIDs}});
+        await this.playerCollection.updateOne({ _id: userID }, { $set: { "inventory.armorBarIDs": armorBarIDs } });
         console.log("Updated armorbar in db: " + armorBarIDs.length + " armoritems now.");
     }
 
@@ -154,7 +176,7 @@ class MongoAccessor {
      * @returns 
      */
     async updateItemContainer(userID, containerIDs, itemContainer) {
-        switch(itemContainer) {
+        switch (itemContainer) {
             case MongoAccessor.ITEM_CONTAINERS.ARMORBAR:
                 return this.updateArmorBar(userID, containerIDs);
             case MongoAccessor.ITEM_CONTAINERS.HOTBAR:
@@ -166,7 +188,7 @@ class MongoAccessor {
 
 
     async updateOwnedItems(ownedItemIDs, userID) {
-        await this.playerCollection.updateOne({_id: userID}, { $set: {"inventory.itemIDs": ownedItemIDs}});
+        await this.playerCollection.updateOne({ _id: userID }, { $set: { "inventory.itemIDs": ownedItemIDs } });
         console.log("Updated owned items in db");
     }
 }

@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "node-fetch": "^3.2.10"
+  },
+  
+  "scripts": {
+    "test": "jest --verbose --config=jest.config.js"
+  },
+
+  "devDependencies": {
+      "jest": "^29.5.0"
   }
 }
