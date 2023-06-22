@@ -1,6 +1,5 @@
 const Vector = require("../../../../GameStatic/js/maths/vector");
-const DamageVisitor = require("../../../fighting/damageProcessing/damageVisitors/damageVisitor");
-const SimpleAdditionalFlatDamageVisitor = require("../../../fighting/damageProcessing/damageVisitors/simpleAdditionalDlatDamageVisitor");
+const SimpleAdditionalFlatDamageVisitor = require("../../../fighting/damageProcessing/damageVisitors/simpleAdditionalFlatDamageVisitor");
 const FacadeForFightingObject = require("../../../fighting/facadeForFightingObject");
 const FightingObject = require("../../../fighting/fightingObject");
 

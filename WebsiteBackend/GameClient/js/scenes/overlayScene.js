@@ -57,14 +57,23 @@ class OverlayScene extends Phaser.Scene {
     }
 
     updateGrade(gradeData) {
+        this._assertCreated();
         this.rightPanel.updateGradeData(gradeData);
     }
 
+    _assertCreated() {
+        if (!this.created) {
+            throw "Trying to set data before finishing creation!"
+        }
+    }
+
     initRespawn(respawnTime) {
+        this._assertCreated();
         this.deathOverlay.startRespawn(respawnTime);
     }
 
     setMatchConfig(gradedMatchDuration) {
+        this._assertCreated();
         this.rightPanel.setGradedMatchDuration(gradedMatchDuration);
     }
 
@@ -83,10 +92,10 @@ class OverlayScene extends Phaser.Scene {
 
     alignNodeRight(node) {
         if (OverlayScene.rightDummy === undefined) {
-            OverlayScene.rightDummy = this.add.line(0,0,0,0,0,0);
+            OverlayScene.rightDummy = this.add.line(0, 0, 0, 0, 0, 0);
             Phaser.Display.Align.In.RightCenter(OverlayScene.rightDummy, this.screenZone);
         }
-        node.setY(OverlayScene.rightDummy.y - node.getBounds().height/2);
+        node.setY(OverlayScene.rightDummy.y - node.getBounds().height / 2);
         node.setX(OverlayScene.rightDummy.x - node.getBounds().width);
     }
 

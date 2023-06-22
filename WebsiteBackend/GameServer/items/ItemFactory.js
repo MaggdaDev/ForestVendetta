@@ -6,11 +6,13 @@ const FrogBoots = require("./armor/frog/frogBoots")
 
 class ItemFactory {
     static instance;
+    static WEAPONS_CONFIG_PATH = "./GameplayConfig/Items/Weapons/";
+    static ARMOR_CONFIG_PATH = "./GameplayConfig/Items/Armor/";
     constructor() {
         
         this.config = new Map();
-        const weaponConfig = FileLoader.loadFilesRecursive("./GameplayConfig/Items/Weapons/");
-        const armorConfig = FileLoader.loadFilesRecursive("./GameplayConfig/Items/Armor/");
+        const weaponConfig = FileLoader.loadFilesRecursive(ItemFactory.WEAPONS_CONFIG_PATH);
+        const armorConfig = FileLoader.loadFilesRecursive(ItemFactory.ARMOR_CONFIG_PATH);
         weaponConfig.forEach((weapon, id) => {
             this.config.set(id, weapon);
         });
