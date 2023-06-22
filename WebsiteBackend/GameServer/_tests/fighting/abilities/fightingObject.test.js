@@ -25,3 +25,32 @@ test("Basic damaging works", () => {
     expect(fightingObject1.getCurrentHP()).toBe(90);
     
 });
+
+test("Defense works", () => {
+    const testFacade = new FacadeForFightingObject();
+    testFacade.getOwnerPosition = ()=> {
+        return new Vector(0,0);
+    };
+    
+    const stats = new Stats();
+    testFacade.getOwnerStats = () => {
+        stats.maxHpStat.setValue(100);
+        
+        stats.damageStat.setValue(10);
+        return stats;
+    }
+
+    testFacade.getOwnerPosition();
+    const fightingObject1 = new FightingObject(testFacade, "allahId123");
+    const fightingObject2 = new FightingObject(testFacade, "fighting22");
+    expect(fightingObject1.getCurrentHP()).toBe(100);
+    FightingObject.aDamageB(fightingObject2, fightingObject1);
+    expect(fightingObject1.getCurrentHP()).toBe(90);
+    stats.defenseStat.setValue(100);
+    FightingObject.aDamageB(fightingObject2, fightingObject1);
+    expect(fightingObject1.getCurrentHP()).toBe(85);
+    stats.defenseStat.setValue(-100);
+    FightingObject.aDamageB(fightingObject2, fightingObject1);
+    expect(fightingObject1.getCurrentHP()).toBe(65);
+    
+});

@@ -15,6 +15,7 @@ class PlayerStats {
 
         this.armorPieceStats = [];
         this.weaponStats = null;
+        this._lastCalculatedTotalStats = null;
     }
 
     /**
@@ -55,7 +56,15 @@ class PlayerStats {
         if(this.weaponStats !== null) {
             retStats.addToMe(this.weaponStats);
         }
+        this._lastCalculatedTotalStats = retStats;
         return retStats;
+    }
+
+    getLastCalculatedTotalStats() {
+        if(this._lastCalculatedTotalStats === null) {
+            this.getTotalStats();
+        }
+        return this._lastCalculatedTotalStats;
     }
 
 

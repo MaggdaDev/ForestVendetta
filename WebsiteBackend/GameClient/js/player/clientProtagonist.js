@@ -17,6 +17,9 @@ class ClientProtagonist extends ClientPlayer {
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToLocal(data);
         this.gameScene.updateGrade(data.gradeData);
+        
+        this.stats.overrideFrom(data.stats);
+        console.log(this.stats);
         //this.updateInventory(data);
     }
 

@@ -13,6 +13,7 @@ class ClientPlayer {
         this.isWalkingLeft = false;
         this.inventory = new ClientInventory(scene, isProtagonist);
         this.clientPrediction = new ClientPrediction({x:0, y:0});
+        this.stats = new Stats();
     }
 
     /**
@@ -39,6 +40,8 @@ class ClientPlayer {
         this.updateDebugPolygon(data);
         this.updateWalkingAnimationToData(data);
         this.isContact = data.isContact;
+        this.stats.overrideFrom(data.stats);
+        console.log(this.stats);
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 

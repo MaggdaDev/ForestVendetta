@@ -1,20 +1,30 @@
-var Stat;
-if (process.env.NODE_ENV === "test") {
-    Stat = require("./stat");
-} else if(typeof module !== 'undefined'){
-    Stat = require("./stat");
+var StatClass;
+if ((typeof module) === "undefined" && (typeof process) === "undefined"){
+    StatClass = Stat;
+} else {
+    StatClass = require("./stat");
 }
 
 
 class Stats {
     constructor() {
-        this.maxHpStat = new Stat("maxHp", 0, 0);
-        this.damageStat = new Stat("damage", 0, 0);
-        this.defenseStat = new Stat("defense", 0, 0);
+        this.maxHpStat = new StatClass("maxHp", 0, 0);
+        this.damageStat = new StatClass("damage", 0, 0);
+        this.defenseStat = new StatClass("defense", 0, 0);
 
         this.stats = [
             this.maxHpStat, this.damageStat, this.defenseStat
         ]
+    }
+
+    /**
+     * 
+     * @param {Object} stats stats object to copy (may be just json data)
+     */
+    overrideFrom(stats) {
+        this.stats.forEach((currStat, idx) => {
+            currStat.setValue(stats.stats[idx]._value);
+        })
     }
 
     /**
@@ -26,6 +36,8 @@ class Stats {
             currThisStat.addToMe(statsToAdd.stats[idx]);
         });
     }
+
+    
 
     reduceDamage(damage) {
         //defense

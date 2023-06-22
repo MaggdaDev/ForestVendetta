@@ -236,9 +236,13 @@ class Protagonist {
 
     selectItem(index) {
         this.inventory.selectItem(index);
-        if(this.inventory.isWeaponSelected) {
+        if(this.inventory.isWeaponSelected()) {
             this.stats.setWeaponStats(this.inventory.selectedItem.getStats());
+        } else {
+            this.stats.setWeaponStats(null);
         }
+        this.stats.getTotalStats();
+        
     }
 
     handleLeaveGameRequest() {
@@ -329,7 +333,8 @@ class Protagonist {
             isWalking: this.isWalking,
             userName: this.userName,
             isAlive: this.isAlive,
-            gradeData: this.updateGradeData()
+            gradeData: this.updateGradeData(),
+            stats: this.stats.getLastCalculatedTotalStats()
         }
     }
 
