@@ -1,7 +1,6 @@
 const Frog = require("../../../../mobs/frog");
 const mobConfig = require("../../../../../GameplayConfig/Bosses/frog.json");
 const FrogAbilityPerformer = require("../../../../fighting/abilities/mobs/frogAbilityPerformer");
-const AbilityPerformerAbstract = require("../../../../fighting/abilities/abilityPerformerAbstract");
 
 test("frog implementing all abilities", () => {
     const testFrog = Frog.prototype;

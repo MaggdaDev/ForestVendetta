@@ -1,4 +1,3 @@
-const SimpleAdditionalFlatDamageVisitor = require("../../fighting/damageProcessing/damageVisitors/simpleAdditionalFlatDamageVisitor");
 const Item = require("../item");
 const Stats = require("../../../GameStatic/js/gameplay/stats/stats");
 

@@ -1,4 +1,3 @@
-const StatsBinder = require("../../fighting/statsBinder");
 const PlayerStats = require("../../player/playerStats");
 const ItemFactory = require("../ItemFactory");
 const ArmorPiece = require("./armorPiece");
@@ -13,25 +12,14 @@ class ArmorHolder {
         this.chestplate = null;
 
         this.piecesArray = [this.helmet, this.gloves, this.armguard, this.leggings, this.boots, this.chestplate];
-        this.damageReceivedVisitors = [];
-        this.damageDealtVisistors = [];
-
 
         armorBarList.forEach((currArmorMongo) => {
             this._addPieceFromMongo(currArmorMongo);
         });
 
-        this.createVisitors();
 
     }
 
-    getDamageDealtVisitors() {
-        return this.damageDealtVisistors;
-    }
-
-    getDamageReceivedVisitors() {
-        return this.damageReceivedVisitors;
-    }
 
     _addPieceFromMongo(mongoData) {
         const addPiece = ItemFactory.makeItemFromMongoData(mongoData);
@@ -60,25 +48,6 @@ class ArmorHolder {
     setBoots(boots) {
         this.boots = boots;
         this.piecesArray[4] = boots;
-    }
-
-    createVisitors() {
-        this.piecesArray.forEach((currArmorPiece) => {
-            if (currArmorPiece !== undefined && currArmorPiece !== null) {
-                this.createVisitorsFromArmorPiece(currArmorPiece);
-            }
-        })
-    }
-
-    /**
-     * 
-     * @param {ArmorPiece} armorPiece 
-     */
-    createVisitorsFromArmorPiece(armorPiece) {
-        const statsBinderInstance = StatsBinder.getInstance();
-        const armorPieceStats = armorPiece.getStats();
-        this.damageDealtVisistors.push(...statsBinderInstance.getDamageDealtVisitorsFromStats(armorPieceStats));
-        this.damageReceivedVisitors.push(...statsBinderInstance.getDamageReceivedVisitorsFromStats(armorPieceStats));
     }
 
     /**

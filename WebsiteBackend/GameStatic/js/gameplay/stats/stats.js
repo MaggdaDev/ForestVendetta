@@ -27,6 +27,21 @@ class Stats {
         });
     }
 
+    reduceDamage(damage) {
+        //defense
+        damage *= Stats._damageMultiplierFromDefense(this.defenseStat.getValue());
+        return damage;
+    }
+
+    static _damageMultiplierFromDefense(defense) {
+        if(defense > 0) {
+            return 1.0 / (0.01 * defense + 1);
+        } else {
+            return -0.01 * defense + 1;
+        }
+    }
+
+
     static fromConfigJson(jsonObj) {
         const ret = new Stats();
         if(jsonObj.max_hp !== undefined) {

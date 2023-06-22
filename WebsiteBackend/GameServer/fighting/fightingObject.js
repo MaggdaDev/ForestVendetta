@@ -1,7 +1,5 @@
 const NetworkCommands = require("../../GameStatic/js/network/networkCommands");
 const Vector = require("../../GameStatic/js/maths/vector");
-const DamageVisitor = require("./damageProcessing/damageVisitors/damageVisitor");
-const DamageObject = require("./damageProcessing/damageObject");
 const FacadeForFightingObject = require("./facadeForFightingObject");
 
 class FightingObject {
@@ -17,10 +15,6 @@ class FightingObject {
         this.onDamageDealtHandlers = [];
         this.onDeathHandlers = [];
 
-        // visitors
-        this.damageDealtVisitors = [];
-        this.damageReceivedVisitors = [];
-
         this.hp = this._getMaxHp();
     }
 
@@ -28,16 +22,21 @@ class FightingObject {
         return this.facade.getOwnerStats().maxHpStat.getValue();
     }
 
+    /**
+     * 
+     * @param {FightingObject} a 
+     * @param {FightingObject} b 
+     * @param {*} damagePos 
+     * @returns 
+     */
     static aDamageB(a, b, damagePos) {
         const aPos = a.getOwnerPosition();
         const bPos = b.getOwnerPosition();
         console.log("Damage!");
 
         // damage procedure start
-        const damageObject = new DamageObject(a.getDamage());
-        a.applyDamageDealtVisitors(damageObject);
-        b.applyDamageReceivedVisitors(damageObject);
-        const damageDealt = b.applyDamageObject(damageObject);
+        var damage = a.getDamage();
+        const damageDealt = b.applyDamage(damage);
         // damage procedure end
         
 
@@ -57,29 +56,20 @@ class FightingObject {
         return damageDealt;
     }
 
-    applyDamageDealtVisitors(damageObject) {
-        this.damageDealtVisitors.forEach((currVisitor) => {
-            currVisitor.visitDamageObject(damageObject);
-        });
-        logFightingObject("Applied " + this.damageDealtVisitors.length + " damage dealt visitors.");
-    }
-
-    applyDamageReceivedVisitors(damageObject) {
-        this.damageReceivedVisitors.forEach((currVisitor) => {
-            currVisitor.visitDamageObject(damageObject);
-        });
-        logFightingObject("Applied " + this.damageReceivedVisitors.length + " damage dealt visitors.");
-    }
 
     /**
      * @description final applying of damage object without any other calculations
-     * @param {DamageObject} damageObject 
+     * @param {number} damage 
      */
-    applyDamageObject(damageObject) {
+    applyDamage(damage) {
         const oldHp = this.hp;
-        this.hp -= damageObject.getResultingDamage();
+        this.hp -= this._getStats().reduceDamage(damage);
 
         return oldHp - this.hp;
+    }
+
+    _getStats() {
+        return this.facade.getOwnerStats();
     }
 
     getDamage() {
@@ -98,17 +88,6 @@ class FightingObject {
         this.hp = this._getMaxHp();
     }
 
-    /**
-     * @description visitors ("modifiers") for dealt damage before dealing it and before other fighting object receives it
-     * @param {DamageVisitor} visitor 
-     */
-    addDamageDealtVisitor(visitor) {
-        this.damageDealtVisitors.push(visitor);
-    }
-
-    addDamageReceivedVisitor(visitor) {
-        this.damageReceivedVisitors.push(visitor);
-    }
 
     /**
      * 

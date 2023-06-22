@@ -13,7 +13,6 @@ const Timer = require("../../GameStatic/js/util/timer");
 const GradeHandler = require("./gradeHandler");
 const MainLoop = require("../mainLoop");
 const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
-const DamageVisitor = require("../fighting/damageProcessing/damageVisitors/damageVisitor");
 const ArmorHolder = require("../items/armor/armorHolder");
 const PlayerStats = require("./playerStats");
 
@@ -22,8 +21,6 @@ const PLAYER_HITBOX_HEIGHT = 100;
 
 class Protagonist {
     static JUMP_FORCE = 50000;
-    static DAMAGE = 5;
-    static HP = 25;
     static DESIRED_SPEED = 300;
     static ACC_FORCE = 5000;
 
@@ -103,7 +100,7 @@ class Protagonist {
         fightingObjectFacade.getOwnerStats = () => {
             return this.getStats();
         }
-        this.fightingObject = new FightingObject(fightingObjectFacade, this.getBaseDamage(), Protagonist.HP, this.id);
+        this.fightingObject = new FightingObject(fightingObjectFacade, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway) => {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { damage: damageTaken, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 40000), 1);
@@ -149,34 +146,8 @@ class Protagonist {
             this.inventory.addDrop(new DropObject("RUSTY_SPADE"));
         }
 
-        // last
-        this.setupDamageVisitors();
-
     }
 
-    /**
-     * @description care that everything needed is already defined!
-     */
-    setupDamageVisitors() {
-        // main weapon visitor
-        const mainWeaponVisitor = new DamageVisitor();
-        mainWeaponVisitor.visitDamageObject = (damageObject) => {
-            if(this.inventory.isWeaponSelected()) {
-                damageObject.addFlatDamage(this.inventory.selectedItem.getDamage());
-            }
-        };
-        this.fightingObject.addDamageDealtVisitor(mainWeaponVisitor);
-        
-        // armor visitors
-        this.armorHolder.getDamageDealtVisitors().forEach((currVisitor) => {
-            this.fightingObject.addDamageDealtVisitor(currVisitor);
-            console.log("Added damage dealt visitor from armor");
-        });
-        this.armorHolder.getDamageReceivedVisitors().forEach((currVisitor) => {
-            this.fightingObject.addDamageReceivedVisitor(currVisitor);
-            console.log("Added damage received visitor from armor");
-        });
-    }
 
     /**
      * 
