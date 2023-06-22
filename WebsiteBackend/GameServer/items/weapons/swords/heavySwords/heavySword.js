@@ -47,7 +47,7 @@ class HeavySword extends Sword {
     }
 
     getCooldown() {
-        return this.baseCombatStats.cooldown;
+        return this.cooldown;
     }
 
     strike() {
@@ -85,7 +85,7 @@ class HeavySword extends Sword {
     }
 
     getDamage() {
-       return this.baseCombatStats.damage;
+       return this.baseCombatStats.damageStat.getValue();
     }
 
     /**

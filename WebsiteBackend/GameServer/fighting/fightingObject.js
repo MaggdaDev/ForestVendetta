@@ -7,15 +7,11 @@ const FacadeForFightingObject = require("./facadeForFightingObject");
 class FightingObject {
 
     /**
-     * @param {FacadeForFightingObject} facade
-     * @param {*} hp 
+     * @param {FacadeForFightingObject} facade - needs getOwnerPosition(), getOwnerStats()
      * @param {*} gameUniqueId 
      */
-    constructor(facade, baseDamage, baseHp, gameUniqueId) {
+    constructor(facade, gameUniqueId) {
         this.facade = facade;
-        this.baseDamage = baseDamage;
-        this.hp = baseHp;
-        this.maxHp = baseHp;
         this.id = gameUniqueId;
         this.onDamageTakenHandlers = [];
         this.onDamageDealtHandlers = [];
@@ -24,6 +20,12 @@ class FightingObject {
         // visitors
         this.damageDealtVisitors = [];
         this.damageReceivedVisitors = [];
+
+        this.hp = this._getMaxHp();
+    }
+
+    _getMaxHp() {
+        return this.facade.getOwnerStats().maxHpStat.getValue();
     }
 
     static aDamageB(a, b, damagePos) {
@@ -32,7 +34,7 @@ class FightingObject {
         console.log("Damage!");
 
         // damage procedure start
-        const damageObject = new DamageObject(a.getBaseDamage());
+        const damageObject = new DamageObject(a.getDamage());
         a.applyDamageDealtVisitors(damageObject);
         b.applyDamageReceivedVisitors(damageObject);
         const damageDealt = b.applyDamageObject(damageObject);
@@ -80,8 +82,8 @@ class FightingObject {
         return oldHp - this.hp;
     }
 
-    getBaseDamage() {
-        return this.baseDamage;
+    getDamage() {
+        return this.facade.getOwnerStats().damageStat.getValue();
     }
 
     getOwnerPosition() {
@@ -90,6 +92,10 @@ class FightingObject {
 
     getCurrentHP() {
         return this.hp;
+    }
+
+    resetHp() {
+        this.hp = this._getMaxHp();
     }
 
     /**
@@ -102,10 +108,6 @@ class FightingObject {
 
     addDamageReceivedVisitor(visitor) {
         this.damageReceivedVisitors.push(visitor);
-    }
-
-    reset() {
-        this.hp = this.maxHp;
     }
 
     /**

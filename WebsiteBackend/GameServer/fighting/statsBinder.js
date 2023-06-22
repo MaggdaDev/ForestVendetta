@@ -1,3 +1,4 @@
+const Stats = require("../../GameStatic/js/gameplay/stats/stats");
 const SimpleAdditionalFlatDamageVisitor = require("./damageProcessing/damageVisitors/simpleAdditionalFlatDamageVisitor");
 const SimpleDefenseDamageVisitor = require("./damageProcessing/damageVisitors/simpleDefenseVisitor");
 
@@ -22,11 +23,16 @@ class StatsBinder {
         this.damageReceivedStatVisitors.set("defense", SimpleDefenseDamageVisitor);
     }
 
+    /**
+     * 
+     * @param {Stats} stats 
+     * @returns 
+     */
     getDamageDealtVisitorsFromStats(stats) {
         const visitors = [];
-        Object.entries(stats).forEach((keyValueArray) => {
-            if(this.damageDealtStatVisitors.has(keyValueArray[0])) {
-                visitors.push(new (this.damageDealtStatVisitors.get(keyValueArray[0]))(keyValueArray[1]));
+        stats.stats.forEach((currStat) => {
+            if(this.damageDealtStatVisitors.has(currStat.name)) {
+                visitors.push(new (this.damageDealtStatVisitors.get(currStat.name))(currStat.getValue()));
             }
         });
         return visitors;
@@ -34,9 +40,9 @@ class StatsBinder {
 
     getDamageReceivedVisitorsFromStats(stats) {
         const visitors = [];
-        Object.entries(stats).forEach((keyValueArray) => {
-            if(this.damageReceivedStatVisitors.has(keyValueArray[0])) {
-                visitors.push(new (this.damageReceivedStatVisitors.get(keyValueArray[0]))(keyValueArray[1]));
+        stats.stats.forEach((currStat) => {
+            if(this.damageReceivedStatVisitors.has(currStat.name)) {
+                visitors.push(new (this.damageReceivedStatVisitors.get(currStat.name))(currStat.getValue()));
             }
         });
         return visitors;

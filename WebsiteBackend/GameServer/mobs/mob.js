@@ -6,6 +6,7 @@ const DropHandler = require("./dropHandler");
 const TargetManager = require("./targetManager");
 const HitBox = require("../physics/hitbox");
 const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
+const Stats = require("../../GameStatic/js/gameplay/stats/stats");
 
 class Mob {
     /**
@@ -36,10 +37,16 @@ class Mob {
         this.onDeathHandlers = [];
         this.shouldRemove = false;
 
+        // stats
+        this.stats = Stats.fromConfigJson(mobConfig.fighting_stats);
+
         // fighting
         const fightingObjectFacade = new FacadeForFightingObject();
         fightingObjectFacade.getOwnerPosition = ()=> {
             return this.pos;
+        };
+        fightingObjectFacade.getOwnerStats = () => {
+            return this.stats;
         };
         this.fightingObject = new FightingObject(fightingObjectFacade, mobConfig.fighting_stats.damage, mobConfig.fighting_stats.max_hp, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway)=>{

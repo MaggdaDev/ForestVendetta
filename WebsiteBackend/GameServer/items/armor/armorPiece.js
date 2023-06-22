@@ -1,5 +1,5 @@
 const Item = require("../item");
-
+const Stats = require("../../../GameStatic/js/gameplay/stats/stats");
 class ArmorPiece extends Item{
     constructor(owner, id) {
         super(owner, id);
@@ -18,8 +18,15 @@ class ArmorPiece extends Item{
 
     applyConfig(config) {       // loading all attributes
         this.rarity = config.rarity;
-        this.baseCombatStats = config.stats;
+        this.baseCombatStats = Stats.fromConfigJson(config.stats);
         this.setClass(config.class);
+    }
+
+    /**
+     * @returns {Stats}
+     */
+    getStats() {
+        return this.baseCombatStats;
     }
 }
 

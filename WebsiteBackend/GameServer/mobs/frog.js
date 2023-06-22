@@ -10,10 +10,7 @@ class Frog extends Mob{
     static MASS = 200;
     static JUMP_ANGLE = Math.PI/30;
     static JUMP_FORCE = 150000;
-
-    //fighting
-    static DAMAGE = 5;
-    static HP = 50;
+    
     constructor(x,y,id,players,world, frogConfig, variant) {
         super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, variant, FrogAbilityPerformer);
         this.movableBody.addGravity();

@@ -15,6 +15,7 @@ const MainLoop = require("../mainLoop");
 const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
 const DamageVisitor = require("../fighting/damageProcessing/damageVisitors/damageVisitor");
 const ArmorHolder = require("../items/armor/armorHolder");
+const PlayerStats = require("./playerStats");
 
 const PLAYER_HITBOX_WIDTH = 25;
 const PLAYER_HITBOX_HEIGHT = 100;
@@ -82,12 +83,26 @@ class Protagonist {
         this.movableBody.adjustJumpData({ jumpForce: Protagonist.JUMP_FORCE });
         this.movableBody.setProtagonist();
 
-        //Fighting
+        
+
+        
+
+
+
+        
+        // stats
+        this.stats = new PlayerStats();
+        this.accountLevel = playerData.accountLevel;
+
+        //Fighting - after stats!
         this.currentStrike = null;
         const fightingObjectFacade = new FacadeForFightingObject();
         fightingObjectFacade.getOwnerPosition = ()=> {
             return this.pos;
         };
+        fightingObjectFacade.getOwnerStats = () => {
+            return this.getStats();
+        }
         this.fightingObject = new FightingObject(fightingObjectFacade, this.getBaseDamage(), Protagonist.HP, this.id);
         this.fightingObject.addOnDamageTaken((damageTaken, damagePos, damageNormalAway) => {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { damage: damageTaken, pos: damagePos });
@@ -97,8 +112,19 @@ class Protagonist {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { weaponId: instance.currentHittingWeapon.id, damage: damageDealt, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000), 1);
         });
+        
+        // inventory - after fighting
+        this.inventory = new Inventory(playerData.hotbar, this);
+        this.armorHolder = new ArmorHolder(playerData.armorBar);
 
-        // grade
+        // inventory stats - after stats and inventory
+        this.armorHolder.insertPieceStatsIntoPlayerStats(this.stats);
+        if(this.inventory.isWeaponSelected()) {
+            this.stats.setWeaponStats(this.inventory.selectedItem.getStats());
+        }
+
+
+        // grade after fighting!
         
         this.gradeHandler = new GradeHandler(this.fightingObject, 
             mainLoop.getMobManager(), 
@@ -112,14 +138,6 @@ class Protagonist {
             grade: this.gradeHandler.grade,
             fightDuration: mainLoop.getStopwatchFightDuration()
         }
-
-        // stats
-        this.accountLevel = playerData.accountLevel;
-
-
-        // inventory
-        this.inventory = new Inventory(playerData.hotbar, this);
-        this.armorHolder = new ArmorHolder(playerData.armorBar);
 
         // respawning
         this.respawnTimer = new Timer(Protagonist.RESPAWN_TIME, ()=> this.respawn());
@@ -202,7 +220,7 @@ class Protagonist {
 
     respawn() {
         console.log("Player " + this.id + " respawned.");
-        this.fightingObject.reset();
+        this.fightingObject.resetHp();
         this.movableBody.reset();
         this.pos = Protagonist.START_POS.clone();
         this.isAlive = true;
@@ -247,6 +265,9 @@ class Protagonist {
 
     selectItem(index) {
         this.inventory.selectItem(index);
+        if(this.inventory.isWeaponSelected) {
+            this.stats.setWeaponStats(this.inventory.selectedItem.getStats());
+        }
     }
 
     handleLeaveGameRequest() {
@@ -260,6 +281,10 @@ class Protagonist {
 
     getDropProbabilityModifier() {
         return this.gradeHandler.dropProbabilityModifier;
+    }
+
+    getStats() {
+        return this.stats.getTotalStats();
     }
 
     get equippedWeapon() {

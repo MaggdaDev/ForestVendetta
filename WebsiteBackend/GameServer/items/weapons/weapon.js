@@ -1,5 +1,6 @@
 const SimpleAdditionalFlatDamageVisitor = require("../../fighting/damageProcessing/damageVisitors/simpleAdditionalFlatDamageVisitor");
 const Item = require("../item");
+const Stats = require("../../../GameStatic/js/gameplay/stats/stats");
 
 class Weapon extends Item{
     /**
@@ -19,7 +20,12 @@ class Weapon extends Item{
 
     applyConfig(config) {       // loading all attributes
         this.rarity = config.rarity;
-        this.baseCombatStats = config.stats;
+        this.baseCombatStats = Stats.fromConfigJson(config.stats);
+        this.cooldown = config.stats.cooldown;
+    }
+
+    getStats() {
+        return this.baseCombatStats;
     }
 
     /**

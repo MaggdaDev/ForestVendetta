@@ -1,4 +1,5 @@
 const StatsBinder = require("../../fighting/statsBinder");
+const PlayerStats = require("../../player/playerStats");
 const ItemFactory = require("../ItemFactory");
 const ArmorPiece = require("./armorPiece");
 
@@ -15,13 +16,13 @@ class ArmorHolder {
         this.damageReceivedVisitors = [];
         this.damageDealtVisistors = [];
 
-        
-        armorBarList.forEach((currArmorMongo)=> {
+
+        armorBarList.forEach((currArmorMongo) => {
             this._addPieceFromMongo(currArmorMongo);
         });
 
         this.createVisitors();
-        
+
     }
 
     getDamageDealtVisitors() {
@@ -34,14 +35,26 @@ class ArmorHolder {
 
     _addPieceFromMongo(mongoData) {
         const addPiece = ItemFactory.makeItemFromMongoData(mongoData);
-        switch(addPiece.getClass()) {
+        switch (addPiece.getClass()) {
             case "BOOTS":
                 this.setBoots(addPiece);
-                break; 
+                break;
             default:
                 throw "Unsupported armor class: " + addPiece.getClass();
         }
 
+    }
+
+    /**@description inseerts armor stats into players total stats
+     * 
+     * @param {PlayerStats} playerStats 
+     */
+    insertPieceStatsIntoPlayerStats(playerStats) {
+        this.piecesArray.forEach((currPiece) => {
+            if (currPiece !== null && currPiece !== undefined) {
+                playerStats.addArmorPieceStats(currPiece.getStats());
+            }
+        });
     }
 
     setBoots(boots) {
@@ -50,8 +63,8 @@ class ArmorHolder {
     }
 
     createVisitors() {
-        this.piecesArray.forEach((currArmorPiece)=> {
-            if(currArmorPiece !== undefined && currArmorPiece !== null) {
+        this.piecesArray.forEach((currArmorPiece) => {
+            if (currArmorPiece !== undefined && currArmorPiece !== null) {
                 this.createVisitorsFromArmorPiece(currArmorPiece);
             }
         })
@@ -82,6 +95,6 @@ class ArmorHolder {
         }
     }
 
-    
+
 }
 module.exports = ArmorHolder;
