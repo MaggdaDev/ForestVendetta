@@ -58,6 +58,10 @@ class GameScene extends Phaser.Scene {
         this.overlayScene.updateGrade(gradeData);
     }
 
+    updateStats(statsObject) {
+        this.overlayScene.updateStats(statsObject);
+    }
+
 
     // Start: Executing incoming commands from network manager
 

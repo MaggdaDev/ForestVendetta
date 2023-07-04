@@ -1,5 +1,6 @@
 class OverlayScene extends Phaser.Scene {
     static rightDummy;
+    static leftDummy;
     constructor() {
         super({ key: 'OverlayScene', active: true });
     }
@@ -40,6 +41,11 @@ class OverlayScene extends Phaser.Scene {
         this.add.existing(this.rightPanel);
         this.alignNodeRight(this.rightPanel);
 
+        // stats panel
+        this.statsPanel = new StatsPanel(this);
+        this.add.existing(this.statsPanel);
+        this.alignNodeLeft(this.statsPanel);
+
         // controls
         if (MobileController.isMobile(this)) {
             this.input.addPointer(3);
@@ -59,6 +65,11 @@ class OverlayScene extends Phaser.Scene {
     updateGrade(gradeData) {
         this._assertCreated();
         this.rightPanel.updateGradeData(gradeData);
+    }
+
+    updateStats(statsObject) {
+        this._assertCreated();
+        this.statsPanel.update(statsObject);
     }
 
     _assertCreated() {
@@ -97,6 +108,15 @@ class OverlayScene extends Phaser.Scene {
         }
         node.setY(OverlayScene.rightDummy.y - node.getBounds().height / 2);
         node.setX(OverlayScene.rightDummy.x - node.getBounds().width);
+    }
+
+    alignNodeLeft(node) {
+        if (OverlayScene.leftDummy === undefined) {
+            OverlayScene.leftDummy = this.add.line(0, 0, 0, 0, 0, 0);
+            Phaser.Display.Align.In.LeftCenter(OverlayScene.leftDummy, this.screenZone);
+        }
+        node.setY(OverlayScene.leftDummy.y - node.getBounds().height / 2);
+        node.setX(OverlayScene.leftDummy.x + node.getBounds().width);
     }
 
     alignNodeCenter(node) {
