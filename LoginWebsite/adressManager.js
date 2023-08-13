@@ -1,11 +1,21 @@
 class AdressManager {
-    constructor(baseAdress) {
-        console.log("Created new AdressManager with baseAdress: " + baseAdress);
-        this.baseAdress = baseAdress;
+    constructor(isTestMode) {
+        this.adressConfig = require("../config-example/adresses-config.json");
+        if(this.adressConfig === undefined || this.adressConfig === null) throw "Invalid configuration!";
+
+        if(isTestMode) {
+            this.baseAdress = this.adressConfig["test-mode-login-website-adress"];
+        } else {
+            this.baseAdress = this.adressConfig["login-website-adress"];
+        }
+
+        
+        console.log("Created new AdressManager with baseAdress: " + this.baseAdress);
+
     }
 
     getIndexURL(params) {
-        var ret = this.baseAdress + "/index.html";
+        var ret = this.baseAdress + this.adressConfig["index-sub"];
         if(params !==  undefined) {
             ret +="?";
             for (var prop in params) {
@@ -19,7 +29,7 @@ class AdressManager {
 
 
     createRedirectToPrepareUri(userID, code, gameID) {
-        return this.baseAdress + `/prepare.html?userID=${userID}&code=${code}&state=${gameID}`;
+        return this.baseAdress + this.adressConfig["redirect-to-prepare-sub"] + `?userID=${userID}&code=${code}&state=${gameID}`;
     }
 }
 

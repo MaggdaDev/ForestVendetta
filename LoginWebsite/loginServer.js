@@ -12,9 +12,9 @@ class LoginServer {
     static LOCALHOST = "localhost";
     static HOST = "minortom.net";
     static LOGINPAGE = "index.html";
-    constructor(config, mongoAccess, rabbitConnection) {
+    constructor(mongoAccess, rabbitConnection, isTestMode) {
         this.server = null;
-        if (config.testMode) {
+        if (isTestMode) {
             console.log("Entering TEST MODE");
             this.host = LoginServer.LOCALHOST;
         } /*else {

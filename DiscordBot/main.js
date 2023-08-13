@@ -3,6 +3,7 @@ const { Routes, Client, GatewayIntentBits } = require('discord.js');
 const secret = require('./_SECRET.json');
 const { REST } = require('@discordjs/rest');
 const config = require('../config-example/discordbot-config.json');
+const globalConfig = require("../config-example/global-config.json");
 const CommandManager = require('./src/Commands/commandManager');
 const ForestScout = require('./src/forestScout');
 const RabbitConnection = require('../shared/rabbitConnection');
@@ -10,7 +11,7 @@ const MongoAccessor = require('../shared/mongoAccess/mongoAccessor');
 logMain("Preparing to start discord bot...");
 // test mode?
 var token;
-if (config.testMode) {
+if (globalConfig.isTestMode) {
     token = secret.test_token;
     logMain("TESTMODE ACTIVE");
     logMain("testmode => test token for test-bot user is used");
@@ -28,7 +29,7 @@ rabbitConnection.connectUntilSuccess(2000).then(()=>mongoAccessor.connectUntilSu
     logMain("Connecting to rabbit finished; creating bot discord client...");
     const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
     logMain("Creating Bot...");
-    const forestScout = new ForestScout(token, client, rabbitConnection, mongoAccessor, config.testMode);
+    const forestScout = new ForestScout(token, client, rabbitConnection, mongoAccessor, globalConfig.isTestMode);
 
     // When the client is ready, run this code (only once)
     client.once('ready', () => forestScout.onReady(forestScout));

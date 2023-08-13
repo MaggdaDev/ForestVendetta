@@ -1,5 +1,6 @@
 const secret = require("../../DiscordBot/_SECRET.json");
 const botConfig = require("../../config-example/discordbot-config.json");
+const globalConfig = require("../../config-example/global-config.json");
 const fetch = require("node-fetch");
 
 class DiscordAPIAccessor {
@@ -10,7 +11,7 @@ class DiscordAPIAccessor {
     static API_IDENTIFY_URI = 'oauth2/@me';
     constructor() {
         console.log("Constructing discord API Accessor");
-        if (botConfig.testMode) {
+        if (globalConfig.isTestMode) {
             this.redirectUri = DiscordAPIAccessor.TEST_REDIRECT_URI;
         } else {
             this.redirectUri = DiscordAPIAccessor.REDIRECT_URI;

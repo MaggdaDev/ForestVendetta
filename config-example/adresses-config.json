@@ -1,0 +1,8 @@
+{
+    
+
+    "test-mode-login-website-adress": "localhost:2999",
+    "login-website-adress": "forestvendetta.account.minortom.net",
+    "index-sub": "/index.html",
+    "redirect-to-prepare-sub": "/prepare.html" 
+}
