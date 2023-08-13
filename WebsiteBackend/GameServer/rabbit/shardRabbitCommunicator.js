@@ -21,7 +21,12 @@ class ShardRabbitCommunicator {
 
     sendDeployPlayerSuccessToLogin(requestDeployMessageID, pw, accessObject) {
         // create uri with password:
-        accessObject.shardUri = this.shardUri + "?pw=" + pw;
+        accessObject.shardUri = this.shardUri;
+        if(accessObject.shardUri.includes("?")) {
+            accessObject.shardUri += "&pw=" + pw;
+        } else {
+            accessObject.shardUri += "?pw=" + pw;
+        }
         this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));       // status: 1 success  retUri: uri?pw=123
     }
 
