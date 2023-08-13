@@ -5,3 +5,4 @@ DiscordBot/_SECRET.json
 WebsiteBackend/node_modules
 node_modules
 caddy/
+config-example/global-config.json
