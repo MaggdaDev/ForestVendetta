@@ -17,19 +17,14 @@ var adressConfig;
 
 const args = process.argv;
 var host = args[2]; // first 2 elements internal
-if(host === undefined) {
-  console.error("Host undefined. Using default: minortom.net");
-  host = "minortom.net";
-}
 var port = args[3];   
 if(port === undefined) {
   console.error("Port undefined. Using default: 3000");
   port = 3000;
 }
-const uri = "http://" + host + ":" + port;  
 var accessUri;
 if(globalConfig.isTestMode) {
-  accessUri = uri;
+  accessUri = "http://" + host + ":" + port; 
 } else {
   const adressConfig = require("../../config-example/adresses-config.json");
   accessUri = adressConfig["game-adress"] + "/?port=" + port;

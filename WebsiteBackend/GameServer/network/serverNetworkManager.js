@@ -21,7 +21,7 @@ class ServerNetworkManager {
         this.openPasswordAccesses = new Map();      // userID <-> pw
         this.deliveredPlayerData = new Map();       // userID <-> playerData        will be read on player object create
 
-        io.use((socket, next) => {      // authentication
+        io.of("/g").use((socket, next) => {      // authentication
             if(socket.handshake.auth === undefined || socket.handshake.auth === undefined) {
                 console.error("Someone trying to connect without auth string!");
                 next(new Error("unauthorized"));
