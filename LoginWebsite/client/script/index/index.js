@@ -6,7 +6,7 @@ var host;
 if (isTestMode) {
     host = "localhost";
 } else {
-    host = "forestvendetta.minortom.net/login/";
+    host = "forestvendetta.minortom.net/login";
 }
 var profileData = null;
 // real start
