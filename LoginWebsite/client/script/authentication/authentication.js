@@ -4,6 +4,4 @@ const httpCommunicator = new HTTPCommunicator(host);
 
 const code = params.code;
 const gameID = params.state;
-httpCommunicator.requestDiscordAccessAndRedirect(code, gameID).then((res) => {
-    console.log("Well... what to do now");
-});
+httpCommunicator.requestDiscordAccessAndRedirect(code, gameID);

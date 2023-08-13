@@ -125,7 +125,7 @@ class HTTPCommunicator {
      * @param {string} subAdress - command and params created with _generateSubadress
      * @param {function()} callback 
      */
-    _getAsync(subServer, subAdress, callback,) { // copy pesto https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+    _getAsync(subServer, subAdress, callback) { // copy pesto https://stackoverflow.com/questions/247483/http-get-request-in-javascript
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
