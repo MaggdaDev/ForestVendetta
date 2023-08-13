@@ -11,7 +11,10 @@ class NetworkManager {
         const authObj = this.extractUriParams();
 
         console.log("Creating socket...")
-        this.socket = io(window.location.host + "/g", { auth: authObj });
+        this.socket = io(window.location.host + "/g", { 
+            auth: authObj,
+            path:  "/g/socket.io"
+        });
         this.socket.on('connect_error', (error) => {
             console.log("UNAUTHORIZED");
             scene.connectionIsUnauthorized(error);

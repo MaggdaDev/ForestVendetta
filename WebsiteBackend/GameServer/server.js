@@ -11,7 +11,9 @@ const RabbitConnection = require('../../shared/rabbitConnection.js');
 const ShardRabbitCommunicator = require('./rabbit/shardRabbitCommunicator.js');
 const ShardRabbitCommandHandler = require('./rabbit/shardRabbitCommandHandler.js');
 const AccessManager = require('./admin/accessManager.js');
-const io = new Server(server);
+const io = new Server(server, {
+  path: "/g/socket.io"
+});
 const globalConfig = require("../../config-example/global-config.json");
 var adressConfig;
 
