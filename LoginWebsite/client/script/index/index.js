@@ -1,12 +1,12 @@
 console.log("Client script started");
 
-const isTestMode = true;            // TODO: SOMETHING BETTER...
+const isTestMode = false;            // TODO: SOMETHING BETTER...
 const port = 2999;
 var host;
 if (isTestMode) {
     host = "localhost";
 } else {
-    host = "minortom.net";
+    host = "forestvendetta.minortom.net/login/";
 }
 var profileData = null;
 // real start
