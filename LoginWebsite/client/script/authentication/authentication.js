@@ -1,5 +1,9 @@
 const params = ParamReader.params;
-const host = document.location.host;
+var host = document.location.host;
+if(document.URL.includes("/login/")) {
+    host += "/login";
+    console.log("Detected server is running reverse proxy; appended /login to host");
+}
 const httpCommunicator = new HTTPCommunicator(host);
 
 const code = params.code;

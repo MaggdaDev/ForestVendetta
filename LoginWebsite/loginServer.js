@@ -17,9 +17,9 @@ class LoginServer {
         if (config.testMode) {
             console.log("Entering TEST MODE");
             this.host = LoginServer.LOCALHOST;
-        } else {
+        } /*else {
             this.host = LoginServer.HOST;
-        }
+        }*/ // always localhost since caddy routes https to http at localhost
         this.port = LoginServer.PORT;
         this.adress = `http://${this.host}:${this.port}`;
         this.adressManager = new AdressManager(this.adress);
