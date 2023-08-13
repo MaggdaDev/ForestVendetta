@@ -40,7 +40,7 @@ class RequestHandler {
     getRejectObject(error) {
         return {
             error: error,
-            redirect: this.adressManager.getIndexURL({ "error": error })
+            redirect: this.adressManager.getErrorURL({ "error": error })
         }
     }
 

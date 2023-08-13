@@ -1,4 +1,5 @@
 {
+    "error-redirect-full-adress": "https://forestvendetta.account.minortom.net/index.html",
     "redirect-to-authentication-adress": "https://forestvendetta.account.minortom.net",
     "login-website-adress": "http://localhost:2999",
     "game-adress": "https://forestvendetta.game.minortom.net",

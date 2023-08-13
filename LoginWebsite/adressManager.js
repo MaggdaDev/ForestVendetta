@@ -16,8 +16,8 @@ class AdressManager {
         return this.adressConfig;
     }
 
-    getIndexURL(params) {
-        var ret = this.baseAdress + this.adressConfig["index-sub"];
+    getErrorURL(params) {
+        var ret = this.adressConfig["error-redirect-full-adress"];
         if(params !==  undefined) {
             ret +="?";
             for (var prop in params) {
