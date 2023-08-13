@@ -22,7 +22,7 @@ class LoginServer {
         }*/ // always localhost since caddy routes https to http at localhost
         this.port = LoginServer.PORT;
         this.adress = `http://${this.host}:${this.port}`;
-        this.adressManager = new AdressManager(this.adress);
+        this.adressManager = new AdressManager(isTestMode);
 
         console.log("Creating server for: " + this.host + ":" + this.port);
         this.rabbitCommunicator = new LoginRabbitCommunicator(rabbitConnection);
