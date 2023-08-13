@@ -136,7 +136,7 @@ class HTTPCommunicator {
                 return window.location.replace(xmlHttp.responseText);
             }
         }
-        xmlHttp.open("GET", "http://" + this.adress + subServer + subAdress, true); // true for asynchronous 
+        xmlHttp.open("GET", location.protocol + "//" + this.adress + subServer + subAdress, true); // true for asynchronous 
         xmlHttp.send(null);
         logHTTPCommunicator("Sent http request: " + subAdress);
     }
