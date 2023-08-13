@@ -9,8 +9,8 @@ class ShardRabbitCommunicator {
      * @param {RabbitConnection} rabbitConnection - 
      * @param {string} gameID - should be from IDGenerator.instance().nextGameID()
      */
-    constructor(rabbitConnection, gameID, networkManager, shardUri, accessManager) {
-        this.shardUri = shardUri;
+    constructor(rabbitConnection, gameID, networkManager, shardAccessUri, accessManager) {
+        this.shardUri = shardAccessUri;
         this.rabbitConnection = rabbitConnection;
         this.rabbitConnection.assertCustomQueue(gameID);
         this.rabbitCommandHandler = new ShardRabbitCommandHandler(this, networkManager, accessManager);

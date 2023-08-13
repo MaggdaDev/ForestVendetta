@@ -27,12 +27,12 @@ if(port === undefined) {
   port = 3000;
 }
 const uri = "http://" + host + ":" + port;  
-var playerUri;
+var accessUri;
 if(globalConfig.isTestMode) {
-  playerUri = uri;
+  accessUri = uri;
 } else {
   const adressConfig = require("../../config-example/adresses-config.json");
-  playerUri = adressConfig["game-adress"] + "/?port=" + port;
+  accessUri = adressConfig["game-adress"] + "/?port=" + port;
 }
 var gameID = args[4];
 if(gameID === undefined) {
@@ -61,8 +61,8 @@ rabbitConnection.connectUntilSuccess(2000).then(()=> {
   var mainLoop = new MainLoop(playerMap, server);
   var networkManager = new ServerNetworkManager(io, playerMap, mainLoop);
   var accessManager = new AccessManager(playerMap);
-  const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, uri, accessManager);
-  rabbitCommunicator.sendCreateSuccess(createMessageID, playerUri);
+  const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, accessUri, accessManager);
+  rabbitCommunicator.sendCreateSuccess(createMessageID, accessUri);
   mainLoop.init(rabbitCommunicator);
   mainLoop.start();
 
