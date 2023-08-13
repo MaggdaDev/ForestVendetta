@@ -3,10 +3,13 @@ console.log("Client script started");
 const isTestMode = false;            // TODO: SOMETHING BETTER...
 const port = 2999;
 var host;
+var protocoll;
 if (isTestMode) {
     host = "localhost";
+    protocoll = "http";
 } else {
     host = "forestvendetta.minortom.net/login";
+    protocoll = "https";
 }
 var profileData = null;
 // real start
@@ -29,7 +32,8 @@ window.onload = () => {
     }
 
     // setup login with discord
-    const redirectUri = "http://" + host + ":" + port + "/authentication.html";
+    const redirectUri = protocoll + "://" + host + ":" + port + "/authentication.html";
+    
     const formObject = new FormObject("loginWithDiscordForm",       // form document ID
         "https://discord.com/api/oauth2/authorize",                 // action
         [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
