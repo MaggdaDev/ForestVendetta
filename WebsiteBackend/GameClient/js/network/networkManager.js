@@ -3,11 +3,10 @@ class NetworkManager {
      * 
      * @param {Phaser.Scene} scene 
      */
-    constructor(scene, mobManager, port) {
+    constructor(scene, mobManager) {
         console.log("Creating Network manager...");
         this.isIngame = true;
         this.mainScene = scene;
-        port = 3000;
         const authObj = this.extractUriParams();
 
         console.log("Creating socket...")
@@ -15,7 +14,7 @@ class NetworkManager {
             auth: authObj,
             path:  "/g/socket.io",
             query: {
-                "port": port
+                "port": authObj.port
             }
         });
         this.socket.on('connect_error', (error) => {
@@ -74,10 +73,12 @@ class NetworkManager {
         });
         const userID = params.userID;
         const pw = params.pw;
-        console.log("Extracted auth params from uri: userID:" + userID + " and pw: " + pw);
+        const port = params.port;
+        console.log("Extracted auth params from uri: userID:" + userID + " and pw: " + pw + " and port: " + port);
         return {
             userID: userID,
-            pw: pw
+            pw: pw,
+            port: port
         }
     }
 

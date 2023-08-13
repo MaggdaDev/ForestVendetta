@@ -9,12 +9,13 @@ class ShardRabbitCommunicator {
      * @param {RabbitConnection} rabbitConnection - 
      * @param {string} gameID - should be from IDGenerator.instance().nextGameID()
      */
-    constructor(rabbitConnection, gameID, networkManager, shardAccessUri, accessManager) {
+    constructor(rabbitConnection, gameID, networkManager, shardAccessUri, accessManager, port) {
         this.shardUri = shardAccessUri;
         this.rabbitConnection = rabbitConnection;
         this.rabbitConnection.assertCustomQueue(gameID);
         this.rabbitCommandHandler = new ShardRabbitCommandHandler(this, networkManager, accessManager);
         this.gameQueueName = gameID;
+        this.port = port;
 
         this.rabbitConnection.onMessageToCustomQueue((message) => this.rabbitCommandHandler.handleCommand(message), this.gameQueueName)
     }
@@ -27,6 +28,7 @@ class ShardRabbitCommunicator {
         } else {
             accessObject.shardUri += "?pw=" + pw;
         }
+        accessObject.shardUri += "&port=" + this.port;
         this.rabbitConnection.sendToLoginWebsite(RabbitMessage.fromCorrelationID(requestDeployMessageID, accessObject));       // status: 1 success  retUri: uri?pw=123
     }
 
