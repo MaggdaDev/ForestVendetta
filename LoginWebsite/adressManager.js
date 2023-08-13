@@ -17,7 +17,7 @@ class AdressManager {
     }
 
     getErrorURL(params) {
-        var ret = this.adressConfig["error-redirect-full-adress"];
+        var ret = this.adressConfig["redirect-home"] + this.adressConfig["index-sub"];
         if(params !==  undefined) {
             ret +="?";
             for (var prop in params) {
@@ -29,9 +29,27 @@ class AdressManager {
         return ret;
     }
 
+    /**
+     * 
+     * @returns the flat adress redirecting to prepare after discord auth
+     */
+    getRedirectToPrepareUri() {
+        return this.adressConfig["redirect-home"] + this.adressConfig["prepare-sub"];
+    }
 
+    getRedirectToAuthenticationUri() {
+        return this.adressConfig["redirect-home"] + this.adressConfig["authentication-sub"];
+    }
+
+    /**
+     * 
+     * @param {*} userID 
+     * @param {*} code 
+     * @param {*} gameID 
+     * @returns the redirecting adress to prepare including userID, code and gameID as query strings
+     */
     createRedirectToPrepareUri(userID, code, gameID) {
-        return this.baseAdress + this.adressConfig["redirect-to-prepare-sub"] + `?userID=${userID}&code=${code}&state=${gameID}`;
+        return this.getRedirectToPrepareUri() + `?userID=${userID}&code=${code}&state=${gameID}`;
     }
 }
 

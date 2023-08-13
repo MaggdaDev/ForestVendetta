@@ -23,7 +23,7 @@ class FVAPI {
         logApi("API constructed");
         this.rabbitCommunicator = rabbitCommunicator;
         this.adressManager = adressManager;
-        this.discordApiAccessor = new DiscordAPIAccessor();
+        this.discordApiAccessor = new DiscordAPIAccessor(adressManager);
         this.discordAuthenticator = new DiscordAuthenticator(this.discordApiAccessor);
         this.requestHandler = new RequestHandler(this.discordApiAccessor, this.discordAuthenticator, mongoAccessor, this.rabbitCommunicator, adressManager);
 

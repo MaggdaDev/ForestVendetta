@@ -1,10 +1,8 @@
 {
-    "request-discord-auth-redirect-full-adress": "https://forestvendetta.account.minortom.net/authentication.html",
-    "error-redirect-full-adress": "https://forestvendetta.account.minortom.net/index.html",
-    "redirect-to-authentication-adress": "https://forestvendetta.account.minortom.net",
+    "redirect-home": "https://forestvendetta.account.minortom.net",
     "login-website-adress": "http://localhost:2999",
     "game-adress": "https://forestvendetta.game.minortom.net",
     "authentication-sub": "/authentication.html",
     "index-sub": "/index.html",
-    "redirect-to-prepare-sub": "/prepare.html"
+    "prepare-sub": "/prepare.html"
 }

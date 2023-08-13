@@ -4,20 +4,12 @@ const globalConfig = require("../../config-example/global-config.json");
 const fetch = require("node-fetch");
 
 class DiscordAPIAccessor {
-    static REDIRECT_URI = "http://minortom.net:2999/authentication.html";
-    static TEST_REDIRECT_URI = "http://localhost:2999/authentication.html";
     static API_ENDPOINT = 'https://discord.com/api/v10/';
     static API_TOKEN_URI = 'oauth2/token';
     static API_IDENTIFY_URI = 'oauth2/@me';
-    constructor() {
+    constructor(adressManager) {
         console.log("Constructing discord API Accessor");
-        if (globalConfig.isTestMode) {
-            console.log("Test mode detected; loading auth redirect from test-config");
-            this.redirectUri = require("../../config-example/adresses-test-config.json")["request-discord-auth-redirect-full-adress"];
-        } else {
-            console.log("Loading auth redirect from config");
-            this.redirectUri = require("../../config-example/adresses-config.json")["request-discord-auth-redirect-full-adress"];
-        }
+        this.redirectUri = adressManager.getRedirectToAuthenticationUri();
     }
 
     /**

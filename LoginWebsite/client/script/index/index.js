@@ -25,7 +25,7 @@ window.onload = () => {
     })
     .then(responseString => {
         const adressConfig = JSON.parse(responseString);
-        const redirectUri = adressConfig["redirect-to-authentication-adress"] + adressConfig["authentication-sub"];
+        const redirectUri = adressConfig["redirect-home"] + adressConfig["authentication-sub"];
         console.log("Got adress config successfully, forming redirect uri from it: " + redirectUri);
         const formObject = new FormObject("loginWithDiscordForm",       // form document ID
         "https://discord.com/api/oauth2/authorize",                 // action
