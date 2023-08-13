@@ -113,7 +113,7 @@ class MongoAccessor {
         const player = await this.playerCollection.findOne(query);
         if (player === null) {   // not existing
             logMongo("Player not existing; now being created...");
-            var newplayer = this.objectFactory.addNewPlayer(userID);
+            var newplayer = await this.objectFactory.addNewPlayer(userID);
             logMongo("Player created.");
             this.giveStarterItemIfInventoryEmpty(newplayer);
             return newplayer;
@@ -150,7 +150,7 @@ class MongoAccessor {
      */
     async getItemObjectsFromIDs(itemIDs) {
         logMongo("Get itemObjects from IDs...");
-        const query =                                                           { "_id": { "$in": itemIDs } }
+        const query =  { "_id": { "$in": itemIDs } }
         const cursor = await this.itemCollection.find(query);
         const objects = await cursor.toArray();
         logMongo("Got " + objects.length + " items as objects.");

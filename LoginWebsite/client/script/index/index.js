@@ -1,23 +1,8 @@
 console.log("Client script started");
-
-const isTestMode = false;            // TODO: SOMETHING BETTER...
-const port = 2999;
-var host;
-var protocoll;
-var redirectUri;
-if (isTestMode) {
-    host = "localhost";
-    redirectUri = "http://localhost:2999/authentication.html";
-} else {
-    host = "forestvendetta.minortom.net/login";
-    redirectUri = "https://forestvendetta.minortom.net/login/authentication.html";
-}
-var profileData = null;
 // real start
 window.onload = () => {
     // read query params
     const params = ParamReader.params;
-    const test = params.error;
     if (params.error !== undefined && params.error !== null) {
         console.log("Coming from error redirect!");
         switch (params.error) {
@@ -32,8 +17,17 @@ window.onload = () => {
         }
     }
 
-    // setup login with discord
-    const formObject = new FormObject("loginWithDiscordForm",       // form document ID
+    fetch(document.location.protocol + "//" + document.location.host + "/API/getadressconfig").then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(responseString => {
+        const adressConfig = JSON.parse(responseString);
+        const redirectUri = adressConfig["redirect-to-authentication-adress"] + adressConfig["authentication-sub"];
+        console.log("Got adress config successfully, forming redirect uri from it: " + redirectUri);
+        const formObject = new FormObject("loginWithDiscordForm",       // form document ID
         "https://discord.com/api/oauth2/authorize",                 // action
         [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
         { name: 'redirect_uri', value: redirectUri },
@@ -41,4 +35,11 @@ window.onload = () => {
         { name: 'scope', value: 'identify' },
         { name: 'state', value: params.game }]);
     formObject.register();
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+    });
+
+    // setup login with discord
+    
 }

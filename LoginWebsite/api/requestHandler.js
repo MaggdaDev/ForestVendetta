@@ -124,6 +124,7 @@ class RequestHandler {
         return this.mongoAccessor.getPlayerOrCreate(discordID);
     }
 
+
     // end: request join game data
 
 
@@ -213,7 +214,12 @@ class RequestHandler {
     }
 
     // end: join game
+    async getAdressConfig() {
+        return "testtest";
+    }
 }
+
+
 
 function logRequestHandler(s) {
     console.log("[RequestHandler] " + s);

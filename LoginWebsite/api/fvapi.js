@@ -10,7 +10,8 @@ class FVAPI {
     static API_REQUESTS = {     // lower case all
         requestDiscordAuth: "requestdiscordauth",
         getProfileData: "getprofiledata",       // request user profile data before joining a game
-        deployToGameIfPossible: "deploytogameifpossible"
+        deployToGameIfPossible: "deploytogameifpossible",
+        getAdressConfig: "getadressconfig"
     }
 
     /**
@@ -87,6 +88,9 @@ class FVAPI {
                         expressRes.send(res);
                     });
                     break;
+                case FVAPI.API_REQUESTS.getAdressConfig:
+                    logApi("Get adress config");
+                    expressRes.send(this.adressManager.getAdressConfig());
                 default:
                     this.logInvalid(path);
                     reject("invalid request");

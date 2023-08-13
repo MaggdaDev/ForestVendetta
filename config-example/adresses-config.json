@@ -1,8 +1,7 @@
 {
-    
-
-    "test-mode-login-website-adress": "localhost:2999",
-    "login-website-adress": "forestvendetta.account.minortom.net",
+    "redirect-to-authentication-adress": "https://forestvendetta.account.minortom.net",
+    "login-website-adress": "http://localhost:2999",
+    "authentication-sub": "authentication.html",
     "index-sub": "/index.html",
     "redirect-to-prepare-sub": "/prepare.html" 
 }

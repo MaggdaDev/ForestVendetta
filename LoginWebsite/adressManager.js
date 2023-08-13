@@ -1,17 +1,19 @@
 class AdressManager {
     constructor(isTestMode) {
-        this.adressConfig = require("../config-example/adresses-config.json");
-        if(this.adressConfig === undefined || this.adressConfig === null) throw "Invalid configuration!";
-
         if(isTestMode) {
-            this.baseAdress = this.adressConfig["test-mode-login-website-adress"];
+            this.adressConfig = require("../config-example/adresses-test-config.json");
         } else {
-            this.baseAdress = this.adressConfig["login-website-adress"];
+            this.adressConfig = require("../config-example/adresses-config.json");
         }
 
+        if(this.adressConfig === undefined || this.adressConfig === null) throw "Invalid configuration!";
         
+        this.baseAdress = this.adressConfig["login-website-adress"];
         console.log("Created new AdressManager with baseAdress: " + this.baseAdress);
+    }
 
+    getAdressConfig() {
+        return this.adressConfig;
     }
 
     getIndexURL(params) {
