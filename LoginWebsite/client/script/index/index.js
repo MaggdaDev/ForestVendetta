@@ -4,12 +4,13 @@ const isTestMode = false;            // TODO: SOMETHING BETTER...
 const port = 2999;
 var host;
 var protocoll;
+var redirectUri;
 if (isTestMode) {
     host = "localhost";
-    protocoll = "http";
+    redirectUri = "http://localhost:2999/authentication.html";
 } else {
     host = "forestvendetta.minortom.net/login";
-    protocoll = "https";
+    redirectUri = "https://forestvendetta.minortom.net/login/authentication.html";
 }
 var profileData = null;
 // real start
@@ -32,8 +33,6 @@ window.onload = () => {
     }
 
     // setup login with discord
-    const redirectUri = protocoll + "://" + host + ":" + port + "/authentication.html";
-    
     const formObject = new FormObject("loginWithDiscordForm",       // form document ID
         "https://discord.com/api/oauth2/authorize",                 // action
         [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
