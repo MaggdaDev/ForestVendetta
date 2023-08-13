@@ -3,17 +3,20 @@ class NetworkManager {
      * 
      * @param {Phaser.Scene} scene 
      */
-    constructor(scene, mobManager) {
+    constructor(scene, mobManager, port) {
         console.log("Creating Network manager...");
         this.isIngame = true;
         this.mainScene = scene;
-
+        port = 3000;
         const authObj = this.extractUriParams();
 
         console.log("Creating socket...")
         this.socket = io("/g", { 
             auth: authObj,
-            path:  "/g/socket.io"
+            path:  "/g/socket.io",
+            query: {
+                "port": port
+            }
         });
         this.socket.on('connect_error', (error) => {
             console.log("UNAUTHORIZED");
