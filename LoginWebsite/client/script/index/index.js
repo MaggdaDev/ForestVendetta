@@ -8,7 +8,6 @@ var redirectUri;
 if (isTestMode) {
     host = "localhost";
     redirectUri = "http://localhost:2999/authentication.html";
-    isHtt
 } else {
     host = "forestvendetta.minortom.net/login";
     redirectUri = "https://forestvendetta.minortom.net/login/authentication.html";

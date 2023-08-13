@@ -130,7 +130,11 @@ class HTTPCommunicator {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 logHTTPCommunicator("status 200 received. Callback.");
-                callback(xmlHttp.responseText);
+                if (callback !== undefined && callback !== null) {
+                    callback(xmlHttp.responseText);
+                } else {
+                    logHTTPCommunicator("Callback is not existent.");
+                }
             } else if (xmlHttp.readyState == 4 && xmlHttp.status == 302) {
                 logHTTPCommunicator("status 302 received. Redirecting to " + xmlHttp.responseText);
                 return window.location.replace(xmlHttp.responseText);
