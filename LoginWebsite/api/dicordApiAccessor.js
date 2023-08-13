@@ -12,9 +12,9 @@ class DiscordAPIAccessor {
     constructor() {
         console.log("Constructing discord API Accessor");
         if (globalConfig.isTestMode) {
-            this.redirectUri = DiscordAPIAccessor.TEST_REDIRECT_URI;
+            this.redirectUri = require("../../config-example/adresses-test-config.json")["request-discord-auth-redirect-full-adress"];
         } else {
-            this.redirectUri = DiscordAPIAccessor.REDIRECT_URI;
+            this.redirectUri = require("../../config-example/adresses-config.json")["request-discord-auth-redirect-full-adress"];
         }
     }
 

@@ -1,4 +1,5 @@
 {
+    "request-discord-auth-redirect-full-adress": "http://localhost:2999/authentication.html",
     "error-redirect-full-adress": "http://localhost:2999/index.html",
     "redirect-to-authentication-adress": "http://localhost:2999",
     "login-website-adress": "http://localhost:2999",
