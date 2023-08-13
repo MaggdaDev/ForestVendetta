@@ -11,7 +11,7 @@ class NetworkManager {
         const authObj = this.extractUriParams();
 
         console.log("Creating socket...")
-        this.socket = io(window.location.host + "/g", { 
+        this.socket = io("/g", { 
             auth: authObj,
             path:  "/g/socket.io"
         });
