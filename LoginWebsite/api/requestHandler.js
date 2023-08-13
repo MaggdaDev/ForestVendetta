@@ -214,9 +214,6 @@ class RequestHandler {
     }
 
     // end: join game
-    async getAdressConfig() {
-        return "testtest";
-    }
 }
 
 

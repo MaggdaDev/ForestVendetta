@@ -12,6 +12,8 @@ const ShardRabbitCommunicator = require('./rabbit/shardRabbitCommunicator.js');
 const ShardRabbitCommandHandler = require('./rabbit/shardRabbitCommandHandler.js');
 const AccessManager = require('./admin/accessManager.js');
 const io = new Server(server);
+const globalConfig = require("../../config-example/global-config.json");
+var adressConfig;
 
 const args = process.argv;
 var host = args[2]; // first 2 elements internal
@@ -25,6 +27,13 @@ if(port === undefined) {
   port = 3000;
 }
 const uri = "http://" + host + ":" + port;  
+var playerUri;
+if(globalConfig.isTestMode) {
+  playerUri = uri;
+} else {
+  const adressConfig = require("../../config-example/adresses-config.json");
+  playerUri = adressConfig["game-adress"] + "/?port=" + port;
+}
 var gameID = args[4];
 if(gameID === undefined) {
   console.error("GameID undefined. Using default: testtest123");
@@ -53,7 +62,7 @@ rabbitConnection.connectUntilSuccess(2000).then(()=> {
   var networkManager = new ServerNetworkManager(io, playerMap, mainLoop);
   var accessManager = new AccessManager(playerMap);
   const rabbitCommunicator = new ShardRabbitCommunicator(rabbitConnection, gameID, networkManager, uri, accessManager);
-  rabbitCommunicator.sendCreateSuccess(createMessageID, uri);
+  rabbitCommunicator.sendCreateSuccess(createMessageID, playerUri);
   mainLoop.init(rabbitCommunicator);
   mainLoop.start();
 

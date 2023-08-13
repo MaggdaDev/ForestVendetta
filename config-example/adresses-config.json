@@ -1,7 +1,8 @@
 {
     "redirect-to-authentication-adress": "https://forestvendetta.account.minortom.net",
     "login-website-adress": "http://localhost:2999",
+    "game-adress": "https://forestvendetta.game.minortom.net",
     "authentication-sub": "authentication.html",
     "index-sub": "/index.html",
-    "redirect-to-prepare-sub": "/prepare.html" 
+    "redirect-to-prepare-sub": "/prepare.html"
 }
