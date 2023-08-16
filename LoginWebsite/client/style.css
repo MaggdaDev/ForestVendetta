@@ -1,4 +1,4 @@
-.itemFrameDiv {    
+.itemFrameDiv {
     display: flex;
     justify-content: center;
     border-color: black;
@@ -23,7 +23,7 @@
     pointer-events: none;
     margin: auto;
     position: relative;
-    
+
 }
 
 .gridWrapper {
@@ -59,13 +59,15 @@
     border: thin solid black;
     flex-direction: row;
 
-    justify-content: flex-start; /* Align center left */
-    gap: 5px; /* Add spacing between divs */
+    justify-content: flex-start;
+    /* Align center left */
+    gap: 5px;
+    /* Add spacing between divs */
     margin: 5px;
     padding: 5px;
     position: relative;
     align-items: center;
-    
+
 }
 
 .notOkForDrag {
@@ -88,7 +90,7 @@
 }
 
 .itemSlot {
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     border: 2px;
@@ -100,4 +102,91 @@
     position: relative;
 }
 
+.emoteDiv {
+    flex: 1;
+    text-align: right;
+    /* Align content to the right */
+    padding: 20px;
+}
 
+.overlayDialog {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+.overlayDialogContent {
+    padding: 5%;kuizg
+  }
+
+  .toggle-container {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .toggle-image {
+    cursor: pointer;
+    border: 2px solid gray;
+    display: inline-block;
+    padding: 5px;
+    transition: border-color 0.3s ease-in-out;
+  }
+
+  .toggle-radio {
+    display: none;
+  }
+
+  .toggle-radio:checked + .toggle-image {
+    border-color: blue;
+  }
+
+  .selectServerDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 10px;
+  }
+  
+  .selectServerDiv:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-3px);
+  }
+  
+  .selectServerOptionLabel {
+    user-select: none;
+    margin: 0;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .selectServerOptionImg {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .selectServerDiv.active {
+    background-color: #e0e0e0;
+    transform: translateY(0);
+  }
+  
+  /* Optional: Add more styles for click effect */
+  .selectServerDiv.active:hover {
+    background-color: #d0d0d0;
+  }
+
+  #chooseEmoteImportOverlayOptions {
+    display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  grid-gap: 10px;
+  width: 300px; /* Adjust as needed */
+  margin: 0 auto;
+  }

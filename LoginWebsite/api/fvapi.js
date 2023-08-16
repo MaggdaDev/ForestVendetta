@@ -4,6 +4,8 @@ const LoginRabbitCommunicator = require("../rabbit/loginRabbitCommunicator");
 const DiscordAPIAccessor = require("./dicordApiAccessor");
 const DiscordAuthenticator = require("./discordAuthenticator");
 const RequestHandler = require("./requestHandler");
+const DiscordEmoteImporter = require("./discordEmoteImporter");
+const { error, log } = require("console");
 class FVAPI {
     static API_URI = "/api/";
 
@@ -11,7 +13,9 @@ class FVAPI {
         requestDiscordAuth: "requestdiscordauth",
         getProfileData: "getprofiledata",       // request user profile data before joining a game
         deployToGameIfPossible: "deploytogameifpossible",
-        getAdressConfig: "getadressconfig"
+        getAdressConfig: "getadressconfig",
+        getJoinedFVGuilds: "getjointfvguilds",
+        getEmotes: "getemotes"
     }
 
     /**
@@ -26,7 +30,7 @@ class FVAPI {
         this.discordApiAccessor = new DiscordAPIAccessor(adressManager);
         this.discordAuthenticator = new DiscordAuthenticator(this.discordApiAccessor);
         this.requestHandler = new RequestHandler(this.discordApiAccessor, this.discordAuthenticator, mongoAccessor, this.rabbitCommunicator, adressManager);
-
+        this.discordEmoteImporter = new DiscordEmoteImporter(this.discordApiAccessor, this.discordAuthenticator);
     }
 
     apiRequestListenerHandler(req, res) {
@@ -58,6 +62,7 @@ class FVAPI {
         const instance = this;
         const promise = new Promise((resolve, reject) => {
             logApi("Routing request: " + path);
+            try {
             switch (path.toLowerCase()) {
                 case FVAPI.API_REQUESTS.requestDiscordAuth:     // expected args: code and gameID
                     logApi("Received request for discord auth");
@@ -91,11 +96,33 @@ class FVAPI {
                 case FVAPI.API_REQUESTS.getAdressConfig:
                     logApi("Get adress config");
                     expressRes.send(this.adressManager.getAdressConfig());
+                    break;
+                case FVAPI.API_REQUESTS.getJoinedFVGuilds:
+                    logApi("Requested list of FV guilds");
+                    this.discordEmoteImporter.getFVGuildList(query).then((res) => {
+                        logApi("Returning back to client list of joint FV guilds (" + res.length + ")");
+                        expressRes.send(res);
+                    }).catch(error => {
+                        reject(this.requestHandler.getRejectObject(error));
+                    });
+                    break;
+                    case FVAPI.API_REQUESTS.getEmotes:
+                    logApi("requested emotes for guild id");
+                    this.discordEmoteImporter.getGuildEmotes(query).then((res) => {
+                        logApi("Returning list of emotes to client");
+                        expressRes.send(res);
+                    }).catch(error => {
+                        reject(this.requestHandler.getRejectObject(error));
+                    });
+                    break;
                 default:
                     this.logInvalid(path);
                     reject("invalid request");
                     break;
             }
+        } catch(error) {
+            console.error(error);
+        }
         });
         return promise;
     }

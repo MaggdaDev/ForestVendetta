@@ -9,7 +9,9 @@
 </head>
 
 <body style="overflow-x: hidden;"">
-  <h1>Prepare for battle</h1>
+  <div class="header">
+    <h1>Prepare for battle</h1>
+  </div>
   <div class="gridWrapper">
 
 
@@ -45,7 +47,55 @@
   </div>
   <button id="joinGameBtn">JOIN GAME</button>
   <h3 id="errorInfo" hidden></h3>
+  <button id="addEmoteBtn">
+    Add emote from discord
+  </button>
 
+  <div id="chooseServerForEmoteImportOverlay" class="overlayDialog">
+    <div id="chooseServerForEmoteImportContent" class="overlayDialogContent">
+      <div class="toggle-container">
+        <input type="checkbox" id="toggle2" class="toggle-radio" name="imageToggle">
+        <label for="toggle2" class="toggle-image">
+          testtest
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <template id="itemFrameTemplate">
+
+    <div draggable=true class="itemFrameDiv" ondragstart="onItemFrameDragStarted(event)">
+    </div>
+  </template>
+  
+  <template id="selectServerOptionTemplate">
+    <div class="selectServerDiv">
+      <img class="selectServerOptionImg"></img>
+      <p class="selectServerOptionLabel"></p>
+    </div>
+  </template>
+  
+  <template id="chooseServerDialogTemplate">
+    <div id="chooseServerForEmoteImportOverlay" class="overlayDialog">
+      <h1>Select discord server...</h1>
+      <div id="chooseServerForEmoteImportOptions" class="overlayDialogContent">
+      </div>
+    </div>
+  </template>
+
+  <template id="chooseEmoteOptionTemplate">
+    <div class="selectServerDiv">
+      <img class="emoteImg"></img>
+    </div>
+  </template>
+
+  <template id="chooseEmoteDialogTemplate">
+    <div id="chooseEmoteImportOverlay" class="overlayDialog">
+      <h1>Select emote...</h1>
+      <div id="chooseEmoteImportOverlayOptions" class="overlayDialogContent">
+      </div>
+    </div>
+  </template>
 </body>
 
 <footer>
@@ -62,13 +112,14 @@
   <script src="./script/prepare/inventory/itemHoverInfo.js"></script>
   
   
-  <script src="./script/prepare/prepare.js"></script></footer>
+  <script src="./script/prepare/prepare.js"></script>
+  <script src="./script/prepare/emotes.js"></script>
+  <script src="./script/prepare/dialogManager.js"></script>
+
+</footer>
 
 
-<template id="itemFrameTemplate">
 
-  <div draggable=true class="itemFrameDiv" ondragstart="onItemFrameDragStarted(event)">
-  </div>
-</template>
+
 
 </html>

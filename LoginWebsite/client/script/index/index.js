@@ -32,7 +32,7 @@ window.onload = () => {
         [{ name: 'client_id', value: '1014855311259078666' },       // hidden params
         { name: 'redirect_uri', value: redirectUri },
         { name: 'response_type', value: "code" },
-        { name: 'scope', value: 'identify' },
+        { name: 'scope', value: 'identify guilds guilds.members.read' },
         { name: 'state', value: params.game }]);
     formObject.register();
     })

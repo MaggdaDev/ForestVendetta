@@ -6,6 +6,8 @@ class HTTPCommunicator {
     static REQUEST_DISCORD_AUTH = "requestdiscordauth"; // from wait for auth site; expecting redirect as response
     static GET_PROFILE_DATA_REQUEST = "getprofiledata";
     static JOIN_GAME_REQUEST = "deployToGameIfPossible";
+    static GET_JOINT_FV_GUILDS = "getjointfvguilds";
+    static GET_EMOTES = "getemotes";    
 
     // resources (always in json of map of base64 encoded; filename without extension as key)
     static GET_WEAPON_IMAGES = "getweaponimages";
@@ -52,6 +54,20 @@ class HTTPCommunicator {
         const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_PROFILE_DATA_REQUEST, requestParams);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
     }
+
+    requestJoinedFVGuilds(userID, code, callback) {
+        var requestParams = [{ name: "userID", value: userID }, { name: "code", value: code }];
+        const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_JOINT_FV_GUILDS, requestParams);
+        this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
+        console.log("Requested joined fv guilds.");
+    }
+
+    requestEmotes(guildID, callback) {
+        var requestParams = [{ name: "guildID", value: guildID }];
+        const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_EMOTES, requestParams);
+        this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
+        console.log("Requested emotes for " + guildID);
+    }
     // requests to api end
 
 
@@ -79,6 +95,7 @@ class HTTPCommunicator {
         const subAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_ITEM_CONFIG);
         this._requestResource(subAdress, callback);
     }
+
     // requests to resources end
 
     // internal

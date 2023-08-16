@@ -7,6 +7,7 @@ class DiscordAPIAccessor {
     static API_ENDPOINT = 'https://discord.com/api/v10/';
     static API_TOKEN_URI = 'oauth2/token';
     static API_IDENTIFY_URI = 'oauth2/@me';
+    static API_USERS_URI = "users";
     constructor(adressManager) {
         console.log("Constructing discord API Accessor");
         this.redirectUri = adressManager.getRedirectToAuthenticationUri();
@@ -20,14 +21,7 @@ class DiscordAPIAccessor {
     requestUserIdentifyData(code) {
         const promise = new Promise((resolve, reject) => {
             this._requestAuthToken(code).then((token) => {
-                const headers = {
-                    Authorization: "Bearer " + token
-                };
-                const getReqObject = {
-                    method: "get",
-                    headers: headers
-
-                };
+                const getReqObject = this._getGetRequestObject(token);
                 console.log("Get request: " + JSON.stringify(getReqObject));
                 fetch(DiscordAPIAccessor.API_ENDPOINT + DiscordAPIAccessor.API_IDENTIFY_URI, getReqObject).then((res) => res.json()).then((json) => {
                     console.log("API user data received:");
@@ -42,6 +36,81 @@ class DiscordAPIAccessor {
             });
         });
         return promise;
+    }
+
+    /**
+     * check authenticated beforehand!
+     * @param {*} userID 
+     * @param {*} code 
+     */
+    requestJoinedFVGuilds(userID, code, accessToken) {
+        return new Promise((resolve, reject) => {
+            this._requestJoinedGuilds(userID, code, accessToken).then((json) => {
+                resolve(json);
+            }).catch(error => reject(error));
+        });
+    }
+
+    fetchFVGuilds() {
+        return this._sendGetRequestBotAuthed("users/@me/guilds");
+    }
+
+    getEmoteDataObjects(guildID) {
+        return this._sendGetRequestBotAuthed("guilds/" + guildID + "/emojis");
+    }
+
+    // unused
+    _getGuildObject(guildID) {
+        return this._sendGetRequestBotAuthed("guilds/" + guildID);
+    }
+
+    _sendGetRequestBotAuthed(uri) {
+        return new Promise((resolve, reject) => {
+            const reqObj = {
+                method: "get",
+                headers: this._getBotAuthHeader()
+            };
+            fetch(DiscordAPIAccessor.API_ENDPOINT + uri, reqObj).then((res) => res.json()).then((json) => {
+                resolve(json);
+            }).catch(error => reject(error));
+        });
+    }
+
+    _requestJoinedGuilds(userID, code, accessToken) {
+        return new Promise((resolve, reject) => {
+            const uri = this._getJoinedGuildsURI();
+            const reqObject = this._getGetRequestObject(accessToken);
+            console.log("Requesting user object for " + userID);
+            fetch(uri, reqObject).then((res) => res.json()).then((json) => {
+                console.log("Joined guilds data received for " + userID);
+                resolve(json);
+            }).catch(error => reject(error));
+        })
+    }
+
+    _getBotAuthHeader() {
+        const botToken = secret.token;
+        return {
+            Authorization: "Bot " + botToken
+        }
+    }
+
+    _getGetRequestObject(token) {
+        return {
+            method: "get",
+            headers: this._getAuthHeader(token)
+
+        };
+    }
+
+    _getAuthHeader(token) {
+        return {
+            Authorization: "Bearer " + token
+        };
+    }
+
+    _getJoinedGuildsURI() {
+        return DiscordAPIAccessor.API_ENDPOINT + DiscordAPIAccessor.API_USERS_URI + "/@me/guilds";
     }
 
     _requestAuthToken(code) {

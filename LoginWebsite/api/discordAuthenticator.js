@@ -1,4 +1,5 @@
 const DiscordAPIAccessor = require("./dicordApiAccessor");
+const RequestHandler = require("./requestHandler");
 
 class DiscordAuthenticator {
 
@@ -64,10 +65,17 @@ class DiscordAuthenticator {
         if(this.isAuthenticated(userID, code)) {
             return this.authMap.get(userID).discordAPIdata;
         } else {
-            console.error("Trying to get profile data unauthorized!");
-            return null;
+            throw RequestHandler.ERRORS.NOT_AUTHENTICATED;
         }
     }
+
+    getAccessToken(userID, code) {
+        if(this.isAuthenticated(userID, code)) {
+            return this.authMap.get(userID).token;
+        } else {
+            throw RequestHandler.ERRORS.NOT_AUTHENTICATED;
+        }
+    } 
 
 }
 
