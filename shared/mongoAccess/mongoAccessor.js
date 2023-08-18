@@ -150,7 +150,7 @@ class MongoAccessor {
      */
     async getItemObjectsFromIDs(itemIDs) {
         logMongo("Get itemObjects from IDs...");
-        const query =  { "_id": { "$in": itemIDs } }
+        const query = { "_id": { "$in": itemIDs } }
         const cursor = await this.itemCollection.find(query);
         const objects = await cursor.toArray();
         logMongo("Got " + objects.length + " items as objects.");
@@ -190,6 +190,56 @@ class MongoAccessor {
     async updateOwnedItems(ownedItemIDs, userID) {
         await this.playerCollection.updateOne({ _id: userID }, { $set: { "inventory.itemIDs": ownedItemIDs } });
         console.log("Updated owned items in db");
+    }
+
+    async addEmote(userID, emoteID, emoteName) {
+        if (emoteID === undefined || emoteID === null) throw "Emote ID must not be null.";
+        if (emoteName === undefined || emoteName === null) throw "Emote name must not be null";
+        const emotes = await this._getEmotes(userID);
+        if (!ObjectFactory.includesListEmoteWithId(emotes, emoteID)) {
+            emotes.push(ObjectFactory.createEmoteObject(emoteID, emoteName));
+            await this._setEmotes(userID, emotes);
+            console.log("Added to database.");
+        } else {
+            console.error("Trying to add emote " + emoteID + " to player " + userID + " duplicately!");
+        }
+    }
+
+    async removeEmote(userID, emoteID) {
+        if (emoteID === undefined || emoteID === null) throw "Emote ID must not be null.";
+        const emotes = await this._getEmotes(userID);
+        if (ObjectFactory.includesListEmoteWithId(emotes, emoteID)) {
+            var removeCounter = 0;
+            for (var i = 0; i < emotes.length; i += 1) {
+                if (emotes[i].id === emoteID) {
+                    emotes.splice(i, 1);
+                    removeCounter += 1;
+                }
+            }
+            await this._setEmotes(userID, emotes);
+            if (removeCounter === 1) {
+                console.log("Removed emote successfully.");
+            } else {
+                console.warn("Removed " + removeCounter + " entries of same emote!");
+            }
+        } else {
+            console.error("Trying to remove emote " + emoteID + " from player " + userID + " which he does not have!");
+        }
+    }
+
+    /**
+     * 
+     * @param {*} userID 
+     * @param {number[]} emotes list of emote ids
+     */
+    async _setEmotes(userID, emotes) {
+        await this.playerCollection.updateOne({ _id: userID }, { $set: { "emotes": emotes } });
+    }
+
+    async _getEmotes(userID) {
+        var emotes = await this.getPlayerOrCreate(userID).then((player) => player.emotes);
+        if (emotes === undefined || emotes === null) return [];
+        return emotes;
     }
 }
 

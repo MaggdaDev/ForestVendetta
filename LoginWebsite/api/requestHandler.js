@@ -44,6 +44,18 @@ class RequestHandler {
         }
     }
 
+    addEmote(query) {
+        if (!this.discordAuthenticator.isAuthenticated(query.userID, query.code)) throw RequestHandler.ERRORS.NOT_AUTHENTICATED;
+        logRequestHandler("Adding emote...");
+        return this.mongoAccessor.addEmote(query.userID, query.emoteID, query.emoteName);
+    }
+
+    removeEmote(query) {
+        if (!this.discordAuthenticator.isAuthenticated(query.userID, query.code)) throw RequestHandler.ERRORS.NOT_AUTHENTICATED;
+        logRequestHandler("Removing emote...");
+        return this.mongoAccessor.removeEmote(query.userID, query.emoteID);
+    }
+
     // request discord auth
 
     /**
@@ -164,7 +176,7 @@ class RequestHandler {
                         try {
                             if (accessObjectMessage.status === 1) {
                                 console.log("Deploy successful! Adress is " + accessObjectMessage.shardUri);
-                                
+
                                 // tweak uri: add playerID
                                 var tweakedUri = accessObjectMessage.shardUri + "&userID=" + userID;
                                 accessObjectMessage.shardUri = tweakedUri;
@@ -187,13 +199,13 @@ class RequestHandler {
     async updateBars(query, userID) {
         var hotbarIDs = [];
         var armorBarIDs = [];
-        for(var i = 0; i < 6; i+= 1) {
+        for (var i = 0; i < 6; i += 1) {
             const hotbarIndex = "HOTBAR" + i;
             const armorBarIndex = "ARMORBAR" + i;
-            if(query[hotbarIndex] !== undefined && query[hotbarIndex] !== "" && query[hotbarIndex] !== null) {
+            if (query[hotbarIndex] !== undefined && query[hotbarIndex] !== "" && query[hotbarIndex] !== null) {
                 hotbarIDs.push(query[hotbarIndex]);
             }
-            if(query[armorBarIndex] !== undefined && query[armorBarIndex] !== "" && query[armorBarIndex] !== null) {
+            if (query[armorBarIndex] !== undefined && query[armorBarIndex] !== "" && query[armorBarIndex] !== null) {
                 armorBarIDs.push(query[armorBarIndex]);
             }
         }
@@ -204,7 +216,7 @@ class RequestHandler {
         const mongoData = await this.mongoAccessor.getPlayerOrCreate(userID);
         const hotbar = await this.mongoAccessor.createHotbarObject(userID, mongoData.inventory);
         const armorBar = await this.mongoAccessor.createArmorBarObject(userID, mongoData.inventory);
-        
+
         return {
             discordAPI: userData,
             hotbar: hotbar,

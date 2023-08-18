@@ -35,6 +35,19 @@ class ObjectFactory {
         const addPlayer = new PlayerObject(discordID, defaultWeapon);
         return {player: addPlayer, weapon: defaultWeapon};
     }
+
+    static createEmoteObject(id, name) {
+        return {id: id, name: name};
+    }
+
+    static includesListEmoteWithId(emoteList, emoteID) {
+        for(var currEmote of emoteList) {
+            if(currEmote.id === emoteID) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 module.exports = ObjectFactory;

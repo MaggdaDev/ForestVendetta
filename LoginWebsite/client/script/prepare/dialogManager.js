@@ -15,11 +15,7 @@ function cloneTemplate(template) {
     return ret;
 }
 
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape" || event.key === "Esc") {
-      removeAllDialogs();
-    }
-  });
+
 
 // select server dialog
 function showSelectServerDialog(callback, buildContent) {

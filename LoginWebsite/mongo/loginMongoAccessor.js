@@ -5,6 +5,14 @@ class LoginMongoAccessor {
         this.mongoAccessor = new MongoAccessor();
     }
 
+    async addEmote(userID, emoteID, emoteName) {
+        await this.mongoAccessor.addEmote(userID, emoteID, emoteName);
+    }
+
+    async removeEmote(userID, emoteID) {
+        await this.mongoAccessor.removeEmote(userID, emoteID);
+    }
+
     /**
      * @description flow: Display inventory on redirect page load. User inventory object to get information about items in hotbar and inventory
      * @param {string} userID

@@ -11,6 +11,7 @@ const httpCommunicator = new HTTPCommunicator(host, userID);
 const errorInfoObject = new ErrorInfo();
 const joinGameBtnObject = new JoinGameBtn(userID, code, gameID, httpCommunicator, errorInfoObject);
 const itemBrowser = new ItemBrowser();
+const emotes = new Emotes();
 
 var profileData = null; // waiting to be set in async request profile data
 
@@ -20,6 +21,7 @@ var profileData = null; // waiting to be set in async request profile data
 httpCommunicator.requestProfileData(userID, code, (response) => {  // request profile data on window load
     response = JSON.parse(response);
     itemBrowser.setDisplayableInventoryData(response.displayableInventory);
+    emotes.showSelectedEmotes(response.mongo.emotes);
 })
 
 httpCommunicator.requestWeaponImages((response) => {

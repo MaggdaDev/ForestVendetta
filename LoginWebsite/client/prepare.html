@@ -45,11 +45,15 @@
       <div id="armorDiv_SLOT5" class="itemSlot" dropzone="move" ondrop="onItemFrameDroppedToArmorBar(event, 5)"></div>
     </div>
   </div>
+  <div id="emoteDiv">
+    <p>Your emotes:</p>
+    <div id="selectedEmotesDiv" class="selectedEmotesDiv"></div>
+    <button id="addEmoteBtn">Add</button>
+    <button id="removeEmoteBtn">Remove</button>
+    
+  </div>
   <button id="joinGameBtn">JOIN GAME</button>
   <h3 id="errorInfo" hidden></h3>
-  <button id="addEmoteBtn">
-    Add emote from discord
-  </button>
 
   <div id="chooseServerForEmoteImportOverlay" class="overlayDialog">
     <div id="chooseServerForEmoteImportContent" class="overlayDialogContent">
@@ -110,10 +114,9 @@
   <script src="./script/httpCommunicator.js"></script>
   <script src="./script/prepare/joinGameBtn.js"></script>
   <script src="./script/prepare/inventory/itemHoverInfo.js"></script>
-  
+  <script src="./script/prepare/emotes.js"></script>
   
   <script src="./script/prepare/prepare.js"></script>
-  <script src="./script/prepare/emotes.js"></script>
   <script src="./script/prepare/dialogManager.js"></script>
 
 </footer>

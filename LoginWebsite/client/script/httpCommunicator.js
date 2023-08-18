@@ -7,7 +7,9 @@ class HTTPCommunicator {
     static GET_PROFILE_DATA_REQUEST = "getprofiledata";
     static JOIN_GAME_REQUEST = "deployToGameIfPossible";
     static GET_JOINT_FV_GUILDS = "getjointfvguilds";
-    static GET_EMOTES = "getemotes";    
+    static GET_EMOTES = "getemotes";
+    static ADD_EMOTE = "addemote";
+    static REMOVE_EMOTE = "removeemote";
 
     // resources (always in json of map of base64 encoded; filename without extension as key)
     static GET_WEAPON_IMAGES = "getweaponimages";
@@ -67,6 +69,25 @@ class HTTPCommunicator {
         const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.GET_EMOTES, requestParams);
         this._getAsync(HTTPCommunicator.API_URI, apiSubAdress, callback);
         console.log("Requested emotes for " + guildID);
+    }
+
+    addEmote(userID, code, emoteID, name) {
+        var requestParams = [{ name: "userID", value: userID },
+        { name: "code", value: code },
+        { name: "emoteID", value: emoteID },
+        { name: "emoteName", value: name }];
+        const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.ADD_EMOTE, requestParams);
+        this._getAsync(HTTPCommunicator.API_URI, apiSubAdress);
+        console.log("Sent add emote to server for emote " + emoteID);
+    }
+
+    removeEmote(userID, code, emoteID) {
+        var requestParams = [{ name: "userID", value: userID },
+        { name: "code", value: code },
+        { name: "emoteID", value: emoteID }];
+        const apiSubAdress = HTTPCommunicator._generateSubadress(HTTPCommunicator.REMOVE_EMOTE, requestParams);
+        this._getAsync(HTTPCommunicator.API_URI, apiSubAdress);
+        console.log("Sent removeEmote to server for emote " + emoteID);
     }
     // requests to api end
 
