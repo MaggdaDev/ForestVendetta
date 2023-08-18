@@ -145,7 +145,7 @@
     border-color: blue;
   }
 
-  .selectServerDiv {
+  .selectServerDiv, .selectedEmoteElement {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -154,7 +154,8 @@
     margin: 10px;
   }
   
-  .selectServerDiv:hover {
+  .selectServerDiv:hover,
+  .selectedEmotesDivActive .selectedEmoteElement:hover {
     transform: translateY(-3px);
   }
   
@@ -195,11 +196,15 @@
     display: flex;
     flex-direction: row;
     column-gap: 1px;
-    pointer-events: none;
     background-color: none;
   }
 
   .selectedEmotesDivActive {
-    pointer-events:all;
     background-color: rgba(255, 0, 0, 0.2);
+  }
+  .selectedEmoteElement {
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    display: flex;
   }

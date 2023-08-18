@@ -88,8 +88,9 @@ class Emotes {
         const emoteIcon = this.createEmoteOption(id, name);
         document.getElementById("selectedEmotesDiv").appendChild(emoteIcon);
         emoteIcon.addEventListener("click", (e) => {
-            this.removeEmote(e.currentTarget, id, name);
+            if(this.isRemoveEmoteState) this.removeEmote(e.currentTarget, id, name);
         });
+        emoteIcon.classList = ["selectedEmoteElement"];
         this.setRemoveEmoteState(false);
         this.selectedEmoteIDs.push(id);
     }
