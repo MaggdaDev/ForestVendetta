@@ -16,6 +16,7 @@ class EmoteOption {
         this.sprite = this.overlayScene.add.sprite(imgRad * Math.cos(midAngleRads),
         imgRad * Math.sin(midAngleRads),
         EmoteSelector._spriteIdFromEmoteId(emoteID));
+        this.sprite.setDepth(2);
     }
 
     getArc() {
