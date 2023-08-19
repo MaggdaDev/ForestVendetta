@@ -16,9 +16,9 @@ class GameScene extends Phaser.Scene {
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
 
-        
 
-        
+
+
         this.load.setBaseURL('./');
 
         // load 
@@ -39,11 +39,11 @@ class GameScene extends Phaser.Scene {
         this.tasten = this.input.keyboard.createCursorKeys();
         var scene = this;
         this.input.topOnly = false;
-        
+
         console.log("Sending register request add player...");
         this.networkManager.sendRequestAddPlayer();
 
-        
+
     }
 
     onOverlaySceneLoaded() {
@@ -136,10 +136,10 @@ class GameScene extends Phaser.Scene {
     }
 
     showOldPlayers(data) {
-        const armorBarAdd = data.armorBar;
         console.log('Adding old players to the game with data: ' + JSON.stringify(data));
         var instance = this;
         data.forEach((currData) => {
+            const armorBarAdd = currData.armorBar;
             var newPlayer = new ClientPlayer(instance, currData.id, false);
             newPlayer.setInventoryItems(currData.inventory)
             newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.fightingObject.hp, currData.userName, armorBarAdd);

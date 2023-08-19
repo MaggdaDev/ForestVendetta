@@ -1,6 +1,5 @@
 class EmoteOption {
     static RADIUS = 100;
-    static EMOTE_RADIUS = 50;
     static STROKE_WIDTH_DEFAULT = 1;
     static STROKE_COLOR_DEFAULT = 0x000000;
     static STROKE_WIDTH_SELECTED = 4;
@@ -13,8 +12,7 @@ class EmoteOption {
         this.arc = this.overlayScene.add.arc(centerX, centerY, EmoteOption.RADIUS, startAngle, endAngle, false);
         this.unhover();
         const midAngleRads = Math.PI * (endAngle + startAngle) / 360;   // factor 2 cancels!
-        var imgRad = EmoteOption.EMOTE_RADIUS;
-        if(totAmount === 1) imgRad = 0;
+        var imgRad = EmoteOption.RADIUS * Math.pow(Math.cos(Math.PI/ (2*totAmount)),2.0);
         this.sprite = this.overlayScene.add.sprite(imgRad * Math.cos(midAngleRads),
         imgRad * Math.sin(midAngleRads),
         EmoteSelector._spriteIdFromEmoteId(emoteID));
