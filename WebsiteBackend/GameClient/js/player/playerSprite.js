@@ -79,8 +79,10 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         } else {                                        // weapon equipped
             this.weapon.sprite.setVisible(true);                    // weapon visible
+            try {
             this.upperSprite.stop();                                // stop swinging arms while walking
             this.upperSprite.setFrame(10);                          // weapon holding pose
+            } catch(error) { console.log(error);};
             this.add(weapon.sprite);
             this.mainScene.add.existing(weapon.cooldownIndicator);
             this.excludeFromFlip.push(weapon.cooldownIndicator);
