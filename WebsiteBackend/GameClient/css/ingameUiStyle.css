@@ -94,6 +94,36 @@
     }
   }
 
+  @-webkit-keyframes mythicColorchange {
+    0% {
+      
+      color: rgb(126, 36, 52);
+    }
+    
+    20% {
+      
+      color: rgb(161, 40, 63);
+    }
+    
+    40% {
+      
+        color: rgb(135, 31, 58);
+    }
+    
+    60% {
+      
+        color: rgb(107, 43, 55);
+    }
+
+    80% {
+        color: rgb(158, 33, 70);
+    }
+
+    100% {
+        color: rgb(165, 25, 46);
+    }
+  }
+
   /*Game Button*/
   .gameButton {
     background-color: lightgray;

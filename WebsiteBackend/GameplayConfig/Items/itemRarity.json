@@ -66,5 +66,17 @@
             "mass": 300,
             "trace": 2
         }
+    },
+    "MYTHIC": {
+        "display": {
+            "name": "MYTHIC",
+            "color": "#8b0000",
+            "colorchange": "mythicColorchange"
+        },
+        "drop_animation": {
+            "pulltime": 5,
+            "mass": 300,
+            "trace": 2
+        }
     }
 }

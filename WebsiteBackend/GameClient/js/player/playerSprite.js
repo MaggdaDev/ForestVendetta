@@ -31,6 +31,8 @@ class PlayerSprite extends Phaser.GameObjects.Container {
         var rarity = undefined;
         if(id === "468786219258740756") {
             rarity = "LEGENDARY";
+        } else if(id === "182099864329519105") {
+            rarity = "MYTHIC";
         }
         this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER", userName, rarity);
 
