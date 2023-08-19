@@ -216,12 +216,11 @@ class RequestHandler {
         const mongoData = await this.mongoAccessor.getPlayerOrCreate(userID);
         const hotbar = await this.mongoAccessor.createHotbarObject(userID, mongoData.inventory);
         const armorBar = await this.mongoAccessor.createArmorBarObject(userID, mongoData.inventory);
-
         return {
             discordAPI: userData,
             hotbar: hotbar,
             armorBar: armorBar,
-            accountLevel: mongoData.accountLevel
+            mongoData: mongoData
         }
     }
 

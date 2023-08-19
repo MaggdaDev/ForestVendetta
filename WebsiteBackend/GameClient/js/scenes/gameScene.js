@@ -10,7 +10,8 @@ class GameScene extends Phaser.Scene {
         this.networkManager = new NetworkManager(this, this.mobManager);
         this.keyManager = new KeyManager(this);
         this.mouseManager = new MouseManager(this);     // important preload: will be accessed in create of overlay scene
-        
+        this.overlayScene.registerInputEvents(this.keyManager, this.mouseManager);
+
         this.players = new Map();
         this.clientProtagonist = new ClientProtagonist(this, this.networkManager.clientId);
         this.players.set(this.networkManager.clientId, this.clientProtagonist);
@@ -101,13 +102,14 @@ class GameScene extends Phaser.Scene {
             this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd);
             console.log('Added local protagonist with server data.');
             this.cameras.main.startFollow(this.clientProtagonist.sprite);
-
+            this.overlayScene.loadProtagonistEmotes(data.emoteObjects);
         } else {
             var newPlayer = new ClientPlayer(this, data.id, false);
             newPlayer.setInventoryItems(data.inventory);
             newPlayer.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd)
             this.players.set(data.id, newPlayer);
             console.log('Added new player with id: ' + data.id);
+            this.overlayScene.loadPlayerEmotes(data.emoteObjects);
         }
 
     }
@@ -142,6 +144,7 @@ class GameScene extends Phaser.Scene {
             newPlayer.setInventoryItems(currData.inventory)
             newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.fightingObject.hp, currData.userName, armorBarAdd);
             instance.players.set(currData.id, newPlayer);
+            this.overlayScene.loadPlayerEmotes(currData.emoteObjects);
         });
         console.log('Added ' + data.length + ' old players to the game.');
     }

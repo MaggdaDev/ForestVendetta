@@ -14,4 +14,8 @@ set mouseScroll(onMouseScroll) {
 set strike(onStrike) {
     this.mainScene.input.on('pointerdown', onStrike);
 }
+
+set mouseMoved(onMouseMoved) {
+    this.mainScene.input.on("pointermove", onMouseMoved);
+}
 }

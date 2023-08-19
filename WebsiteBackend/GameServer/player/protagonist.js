@@ -29,7 +29,7 @@ class Protagonist {
 
     /**
      * 
-     * @param {Object} playerData - discordAPI, accountLevel, hotbar      see loginwebsite-api-requestHandler createDeployObject
+     * @param {Object} playerData - discordAPI, mongoData, hotbar      see loginwebsite-api-requestHandler createDeployObject
      * @param {*} socket 
      * @param {*} world 
      * @param {Object} match - current match_config from boss
@@ -39,6 +39,7 @@ class Protagonist {
         this.discordData = playerData.discordAPI;
         this.id = this.discordData.id;
         this.userName = this.discordData.username;
+        this.emoteObjects = playerData.mongoData.emotes; // type: {id: 123, name: "abc"}
 
 
         this.isIngame = true;
@@ -89,7 +90,7 @@ class Protagonist {
         
         // stats
         this.stats = new PlayerStats();
-        this.accountLevel = playerData.accountLevel;
+        this.accountLevel = playerData.mongoData.accountLevel;
 
         //Fighting - after stats!
         this.currentStrike = null;
@@ -334,7 +335,8 @@ class Protagonist {
             userName: this.userName,
             isAlive: this.isAlive,
             gradeData: this.updateGradeData(),
-            stats: this.stats.getLastCalculatedTotalStats()
+            stats: this.stats.getLastCalculatedTotalStats(),
+            emoteObjects: this.emoteObjects
         }
     }
 

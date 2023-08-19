@@ -31,10 +31,15 @@ class OverlayScene extends Phaser.Scene {
         this.inventoryHUD = new InventoryHUD(this);
         this.input.topOnly = false;
 
+        // emotes
+        this.emoteSelector = new EmoteSelector(this);
+        this.add.existing(this.emoteSelector);
+
         // death overlay
         this.deathOverlay = new DeathOverlay(this);
         this.add.existing(this.deathOverlay);
         this.alignNodeCenter(this.deathOverlay);
+
 
         // right panel
         this.rightPanel = new RightPanel(this);
@@ -60,6 +65,21 @@ class OverlayScene extends Phaser.Scene {
         this.created = true;
 
 
+    }
+
+    loadProtagonistEmotes(emoteObjectList) {
+        this.emoteSelector.loadProtagonistEmotes(emoteObjectList);
+    }
+
+    loadPlayerEmotes(emoteObjectList) {
+        this.emoteSelector.loadPlayerEmotes(emoteObjectList);
+    }
+
+    registerInputEvents(keyManager, mouseManager) {
+        console.log("Registering input events in overlay scene...");
+        keyManager.emotePressed = (event) => this.emoteSelector.emotePressed(event);
+        keyManager.emoteReleased = (event) => this.emoteSelector.emoteReleased(event);
+        mouseManager.mouseMoved = (event) => this.emoteSelector.mouseMoved(event);
     }
 
     updateGrade(gradeData) {

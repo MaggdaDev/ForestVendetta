@@ -11,7 +11,10 @@ test("Protagonist can be constructed", () => {
         ],
         armorBar: [
 
-        ]
+        ],
+        mongoData: {
+            emotes: []
+        }
     };
     const mockedSocket = {
         on() {

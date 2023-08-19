@@ -4,6 +4,7 @@ class KeyManager {
         this.walkLeftKey = 'A';
         this.walkRightKey = 'D';
         this.jumpKey = 'SPACE';
+        this.emoteKey = 'E';
     }
 
     set startWalkLeft(onWalkLeft) {
@@ -28,6 +29,14 @@ class KeyManager {
 
     set stopJump(onStopJump) {
         this.mainScene.input.keyboard.on(this.getKeyUp(this.jumpKey), onStopJump);
+    }
+
+    set emotePressed(onEmotePressed) {
+        this.mainScene.input.keyboard.on(this.getKeyDown(this.emoteKey), onEmotePressed);
+    }
+
+    set emoteReleased(onEmoteReleased) {
+        this.mainScene.input.keyboard.on(this.getKeyUp(this.emoteKey), onEmoteReleased);
     }
 
     getKeyDown(key) {
