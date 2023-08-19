@@ -10,6 +10,7 @@ class EmoteSelector extends Phaser.GameObjects.Container {
         this.options = [];
         this.currentSelectedIdx = 0;
         this.loadedEmoteIDs = [];
+        this.hide();
     }
 
     createOptions(emoteObjectList) {
@@ -75,7 +76,11 @@ class EmoteSelector extends Phaser.GameObjects.Container {
 
     emoteReleased(event) {
         this.showing = false;
+        const currIdx = this.calcCurrSelectedIdx(this.overlayScene.input.activePointer.x, this.overlayScene.input.activePointer.y);
+        const selectedEmoteID = this.options[currIdx].emoteID;
+        console.log("Selected emote: " + selectedEmoteID);
         this.hide();
+        this.overlayScene.gameScene.networkManager.sendShowEmoteCommand(selectedEmoteID);
 
     }
 
@@ -97,6 +102,7 @@ class EmoteSelector extends Phaser.GameObjects.Container {
                 this.options[i].unhover();
             }
         }
+        this.sort("depth");
         
     }
 

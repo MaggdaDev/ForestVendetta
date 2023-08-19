@@ -100,6 +100,11 @@ class MainLoop {
         this.timers.forEach((timer) => timer.update(timeElapsedSeconds * 1000));
     }
 
+    showEmote(playerID, emoteID) {
+        this.networkManager.sendShowEmoteCommand(playerID, emoteID);
+        console.log("Sent show emote to all players.");
+    }
+
     /**
      * 
      * @param {Timer} timer 

@@ -186,6 +186,12 @@ class GameScene extends Phaser.Scene {
         });
     }
 
+    showEmote(data) {
+        const player = this.players.get(data.playerID);
+        const emoteID = data.emoteID;
+        this.particleManager.emitEmoteParticle(emoteID, player);
+    }
+
     // End: Executing incoming commands from network manager
 
     // error handling

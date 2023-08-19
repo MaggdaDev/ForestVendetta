@@ -48,6 +48,7 @@ class NetworkManager {
         this.socket.on(NetworkCommands.PLAYER_DEATH, (data) => this.playerDeath(data));
         this.socket.on(NetworkCommands.SHOW_SAVING_PROGRESS_SCREEN, (data) => this.showSavingProgressScreen(data));
         this.socket.on(NetworkCommands.REDIRECT_TO_HOME, (data) => this.redirectToHome(data));
+        this.socket.on(NetworkCommands.SHOW_EMOTE, (data) => this.showEmote(data));
 
         // End: registering command handling
 
@@ -230,6 +231,16 @@ class NetworkManager {
         this.mainScene.removeGameObjects(data);
     }
 
+    /**
+     * 
+     * @param {Object} data 
+     * @param {number} data.playerID
+     * @param {number} data.emoteID
+     */
+    showEmote(data) {
+        this.mainScene.showEmote(data);
+    }
+
     // End: Handling commands
 
 
@@ -250,6 +261,10 @@ class NetworkManager {
         this.sendCommand(NetworkCommands.PLAYER_CONTROL, control);
     }
 
+    sendShowEmoteCommand(emoteID) {
+        this.sendCommand(NetworkCommands.REQUEST_SHOW_EMOTE, 
+            {id: emoteID});
+    }
 
     sendCommand(command, data) {
         this.socket.emit(command, data);

@@ -117,6 +117,18 @@ class ServerNetworkManager {
         this.broadcastToAllPlayers(NetworkCommands.REMOVE_GAMEOBJECTS, data);
     }
 
+    /**
+     * 
+     * @param {*} playerID id of the issuer
+     * @param {*} emoteID 
+     */
+    sendShowEmoteCommand(playerID, emoteID) {
+        this.broadcastToAllPlayers(NetworkCommands.SHOW_EMOTE, {
+            playerID: playerID,
+            emoteID: emoteID
+        });
+    }
+
 
     /**
      * 

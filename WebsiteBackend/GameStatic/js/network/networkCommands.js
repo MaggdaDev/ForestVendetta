@@ -19,13 +19,15 @@ const NetworkCommands = {
     SHOW_SAVING_PROGRESS_SCREEN: "SHOW_SAVING_PROGRESS_SCREEN",  // data: id
     REDIRECT_TO_HOME: "REDIRECT_TO_HOME",       // data: id, url
     PLAYER_DEATH: "PLAYER_DEATH",               // data: id, respawnTime
+    SHOW_EMOTE: "SHOW_EMOTE",                   // data: playerID, emoteID
 
 
     // TO SERVER
     REQUEST_ADD_PLAYER: 'REQUEST_ADD_PLAYER',   // data: {string} data.id
     REQUEST_SELECT_ITEM: 'REQUEST_SELECT_ITEM', // data: {number} data.index
-    PLAYER_CONTROL: 'PLAYER_CONTROL',            // data: {string} player control !ONLY PlayerControls.X_Y_Z accepted!
-    REQUEST_LEAVE_GAME: 'REQUEST_LEAVE_GAME'    // data: {string} data.id
+    PLAYER_CONTROL: 'PLAYER_CONTROL',           // data: {string} player control !ONLY PlayerControls.X_Y_Z accepted!
+    REQUEST_LEAVE_GAME: 'REQUEST_LEAVE_GAME',   // data: {string} data.id
+    REQUEST_SHOW_EMOTE: 'REQUEST_SHOW_EMOTE'
 }
 
 if (typeof module !== 'undefined') {

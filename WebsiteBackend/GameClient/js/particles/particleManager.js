@@ -1,4 +1,5 @@
 class ParticleManager {
+    static EMOTE_Y_OFFSET = -120;
     constructor(scene, overlayScene) {
         this.mainScene = scene;
         this.overlayScene = overlayScene;
@@ -18,6 +19,17 @@ class ParticleManager {
     emitDropParticle(playerID, weaponRarity, originPos, targetPlayer) {
         const part = new DropParticle(this.mainScene, weaponRarity, originPos, targetPlayer, this.rarityConfig);
         this.mainScene.add.existing(part);
+    }
+
+    /**
+     * 
+     * @param {number} emoteID 
+     * @param {ClientPlayer} playerX
+     */
+    emitEmoteParticle(emoteID, player) {
+        const part = new EmoteParticle(this.mainScene, emoteID, 0, ParticleManager.EMOTE_Y_OFFSET);
+        this.mainScene.add.existing(part);
+        player.addEmoteParticle(part);
     }
 
     damageParticle(pos, damage) {

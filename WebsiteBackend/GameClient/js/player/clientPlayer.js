@@ -116,6 +116,10 @@ class ClientPlayer {
         this.sprite.playHeavySwordStrike();
     }
 
+    addEmoteParticle(particle) {
+        this.sprite.add(particle);
+    }
+
     //walking animation start
 
     /**

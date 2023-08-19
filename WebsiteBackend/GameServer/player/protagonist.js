@@ -25,7 +25,7 @@ class Protagonist {
     static ACC_FORCE = 5000;
 
     static RESPAWN_TIME = 10000; // millis
-    static START_POS = new Vector(500,500);
+    static START_POS = new Vector(500, 500);
 
     /**
      * 
@@ -81,13 +81,13 @@ class Protagonist {
         this.movableBody.adjustJumpData({ jumpForce: Protagonist.JUMP_FORCE });
         this.movableBody.setProtagonist();
 
-        
-
-        
 
 
 
-        
+
+
+
+
         // stats
         this.stats = new PlayerStats();
         this.accountLevel = playerData.mongoData.accountLevel;
@@ -95,7 +95,7 @@ class Protagonist {
         //Fighting - after stats!
         this.currentStrike = null;
         const fightingObjectFacade = new FacadeForFightingObject();
-        fightingObjectFacade.getOwnerPosition = ()=> {
+        fightingObjectFacade.getOwnerPosition = () => {
             return this.pos;
         };
         fightingObjectFacade.getOwnerStats = () => {
@@ -110,24 +110,24 @@ class Protagonist {
             instance.socketUser.sendCommand(NetworkCommands.DAMAGE_ANIMATION, { weaponId: instance.currentHittingWeapon.id, damage: damageDealt, pos: damagePos });
             instance.movableBody.workForceOverTime(Vector.multiply(damageNormalAway, 20000), 1);
         });
-        
+
         // inventory - after fighting
         this.inventory = new Inventory(playerData.hotbar, this);
         this.armorHolder = new ArmorHolder(playerData.armorBar);
 
         // inventory stats - after stats and inventory
         this.armorHolder.insertPieceStatsIntoPlayerStats(this.stats);
-        if(this.inventory.isWeaponSelected()) {
+        if (this.inventory.isWeaponSelected()) {
             this.stats.setWeaponStats(this.inventory.selectedItem.getStats());
         }
 
 
         // grade after fighting!
-        
-        this.gradeHandler = new GradeHandler(this.fightingObject, 
-            mainLoop.getMobManager(), 
-            () => this.deaths, 
-            () => this.stopwatchIngameSeconds, 
+
+        this.gradeHandler = new GradeHandler(this.fightingObject,
+            mainLoop.getMobManager(),
+            () => this.deaths,
+            () => this.stopwatchIngameSeconds,
             () => mainLoop.getStopwatchFightDuration());
         this.deaths = 0;
         mainLoop.getMobManager().addOnFightReset(() => this.deaths = 0);
@@ -138,7 +138,7 @@ class Protagonist {
         }
 
         // respawning
-        this.respawnTimer = new Timer(Protagonist.RESPAWN_TIME, ()=> this.respawn());
+        this.respawnTimer = new Timer(Protagonist.RESPAWN_TIME, () => this.respawn());
         mainLoop.addTimer(this.respawnTimer);
 
         // debug
@@ -154,7 +154,7 @@ class Protagonist {
      * 
      * @param {number} timeElapsed - timeElapsed since last update 
      */
-     update(timeElapsed, worldObjects, mobs) {
+    update(timeElapsed, worldObjects, mobs) {
         this.stopwatchIngameSeconds += timeElapsed;
         if (this.isInteractable) {
             this.movableBody.update(timeElapsed, worldObjects.concat(mobs));
@@ -162,17 +162,17 @@ class Protagonist {
             if (this.equippedWeapon) {
                 this.equippedWeapon.update(timeElapsed, mobs, this.pos, this.facingLeft);
             }
-            
-        this.updateAlive(timeElapsed);
+
+            this.updateAlive(timeElapsed);
         }
     }
 
     // alive and dead
     updateAlive(timeElasped) {
-        if(this.isAlive && (!this.fightingObject.isAlive())) {
-           this.die();
+        if (this.isAlive && (!this.fightingObject.isAlive())) {
+            this.die();
         }
-        if(this.pos.y > 5000) {
+        if (this.pos.y > 5000) {
             this.die();
             this.pos.y = Protagonist.START_POS.y;
         }
@@ -205,13 +205,28 @@ class Protagonist {
     }
 
 
+    showEmote(emoteID) {
+        var hasEmote = false;
+        for (var currEmote of this.emoteObjects) {   // check if player has emote selected
+            if (currEmote.id === emoteID) {
+                console.log("Player " + this.id + " has emote " + emoteID);
+                hasEmote = true;
+                break;
+            }
+        }
+        if (!hasEmote) {
+            console.error("Player " + this.id + " does not have emote " + emoteID);
+            return;
+        }
+        this.mainLoop.showEmote(this.id, emoteID);
+    }
 
     /**
      * 
      * @param {ShardRabbitCommunicator} rabbitCommunicator 
      */
     goodbyeJojo(rabbitCommunicator, onFinished) {       // on shard death/log out
-        if(this.alreadyExited) {
+        if (this.alreadyExited) {
             console.log("Already exited");
             return;
         }
@@ -221,7 +236,7 @@ class Protagonist {
         // drops
         if (this.inventory.drops.length === 0) {
             console.log("No drops to send.");
-            if(onFinished !== undefined) {
+            if (onFinished !== undefined) {
                 onFinished();
             }
         } else {
@@ -237,13 +252,13 @@ class Protagonist {
 
     selectItem(index) {
         this.inventory.selectItem(index);
-        if(this.inventory.isWeaponSelected()) {
+        if (this.inventory.isWeaponSelected()) {
             this.stats.setWeaponStats(this.inventory.selectedItem.getStats());
         } else {
             this.stats.setWeaponStats(null);
         }
         this.stats.getTotalStats();
-        
+
     }
 
     handleLeaveGameRequest() {
@@ -303,7 +318,7 @@ class Protagonist {
         this.socketUser.showOldMobs(mobManager.mobUpdateData);
     }
 
-    
+
 
     strike() {
         if (this.equippedWeapon) {

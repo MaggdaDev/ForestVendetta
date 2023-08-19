@@ -16,6 +16,7 @@ class SocketUser {
         this.socket.on(NetworkCommands.PLAYER_CONTROL, (data)=>this.playerControl(data));
         this.socket.on(NetworkCommands.REQUEST_SELECT_ITEM, (data)=>this.selectItem(data.index));
         this.socket.on(NetworkCommands.REQUEST_LEAVE_GAME, (data)=>this.requestLeaveGame(data.id));
+        this.socket.on(NetworkCommands.REQUEST_SHOW_EMOTE, (data)=>this.showEmote(data.id));
         // END: register command handling
     }
 
@@ -42,6 +43,10 @@ class SocketUser {
      */
     selectItem(index) {
         this.owner.selectItem(index);
+    }
+
+    showEmote(emoteID) {
+        this.owner.showEmote(emoteID);
     }
 
     // END: command handling
