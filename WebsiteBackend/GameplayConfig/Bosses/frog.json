@@ -12,10 +12,16 @@
             "cooldown": 1,
             "rarity": "COMMON",
             "execution_time": 3
+        },
+        "TONGUE_SLAP_ABILITY": {
+            "cooldown": 10,
+            "rarity": "COMMON",
+            "execution_time": 3
         }
     },
     "abilities": [
-        "JUMP_ABILITY"
+        "JUMP_ABILITY",
+        "TONGUE_SLAP_ABILITY"
     ],
     "variants": {
         "COMMON": {

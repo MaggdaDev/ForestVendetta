@@ -3,6 +3,7 @@ const PolygonHitBox = require("../physics/polygonHitBox");
 const Vector = require("../../GameStatic/js/maths/vector");
 const Mob = require("./mob");
 const FrogAbilityPerformer = require("../fighting/abilities/mobs/frogAbilityPerformer");
+const FrogTongue = require("../projectiles/mobProjectiles/frogTongue");
 
 class Frog extends Mob{
     static WIDTH = 200;
@@ -22,6 +23,8 @@ class Frog extends Mob{
         
         // abilities
         this.abilityPerformer = new FrogAbilityPerformer(this, this.mobConfig.ability_pool, this.mobConfig.abilities, variant);
+        this.tongue = new FrogTongue(this, players);
+        
     }
 
     onPlayerIntersection(player, intersectionPoint) {
@@ -34,6 +37,8 @@ class Frog extends Mob{
             this.movableBody.hitBox.pos = new Vector(500, 0);
             this.movableBody.spd = new Vector(0,0);
         }
+
+        this.tongue.update(timeElapsed);
     }
 
     // ABILITIES: START
@@ -48,6 +53,11 @@ class Frog extends Mob{
             this.movableBody.adjustJumpData({angleAdjust: -Frog.JUMP_ANGLE});
         }
         this.movableBody.wantToJumpOnce = true;
+    }
+
+    TONGUE_SLAP_ABILITY() {
+        console.log("Performing tongue slap!");
+        this.tongue.activate();
     }
 
     // ABILITIES: END
