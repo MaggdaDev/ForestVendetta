@@ -96,31 +96,34 @@ class GameScene extends Phaser.Scene {
      * @param {number} id
      */
     addPlayer(data) {
-        const armorBarAdd = data.armorBar;
-        if (data.id == this.networkManager.clientId) {
-            this.clientProtagonist.setInventoryItems(data.inventory);
-            this.clientProtagonist.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd);
+        const isProtagonist = data.id == this.networkManager.clientId;
+        var addPlayer = isProtagonist ? this.clientProtagonist : new ClientPlayer(this, data.id, false);
+        addPlayer.setInventoryItems(data.inventory);
+        addPlayer.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, data.armorBar);
+
+        if(isProtagonist) {
             console.log('Added local protagonist with server data.');
             this.cameras.main.startFollow(this.clientProtagonist.sprite);
             this.overlayScene.loadProtagonistEmotes(data.emoteObjects);
         } else {
-            var newPlayer = new ClientPlayer(this, data.id, false);
-            newPlayer.setInventoryItems(data.inventory);
-            newPlayer.generateSprite(data.pos.x, data.pos.y, data.fightingObject.hp, data.userName, armorBarAdd)
-            this.players.set(data.id, newPlayer);
+            this.players.set(data.id, addPlayer);
             console.log('Added new player with id: ' + data.id);
             this.overlayScene.loadPlayerEmotes(data.emoteObjects);
-        }
+        }       
+    }
 
+    showOldPlayers(data) {
+        var instance = this;
+        data.forEach((currData) => {
+            instance.addPlayer(data);
+        });
+        console.log('Added ' + data.length + ' old players to the game.');
     }
 
     setupWorld(data) {
         console.log('Setting up world...');
-
         this.world = new ClientWorld(data, this);
-
         console.log('World setup complete.')
-
     }
 
     setupMatch(gradedMatchDuration) {
@@ -135,19 +138,7 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    showOldPlayers(data) {
-        console.log('Adding old players to the game with data: ' + JSON.stringify(data));
-        var instance = this;
-        data.forEach((currData) => {
-            const armorBarAdd = currData.armorBar;
-            var newPlayer = new ClientPlayer(instance, currData.id, false);
-            newPlayer.setInventoryItems(currData.inventory)
-            newPlayer.generateSprite(currData.pos.x, currData.pos.y, currData.fightingObject.hp, currData.userName, armorBarAdd);
-            instance.players.set(currData.id, newPlayer);
-            this.overlayScene.loadPlayerEmotes(currData.emoteObjects);
-        });
-        console.log('Added ' + data.length + ' old players to the game.');
-    }
+    
 
     disconnectPlayer(id) {
         console.log("Disconnecting player: " + id + " ...");

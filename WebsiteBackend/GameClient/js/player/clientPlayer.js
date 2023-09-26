@@ -14,6 +14,8 @@ class ClientPlayer {
         this.inventory = new ClientInventory(scene, isProtagonist);
         this.clientPrediction = new ClientPrediction({x:0, y:0});
         this.stats = new Stats();
+
+        this.onServerUpdate = [];
     }
 
     /**
@@ -35,13 +37,15 @@ class ClientPlayer {
      * @param {*} data 
      */
     update(data) {
+        for(var onUpdate of this.onServerUpdate) {
+            onUpdate(data);
+        }
         this.updateWeapon(data);
         this.updateSpriteToData(data);
         this.updateDebugPolygon(data);
-        this.updateWalkingAnimationToData(data);
+        this.updateWalkingAnimation(data);
         this.isContact = data.isContact;
         this.stats.overrideFrom(data.stats);
-        console.log(this.stats);
         //console.log('Updated position: ' + JSON.stringify(data.hitBox.pos));
     }
 
@@ -74,7 +78,11 @@ class ClientPlayer {
         }
     }
 
-    updateWalkingAnimationToData(data) {
+    /**
+     * @description may be overridden! Is overridden by clientProtagonis
+     * @param {*} data 
+     */
+    updateWalkingAnimation(data) {
         if (data.isWalking) {
             if (data.facingLeft && (!this.isWalkingLeft)) {  // start walk left needed
                 this.onStartWalkLeft();

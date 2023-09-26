@@ -5,25 +5,18 @@ class ClientProtagonist extends ClientPlayer {
         super(scene, id, true);
         this.playerController = new PlayerController(this, MobileController.isMobile(scene));
         this.gameScene = scene;
+
+        this.onServerUpdate.push((data) => this.protagonistOnUpdate(data));
+        
     }
 
-    /** OVERRIDE
-     * @description overrides ClientPlayer.update! Always check differences
-     * @param {Object} data 
-     */
-    update(data) {
-        this.updateWeapon(data);
-        super.updateSpriteToData(data);
-        this.updateDebugPolygon(data);
-        this.updateWalkingAnimationToLocal(data);
+    protagonistOnUpdate(data) {
         this.gameScene.updateGrade(data.gradeData);
         this.gameScene.updateStats(data.stats);
-        this.stats.overrideFrom(data.stats);
-        console.log(this.stats);
-        //this.updateInventory(data);
     }
 
-    updateWalkingAnimationToLocal(data) {
+    // Overrides from ClientPlayer and gets called there in update
+    updateWalkingAnimation(data) {
         if (data.isContact && (!this.isContact)) {
             this.isContact = true;
             if (this.isWalkingLeft) {
