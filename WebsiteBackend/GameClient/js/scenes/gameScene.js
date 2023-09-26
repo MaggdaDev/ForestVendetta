@@ -115,7 +115,7 @@ class GameScene extends Phaser.Scene {
     showOldPlayers(data) {
         var instance = this;
         data.forEach((currData) => {
-            instance.addPlayer(data);
+            instance.addPlayer(currData);
         });
         console.log('Added ' + data.length + ' old players to the game.');
     }
