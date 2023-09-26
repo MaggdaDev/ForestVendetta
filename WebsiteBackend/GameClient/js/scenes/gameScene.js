@@ -138,7 +138,6 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    
 
     disconnectPlayer(id) {
         console.log("Disconnecting player: " + id + " ...");
