@@ -4,6 +4,7 @@ const Vector = require("../../GameStatic/js/maths/vector");
 const Mob = require("./mob");
 const FrogAbilityPerformer = require("../fighting/abilities/mobs/frogAbilityPerformer");
 const FrogTongue = require("../projectiles/mobProjectiles/frogTongue");
+const ProjectilesManager = require("../projectiles/projectilesManager");
 
 class Frog extends Mob{
     static WIDTH = 200;
@@ -12,10 +13,22 @@ class Frog extends Mob{
     static JUMP_ANGLE = Math.PI/30;
     static JUMP_FORCE = 150000;
     
-    constructor(x,y,id,players,world, frogConfig, variant) {
+    /**
+     * 
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} id 
+     * @param {*} players 
+     * @param {*} world 
+     * @param {*} frogConfig 
+     * @param {*} variant 
+     * @param {ProjectilesManager} projectilesManager 
+     */
+    constructor(x,y,id,players,world, frogConfig, variant, projectilesManager) {
         super(PolygonHitBox.fromRect(x,y,Frog.WIDTH,Frog.HEIGHT), id, "FROG",players,world, frogConfig, variant, FrogAbilityPerformer);
+        this.projectilesManager = projectilesManager;
+
         this.movableBody.addGravity();
-        
         this.movableBody.adjustJumpData({jumpForce: Frog.JUMP_FORCE, angleAdjust: Frog.JUMP_ANGLE});
 
         this.addOnUpdate((t)=>{this.onUpdate(t)});
@@ -23,7 +36,8 @@ class Frog extends Mob{
         
         // abilities
         this.abilityPerformer = new FrogAbilityPerformer(this, this.mobConfig.ability_pool, this.mobConfig.abilities, variant);
-        this.tongue = new FrogTongue(this, players);
+        this.tongue = new FrogTongue(this, players, this.targetManager);
+        projectilesManager.addProjectile(this.tongue);
         
     }
 

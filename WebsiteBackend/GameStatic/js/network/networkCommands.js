@@ -4,7 +4,7 @@ const NetworkCommands = {
     SETUP_WORLD: 'SETUP_WORLD',                 // data: world object
     SETUP_MATCH: 'SETUP_MATCH',                 // data: gradedMatchDuration
     ADD_PLAYER: 'ADD_PLAYER',                   // data: pos{pos.x, pos.y}, id
-    UPDATE: 'UPDATE',                           // data: [world: data, players: data]
+    UPDATE: 'UPDATE',                           // data: [world: data, players: data, mobs, projectiles]
     UPDATE_PLAYERS: 'UPDATE_PLAYERS',           // data: [data1, data2, data3] with playerdatas
     UPDATE_WORLD: 'UPDATE_WORLD',               // data: [{id, propsToModify}]
     SHOW_OLD_PLAYERS: 'SHOW_OLD_PLAYERS',       // data: SAME AS ADD_PLAYER! curr: same as update

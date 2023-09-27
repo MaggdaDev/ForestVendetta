@@ -2,14 +2,24 @@ const Frog = require("./frog");
 const Mob = require("./mob");
 
 const frogConfig = require("../../GameplayConfig/Bosses/frog");
+const ProjectilesManager = require("../projectiles/projectilesManager");
+const ServerNetworkManager = require("../network/serverNetworkManager");
 class MobManager {
-    constructor(networkManager, players, world) {
+    /**
+     * 
+     * @param {ServerNetworkManager} networkManager 
+     * @param {*} players 
+     * @param {*} world 
+     * @param {ProjectilesManager} projectilesManager 
+     */
+    constructor(networkManager, players, world, projectilesManager) {
         this.currId = 0;
         this.mobs = new Map();
         this.networkManager = networkManager;
         this.players = players;
         this.world = world;
         this.mobsToRemove = [];
+        this.projectilesManager = projectilesManager;
 
         this.match = null;
 
@@ -40,7 +50,7 @@ class MobManager {
     }
 
     spawnFrog(x, y) {
-        var frog = new Frog(x, y, this.nextID, this.players, this.world, frogConfig);
+        var frog = new Frog(x, y, this.nextID, this.players, this.world, frogConfig, undefined, this.projectilesManager);
         this.spawn(frog);
         return frog;
     }

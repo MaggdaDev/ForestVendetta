@@ -7,7 +7,8 @@ class GameScene extends Phaser.Scene {
         // scaling
 
         this.mobManager = new ClientMobManager(this);
-        this.networkManager = new NetworkManager(this, this.mobManager);
+        this.projectilesManager = new ClientProjectilesManager(this);
+        this.networkManager = new NetworkManager(this, this.mobManager, this.projectilesManager);
         this.keyManager = new KeyManager(this);
         this.mouseManager = new MouseManager(this);     // important preload: will be accessed in create of overlay scene
         this.overlayScene.registerInputEvents(this.keyManager, this.mouseManager);

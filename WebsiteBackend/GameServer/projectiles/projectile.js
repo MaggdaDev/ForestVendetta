@@ -1,7 +1,18 @@
 const HitBox = require("../physics/hitbox");
 const Protagonist = require("../player/protagonist");
 class Projectile {
-    constructor(owner, hitBox) {
+    static PROJECTILE_TYPES = {
+        FROG_TONGUE: "FROG_TONGUE"
+    }
+    /**
+     * 
+     * @param {*} owner 
+     * @param {*} hitBox 
+     * @param {string} type projectile type for client. See ClientProjectileManager's dict to see options
+     */
+    constructor(owner, hitBox, type) {
+        if(type === undefined) throw "Type is mandatory for projectiles.";
+        this.type = type;
         this.owner = owner;
         this.hitBox = hitBox;
 
@@ -10,11 +21,22 @@ class Projectile {
         this._onObjectHit = null;
 
         this.isRemoveHitListenerOnHit = true;
+        this.shouldUpdate = true;
+        this.shouldRender = true;
+        this.shouldDestroy = false;
         this.isAlive = false;   // should projectile be updated + hitting?
     }
 
+    
+
     addOnUpdate(onUpdate) {
         this._onUpdate.push(onUpdate);
+    }
+
+    destroy() {
+        this.shouldDestroy = true;
+        this.shouldRender = false;
+        this.shouldUpdate = false;
     }
 
     update(timeElapsed) {
@@ -53,7 +75,7 @@ class Projectile {
 
     /**
      * 
-     * @param {*} objectList list of objects that have an object.hitBox property
+     * @param {*} objectList list of objects that have an object.hitBox property and a object.isInteractable property
      */
     findCollidingObjects(objectList) {
         let retList = [];
@@ -62,12 +84,37 @@ class Projectile {
                 console.error("Object without hitbox given: " + currObj);
                 return;
             }
+            if (!currObj.isInteractable) {
+                return;
+            }
             if (HitBox.intersects(currObj.hitBox, this.hitBox)) {
                 retList.push(currObj);
             }
 
         });
         return retList;
+    }
+
+    /**
+     * 
+     * @param {Object} modifyableJson 
+     * @returns none!
+     */
+    extendJson(modifyableJson) {
+        // override me!
+    }
+
+    toJSON() {
+        if(this.id === undefined) {
+            console.error("JSONing projectile without ID!");
+        }
+        const ret = {
+            id: this.id,
+            type: this.type,
+            shouldRender: this.shouldRender
+        }
+        this.extendJson(ret);
+        return ret;
     }
 }
 

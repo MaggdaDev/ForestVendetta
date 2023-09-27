@@ -3,7 +3,7 @@ class NetworkManager {
      * 
      * @param {Phaser.Scene} scene 
      */
-    constructor(scene, mobManager) {
+    constructor(scene, mobManager, projectilesManager) {
         console.log("Creating Network manager...");
         this.isIngame = true;
         this.mainScene = scene;
@@ -26,7 +26,7 @@ class NetworkManager {
         console.log("ClientId created: " + this.clientId);
 
         this.mobManager = mobManager;
-
+        this.projectilesManager = projectilesManager;
 
         // Start: registering command handling
         this.registerIngameCommandHandling(NetworkCommands.ADD_PLAYER, (data) => this.addPlayer(data));
@@ -199,6 +199,7 @@ class NetworkManager {
         this.mainScene.updateWorld(data.world);
         this.mainScene.updatePlayers(data.players);
         this.mobManager.updateMobs(data.mobs);
+        this.projectilesManager.updateProjectiles(data.projectiles);
     }
 
     /**

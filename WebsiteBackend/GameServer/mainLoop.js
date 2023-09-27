@@ -2,15 +2,17 @@ const NetworkCommands = require('../GameStatic/js/network/networkCommands');
 const Timer = require('../GameStatic/js/util/timer');
 const MobManager = require('./mobs/mobManager');
 const Protagonist = require('./player/protagonist');
+const Projectile = require('./projectiles/projectile');
+const ProjectilesManager = require('./projectiles/projectilesManager');
 const Platform = require('./world/platform');
 const World = require('./world/world');
 const WorldLoader = require('./world/worldLoader');
 class MainLoop {
     static MAX_LIFE_TIME = Number.MAX_SAFE_INTEGER;
-    
+
     constructor(playerMap, server) {
         this.server = server;
-        
+
         console.log("Main Loop created!")
         this.oldTime = Date.now();
         this.birthTime = -1;
@@ -26,11 +28,13 @@ class MainLoop {
 
         this.networkManager = undefined;
         this.timers = [];
+
+        this.projectilesManager = new ProjectilesManager();
     }
 
     init(rabbitCommunicator) {        // after constructor before start; after network manager is created
         this.rabbitCommunicator = rabbitCommunicator;
-        this.mobManager = new MobManager(this.networkManager, this.players, this.world);  // after network manager is created
+        this.mobManager = new MobManager(this.networkManager, this.players, this.world, this.projectilesManager);  // after network manager is created
         this.mobManager.addOnFightReset(() => this.stopwatchFightDuration = 0);
         this.updateData = this.collectUpdateData();     // after mob manager is created
         this.mobManager.spawnRespawningFrog(900, 300);
@@ -52,6 +56,7 @@ class MainLoop {
         var mobIntersectables = this.mobManager.mobArray;
         var playerIntersectables = this.playerIntersectables;
         this.updateWorld(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
+        this.updateProjectiles(timeElapsed);
         this.updateAllPlayers(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.mobManager.updateMobs(timeElapsed, worldIntersectables, mobIntersectables, playerIntersectables);
         this.allPlayersSendUpdate(this.updateData);
@@ -59,10 +64,13 @@ class MainLoop {
         this.stopwatchFightDuration += timeElapsed;
     }
 
+    updateProjectiles(timeElapsed) {
+        this.projectilesManager.update(timeElapsed);
+    }
 
 
     updateWorld(timeElapsed, ws, ms, ps) {
-        this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed, ws, ms, ps)));
+        this.networkManager.broadcastToAllPlayers(NetworkCommands.CONTROL_DATA, JSON.stringify(this.world.update(timeElapsed, ws, ms, ps)));    // todo duplicated with general player update??
     }
 
 
@@ -86,11 +94,12 @@ class MainLoop {
     collectUpdateData() {
         var instance = this;
         return {
-            toJSON() {
+            toJSON() { 
                 return {
                     players: instance.sendablePlayerUpdateData,
                     world: instance.world.clientWorldUpdateData,
-                    mobs: instance.mobManager.mobUpdateData
+                    mobs: instance.mobManager.mobUpdateData,
+                    projectiles: instance.projectilesManager.projectilesUpdateData
                 }
             }
         }
@@ -145,7 +154,7 @@ class MainLoop {
             console.log("Mainloop running for " + Math.round(0.001 * (Date.now() - this.startTime)) + "s (after " + Math.round(0.001 * (this.startTime - this.birthTime)) + "s idling)");
         }
         instance.update(instance.timeElapsed);
-        if(!this.checkShardALive()) {
+        if (!this.checkShardALive()) {
             console.log("Shard shall die after " + Math.round(0.001 * (Date.now() - this.startTime)) + "s life (after " + Math.round(0.001 * (this.startTime - this.birthTime)) + "s idling)");
             this.end();
         }
@@ -156,23 +165,23 @@ class MainLoop {
 
         console.log("Disconnecting all players...");
         const playerKeys = Array.from(this.players.keys());
-        playerKeys.slice().forEach((element)=> this.handleDisconnect(element));
+        playerKeys.slice().forEach((element) => this.handleDisconnect(element));
 
         console.log("F");
         this.server.close();
-        setTimeout(()=> {
+        setTimeout(() => {
             console.log("Murdering process after 500ms waiting for deconstruction.");
             console.log("F");
             process.exit(0);
         }, 500);
-        
+
     }
 
     /**
      * @description determines wether or not shard should shut down -   100s after birth
      */
     checkShardALive() {
-        if(Date.now() - this.birthTime > MainLoop.MAX_LIFE_TIME * 100 && this.players.size === 0) {
+        if (Date.now() - this.birthTime > MainLoop.MAX_LIFE_TIME * 100 && this.players.size === 0) {
             return false;
         } else {
             return true;
@@ -195,7 +204,7 @@ class MainLoop {
                     self.loop(self);
                 }, 30);
             }
-            if(!self.checkShardALive()) {
+            if (!self.checkShardALive()) {
                 console.log("Shard dieing during idle phase.");
                 self.end();
             }
