@@ -1,5 +1,4 @@
 const HitBox = require("../physics/hitbox");
-const Protagonist = require("../player/protagonist");
 class Projectile {
     static PROJECTILE_TYPES = {
         FROG_TONGUE: "FROG_TONGUE"
@@ -11,7 +10,7 @@ class Projectile {
      * @param {string} type projectile type for client. See ClientProjectileManager's dict to see options
      */
     constructor(owner, hitBox, type) {
-        if(type === undefined) throw "Type is mandatory for projectiles.";
+        if (type === undefined) throw "Type is mandatory for projectiles.";
         this.type = type;
         this.owner = owner;
         this.hitBox = hitBox;
@@ -27,7 +26,7 @@ class Projectile {
         this.isAlive = false;   // should projectile be updated + hitting?
     }
 
-    
+
 
     addOnUpdate(onUpdate) {
         this._onUpdate.push(onUpdate);
@@ -40,18 +39,21 @@ class Projectile {
     }
 
     update(timeElapsed) {
-        if (this.isAlive) {
+        if (this.shouldUpdate) {
 
 
             for (var curr of this._onUpdate) {
                 curr(timeElapsed);
             }
 
-            const hits = this.findCollidingObjects(this._hittableObjects);
-            if (hits.length > 0) {
-                this._onObjectHit(hits);
-                if (this.removeHitListenerOnHit) {
-                    this.setHitListener();
+            if (this.isAlive) {
+
+                const hits = this.findCollidingObjects(this._hittableObjects);
+                if (hits.length > 0) {
+                    this._onObjectHit(hits);
+                    if (this.removeHitListenerOnHit) {
+                        this.setHitListener();
+                    }
                 }
             }
         }
@@ -105,7 +107,7 @@ class Projectile {
     }
 
     toJSON() {
-        if(this.id === undefined) {
+        if (this.id === undefined) {
             console.error("JSONing projectile without ID!");
         }
         const ret = {

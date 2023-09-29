@@ -11,12 +11,17 @@ class FrogAbilityPerformer extends AbilityPerformerAbstract {
      */
     thinkAboutPerformingAbilities(timeElapsed) {
         if (this.isReady()) {
-            if (Math.random() < 0.5) {
+            if (Math.random() < 0.0) {
                 this.queueAbility("JUMP_ABILITY");
             } else {
                 this.queueAbility("TONGUE_SLAP_ABILITY");
             }
         }
+    }
+
+    tongueSlapNotActivated() {
+        this.queueAbility("TONGUE_SLAP_ABILITY");
+        this.resetAbilityExecutionStopwatch();
     }
 
 }

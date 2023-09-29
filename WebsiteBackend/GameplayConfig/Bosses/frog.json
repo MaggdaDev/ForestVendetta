@@ -14,7 +14,7 @@
             "execution_time": 3
         },
         "TONGUE_SLAP_ABILITY": {
-            "cooldown": 10,
+            "cooldown": 1,
             "rarity": "COMMON",
             "execution_time": 3
         }

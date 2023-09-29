@@ -9,7 +9,7 @@ const World = require('./world/world');
 const WorldLoader = require('./world/worldLoader');
 class MainLoop {
     static MAX_LIFE_TIME = Number.MAX_SAFE_INTEGER;
-
+    static SLOWMODE_FACTOR = 1;
     constructor(playerMap, server) {
         this.server = server;
 
@@ -143,7 +143,7 @@ class MainLoop {
     @param {Object} instance - this instance
     */
     loop(instance) {
-        instance.timeElapsed = (Date.now() - instance.oldTime) / 1000.0;
+        instance.timeElapsed = MainLoop.SLOWMODE_FACTOR * (Date.now() - instance.oldTime) / 1000.0;
         instance.oldTime = Date.now();
         if (instance.timeElapsed > 0.1) {
             console.log("More than 100ms in server loop. Cropping time elapsed.");

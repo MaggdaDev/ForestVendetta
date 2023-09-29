@@ -51,8 +51,6 @@ class Frog extends Mob{
             this.movableBody.hitBox.pos = new Vector(500, 0);
             this.movableBody.spd = new Vector(0,0);
         }
-
-        this.tongue.update(timeElapsed);
     }
 
     // ABILITIES: START
@@ -71,7 +69,7 @@ class Frog extends Mob{
 
     TONGUE_SLAP_ABILITY() {
         console.log("Performing tongue slap!");
-        this.tongue.activate();
+        this.tongue.activateAiming();
     }
 
     // ABILITIES: END

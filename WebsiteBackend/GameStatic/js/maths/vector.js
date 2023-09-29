@@ -141,6 +141,19 @@ class Vector {
      * 
      * @param {Vector[]} vecs 
      */
+    static mean(vecs) {
+        var xSum = 0, ySum = 0;
+        vecs.forEach((currVec) => {
+            xSum += currVec.x;
+            ySum += currVec.y;
+        });
+        return Vector.multiply(new Vector(xSum, ySum), 1.0 / vecs.length);
+    }
+
+    /**
+     * 
+     * @param {Vector[]} vecs 
+     */
     static areClockwise(vecs) {
         return Vector.calcAr(vecs) < 0;
     }

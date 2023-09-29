@@ -24,7 +24,7 @@ class Protagonist {
     static DESIRED_SPEED = 300;
     static ACC_FORCE = 5000;
 
-    static RESPAWN_TIME = 10000; // millis
+    static RESPAWN_TIME = 1000; // millis
     static START_POS = new Vector(500, 500);
 
     /**
