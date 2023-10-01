@@ -83,12 +83,6 @@ class ItemFrame extends Phaser.GameObjects.Container {
         }
     }
 
-    select() {
-        if (this.item) {
-            this.item.sprite.setVisible(true);
-        }
-    }
-
     unselect() {
         if (this.item) {
             this.item.sprite.setVisible(false);

@@ -11,17 +11,39 @@
         "JUMP_ABILITY": {
             "cooldown": 1,
             "rarity": "COMMON",
-            "execution_time": 3
+            "execution_time": 3,
+            "jump_force": 150000
+        },
+        "SUPER_JUMP_ABILITY": {
+            "cooldown": 0,
+            "rarity": "COMMON",
+            "execution_time": 5,
+            "jump_force": 300000
+        },
+        "TONGUE_AIMING_ABILITY": {
+            "cooldown": 5,
+            "rarity": "RARE",
+            "execution_time": 5
         },
         "TONGUE_SLAP_ABILITY": {
-            "cooldown": 1,
+            "cooldown": 0,
             "rarity": "COMMON",
-            "execution_time": 3
+            "execution_time": 0
+        },
+        "EAT_ABILITY": {
+            "cooldown": 0,
+            "rarity": "COMMON",
+            "execution_time": 3,
+            "damage_per_second": 20,
+            "spit_gap": 100
         }
     },
     "abilities": [
         "JUMP_ABILITY",
-        "TONGUE_SLAP_ABILITY"
+        "SUPER_JUMP_ABILITY",
+        "TONGUE_AIMING_ABILITY",
+        "TONGUE_SLAP_ABILITY",
+        "EAT_ABILITY"
     ],
     "variants": {
         "COMMON": {

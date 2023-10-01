@@ -18,7 +18,7 @@ test("testTongueActivation", () =>  {
         findNearestAirLine: function() {return 1}
     }
     const tongue = new FrogTongue(mockedOwner, [mockedHittablePlayer], mockedTargetManager);
-    tongue.update(1);
+    tongue.updateTongue(1);
     expect(counter).toBe(0);
     tongue.activate();
     tongue.update(1);

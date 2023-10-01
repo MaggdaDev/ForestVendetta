@@ -19,6 +19,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         this.startingWalk = false;
         this.strikePlaying = false;
+        this.isDisabled = true;
 
         this.add(this.legSprite);
         this.add(this.upperSprite);
@@ -29,9 +30,9 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
         // hp bar
         var rarity = undefined;
-        if(id === "468786219258740756") {
+        if (id === "468786219258740756") {
             rarity = "LEGENDARY";
-        } else if(id === "182099864329519105") {
+        } else if (id === "182099864329519105") {
             rarity = "MYTHIC";
         }
         this.healthBar = new HealthBar(mainScene, maxHp, x, y, PlayerSprite.HEALTH_BAR_Y_OFFSET, "PLAYER", userName, rarity);
@@ -50,15 +51,26 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     updatePredicted(x, y) {
         this.x = x;
         this.y = y;
+        this.setDisabled(this.isDisabled);
         this.healthBar.update(this.x, this.y, this.healthBar.currentHealth);
     }
 
-    updateServer(currHp, facingLeft, isAlive) {
+    updateServer(currHp, facingLeft, isAlive, isDisabled) {
         this.healthBar.update(this.x, this.y, currHp);
         if (facingLeft !== undefined) {
             this.flipped = facingLeft;
         }
         this.setVisible(isAlive);
+        this.setDisabled(isDisabled);
+    }
+
+    setDisabled(disabled) {
+        this.isDisabled = disabled;
+        if (this.weapon !== null && this.weapon !== undefined) {
+            this.weapon.sprite.setVisible(!disabled);
+        }
+        this.legSprite.setVisible(!disabled);
+        this.upperSprite.setVisible(!disabled);
     }
 
     onUpperAnimationUpdate(anim, frame) {
@@ -78,11 +90,11 @@ class PlayerSprite extends Phaser.GameObjects.Container {
 
 
         } else {                                        // weapon equipped
-            this.weapon.sprite.setVisible(true);                    // weapon visible
+            this.weapon.sprite.setVisible(!this.isDisabled);                    // weapon visible
             try {
-            this.upperSprite.stop();                                // stop swinging arms while walking
-            this.upperSprite.setFrame(10);                          // weapon holding pose
-            } catch(error) { console.log(error);};
+                this.upperSprite.stop();                                // stop swinging arms while walking
+                this.upperSprite.setFrame(10);                          // weapon holding pose
+            } catch (error) { console.log(error); };
             this.add(weapon.sprite);
             this.mainScene.add.existing(weapon.cooldownIndicator);
             this.excludeFromFlip.push(weapon.cooldownIndicator);
@@ -135,7 +147,7 @@ class PlayerSprite extends Phaser.GameObjects.Container {
     }
 
     stopWalk() {
-        
+
         this.armorOverlay.stopAnimations();
         this.legSprite.playAfterRepeat(null);
         this.legSprite.stop();

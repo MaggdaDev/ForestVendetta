@@ -11,17 +11,27 @@ class AbilityPerformerAbstract {
         this._insertAbilitiesFromName(abilityPool, abilityIdSelection);
         this._insertAbilitiesFromRarity(abilityPool, rarity);
 
+        this.currentAbility = null;
+
         // handlers
         this.onUpdate = [];
+        this.onAbilityExecutionFinished = [];
+
 
         // ability queue
         /**
          * @description respects execution time but ignores cooldowns; add with push and remove with shift
          */
         this.abilityQueue = [];
+        this.isBusy = false;
 
         // stopwatches
         this.setupStopwatches();
+    }
+
+    setBusy(busy) {
+        console.log("Set busy from " + this.isBusy + " to " + busy);
+        this.isBusy = busy;
     }
 
     setupStopwatches() {
@@ -41,14 +51,19 @@ class AbilityPerformerAbstract {
         this.abilityQueue.push(abilityName);
     }
 
+    performAbilityNow(abilityName) {
+        this._performActiveAbility(abilityName);
+    }
+
     update(timeElapsedSeconds) {
         this.stopwatchHandler.update(timeElapsedSeconds);
-        if(!this.stopwatchHandler.isRunning("abilityExecution")) {
+        if(!this.isBusy && !this.stopwatchHandler.isRunning("abilityExecution")) {
            this._progressAbilityQueue(); 
         }
         
         this.onUpdate.forEach((currFunc) => currFunc(timeElapsedSeconds));
     }
+
 
     isReady() {
         return !(this.stopwatchHandler.isRunning("abilityExecution") || this.stopwatchHandler.isRunning(AbilityPerformerAbstract.COOLDOWN_TIMER_NAME));
@@ -63,6 +78,14 @@ class AbilityPerformerAbstract {
     }
 
     /**
+     * @description dont call directly after executeNow, otherwise the onFinishedMethod will be called for interrupted ability
+     * @param {function (abilityName)} handler
+     */
+    addOnAbilityExecutionFinished(handler) {
+        this.onAbilityExecutionFinished.push(handler);
+    }
+
+    /**
      * @returns true if an action was performed
      */
     _progressAbilityQueue() {
@@ -74,17 +97,31 @@ class AbilityPerformerAbstract {
     }
 
     _performActiveAbility(abilityName) {
+        if(this.stopwatchHandler.isRunning("abilityExecution") && this.currentAbility !== null) {
+            this._onAbilityExecutionFinished(true, abilityName);
+            console.log("Interrupted ability: " + this.currentAbility + " with " + abilityName);
+        }
+        this.currentAbility = abilityName;
         this.owner[abilityName]();
         this.stopwatchHandler.resetStopwatch("timeSinceLastAction");
         this.stopwatchHandler.resetStopwatch("abilityExecution");
-        this.stopwatchHandler.setExpire("abilityExecution", this.abilities[abilityName].execution_time, () => this._onAbilityExecutionFinished(abilityName));
+        this.stopwatchHandler.setExpire("abilityExecution", this.abilities[abilityName].execution_time, () => this._onAbilityExecutionFinished(false, abilityName));
         this.stopwatchHandler.resumeStopwatch("abilityExecution");
 
     }
 
-    _onAbilityExecutionFinished(abilityName) {
+    _onAbilityExecutionFinished(isInterrupted, abilityName) {
         console.log("Ability execution finished");
         this.stopwatchHandler.pauseStopwatch("abilityExecution");
+        this.currentAbility = null;
+        const remHandlerIdcs = [];
+        var currHandler;
+        for(var i = 0; i < this.onAbilityExecutionFinished.length; i += 1) {
+            currHandler = this.onAbilityExecutionFinished[i];
+            currHandler(isInterrupted);
+            remHandlerIdcs.push(i);
+        }
+        this.onAbilityExecutionFinished = this.onAbilityExecutionFinished.filter((item, idx) => (!remHandlerIdcs.includes(idx)));
         if (!this._progressAbilityQueue()) {
             this.stopwatchHandler.resetStopwatch(AbilityPerformerAbstract.COOLDOWN_TIMER_NAME);
             this.stopwatchHandler.setExpire(AbilityPerformerAbstract.COOLDOWN_TIMER_NAME, this.abilities[abilityName].cooldown);

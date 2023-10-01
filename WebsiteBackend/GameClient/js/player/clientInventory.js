@@ -3,7 +3,7 @@ class ClientInventory {
         this.hotBarItems = Array(9);
         this.selected = null;
         this.gameScene = gameScene;
-
+        this.isDisabled = false;
         this.isProtagonists = isProtagonists;
     }
 
@@ -30,6 +30,10 @@ class ClientInventory {
         }
     }
 
+    setDisabled(isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
     setNewItemToSlot(itemData, i) {
         if(itemData === null || itemData === undefined) {
             this.hotBarItems[i] = null;
@@ -45,7 +49,7 @@ class ClientInventory {
     set selectedIndex(idx) {
         this.selected = idx;
         this.hotBarItems.forEach((item, currIdx) => {
-            if(item !== null && item !== undefined) {
+            if(!this.isDisabled && item !== null && item !== undefined) {
                 item.visible = idx === currIdx;
             }
         });

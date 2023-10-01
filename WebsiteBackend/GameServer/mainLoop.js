@@ -62,6 +62,17 @@ class MainLoop {
         this.allPlayersSendUpdate(this.updateData);
         this.updateAllTimers(timeElapsed);
         this.stopwatchFightDuration += timeElapsed;
+
+        this.postUpdate();
+    }
+
+    postUpdate() {
+        this.players.forEach((currPlayer) => {
+            currPlayer.postUpdate();
+        });
+        this.mobManager.mobs.forEach((currMob) => {
+            currMob.postUpdate();
+        })
     }
 
     updateProjectiles(timeElapsed) {

@@ -68,7 +68,8 @@ class ClientPlayer {
     updateSpriteToData(data) {
         //if (Math.random() < 0.1) {
             this.clientPrediction.updateServer(data);
-            this.sprite.updateServer(data.fightingObject.hp, data.facingLeft, data.isAlive);
+            this.sprite.updateServer(data.fightingObject.hp, data.facingLeft, data.isAlive, data.isDisabled);
+            this.inventory.setDisabled(data.isDisabled);
         //}
     }
 

@@ -76,6 +76,10 @@ class Mob {
         this.abilityPerformer = new AbilityPerformerClass(this, this.mobConfig.ability_pool, this.mobConfig.abilities, variant);
     }
 
+    postUpdate() {
+        this.movableBody.postUpdate();
+    }
+
     insertVariantIntoConfig(type, mobConfig, variant) {
         if(variant === undefined) {
             variant = Mob.pickRandomType(Object.getOwnPropertyNames(mobConfig.variants));

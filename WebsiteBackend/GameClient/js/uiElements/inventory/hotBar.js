@@ -49,7 +49,6 @@ class HotBar {
         this.currSelectedIdx = idx;
         this.selectionRect.x = this.calcXOfNthFrame(this.currSelectedIdx);
         this.currSelectedFrame = this.frames[this.currSelectedIdx];
-        this.currSelectedFrame.select();
         this.frames.forEach((currFrame) => {
             if (currFrame !== this.currSelectedFrame) {
                 currFrame.unselect();

@@ -16,8 +16,7 @@ const FacadeForFightingObject = require("../fighting/facadeForFightingObject");
 const ArmorHolder = require("../items/armor/armorHolder");
 const PlayerStats = require("./playerStats");
 
-const PLAYER_HITBOX_WIDTH = 25;
-const PLAYER_HITBOX_HEIGHT = 100;
+
 
 class Protagonist {
     static JUMP_FORCE = 50000;
@@ -26,6 +25,9 @@ class Protagonist {
 
     static RESPAWN_TIME = 1000; // millis
     static START_POS = new Vector(500, 500);
+
+    static PLAYER_HITBOX_WIDTH = 25;
+    static PLAYER_HITBOX_HEIGHT = 100;
 
     /**
      * 
@@ -43,6 +45,7 @@ class Protagonist {
 
 
         this.isIngame = true;
+        this.isDisabled = false;
         this.stopwatchIngameSeconds = 0;
         mainLoop.getMobManager().addOnFightReset(() => this.stopwatchIngameSeconds = 0);
         this.alreadyExited = false;
@@ -50,7 +53,7 @@ class Protagonist {
 
         this.startPos = Protagonist.START_POS.clone();
         this.world = world;
-        this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT);
+        this.hitBox = PolygonHitBox.fromRect(this.startPos.x, this.startPos.y, Protagonist.PLAYER_HITBOX_WIDTH, Protagonist.PLAYER_HITBOX_HEIGHT);
         this.socketUser = new SocketUser(socket, this);
 
         this.mainLoop = mainLoop;
@@ -167,6 +170,10 @@ class Protagonist {
         }
     }
 
+    postUpdate() {
+        this.movableBody.postUpdate();
+    }
+
     // alive and dead
     updateAlive(timeElasped) {
         if (this.isAlive && (!this.fightingObject.isAlive())) {
@@ -250,6 +257,18 @@ class Protagonist {
         this.mainLoop.broadcastToAllPlayers(NetworkCommands.ADD_ITEM_DROP, { id: this.id, weaponRarity: item.config.rarity, originPos: originPos });
     }
 
+    /**
+     * @description Disables player: invisible (except health bar and name), no hitbox, not controllable. When changing disable: reset speed
+     * @param {boolean} disabled 
+     */
+    setDisabled(disabled) {
+        if(disabled !== this.isDisabled) {
+            this.movableBody.spd.setTo(new Vector(0,0));
+        }
+        this.isDisabled = disabled;
+    
+    }
+
     selectItem(index) {
         this.inventory.selectItem(index);
         if (this.inventory.isWeaponSelected()) {
@@ -291,7 +310,7 @@ class Protagonist {
 
 
     get isInteractable() {
-        return this.isAlive && this.isIngame && (!this.alreadyExited);
+        return this.isAlive && this.isIngame && (!this.alreadyExited) && (!this.isDisabled);
     }
 
     setIsIngame(b) {
@@ -338,8 +357,8 @@ class Protagonist {
             pos: this.hitBox.pos,
             spd: this.movableBody.spd,
             acc: Vector.multiply(this.movableBody.resultingForce, 1.0 / this.movableBody.mass),
-            height: PLAYER_HITBOX_HEIGHT,
-            width: PLAYER_HITBOX_WIDTH,
+            height: Protagonist.PLAYER_HITBOX_HEIGHT,
+            width: Protagonist.PLAYER_HITBOX_WIDTH,
             id: this.id,
             isContact: this.movableBody.isContact,
             inventory: this.inventory,
@@ -349,6 +368,7 @@ class Protagonist {
             isWalking: this.isWalking,
             userName: this.userName,
             isAlive: this.isAlive,
+            isDisabled: this.isDisabled,
             gradeData: this.updateGradeData(),
             stats: this.stats.getLastCalculatedTotalStats(),
             emoteObjects: this.emoteObjects
@@ -377,44 +397,48 @@ class Protagonist {
     }
 
     playerControl(control) {
-        switch (control) {
-            case PlayerControls.START_WALK_RIGHT:
-                this.wantGo = "RIGHT";
-                this.startWalk('RIGHT');
-                this.facingLeft = false;
+        if (!this.isDisabled) {
+            switch (control) {
+                case PlayerControls.START_WALK_RIGHT:
+                    this.wantGo = "RIGHT";
+                    this.startWalk('RIGHT');
+                    this.facingLeft = false;
 
-                break;
-            case PlayerControls.STOP_WALK_RIGHT:
-                if (this.wantGo === "RIGHT") {
-                    this.wantGo = "NONE";
-                }
-                this.endWalking();
+                    break;
+                case PlayerControls.STOP_WALK_RIGHT:
+                    if (this.wantGo === "RIGHT") {
+                        this.wantGo = "NONE";
+                    }
+                    this.endWalking();
 
-                break;
-            case PlayerControls.START_WALK_LEFT:
-                this.wantGo = "LEFT";
-                this.startWalk('LEFT');
-                this.facingLeft = true;
-                break;
-            case PlayerControls.STOP_WALK_LEFT:
-                if (this.wantGo === "LEFT") {
-                    this.wantGo = "NONE";
-                }
-                this.endWalking();
+                    break;
+                case PlayerControls.START_WALK_LEFT:
+                    this.wantGo = "LEFT";
+                    this.startWalk('LEFT');
+                    this.facingLeft = true;
+                    break;
+                case PlayerControls.STOP_WALK_LEFT:
+                    if (this.wantGo === "LEFT") {
+                        this.wantGo = "NONE";
+                    }
+                    this.endWalking();
 
-                break;
-            case PlayerControls.STRIKE:
-                this.strike();
+                    break;
+                case PlayerControls.STRIKE:
+                    this.strike();
 
-                break;
-            case PlayerControls.START_JUMP:
-                this.startJump();
-                break;
-            case PlayerControls.STOP_JUMP:
-                this.stopJump();
-                break;
+                    break;
+                case PlayerControls.START_JUMP:
+                    this.startJump();
+                    break;
+                case PlayerControls.STOP_JUMP:
+                    this.stopJump();
+                    break;
+            }
+            console.log("Handled player control: " + control);
+        } else {
+            console.log("Ignored player control " + control + " since player is disabled.");
         }
-        console.log("Handled player control: " + control);
     }
 
 

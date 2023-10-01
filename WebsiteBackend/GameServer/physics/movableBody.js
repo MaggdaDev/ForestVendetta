@@ -4,6 +4,7 @@ const PhysicalContact = require("./physicalContact");
 const RubberPoint = require("./rubberPoint");
 const { isSimilarDir } = require("../../GameStatic/js/maths/vector");
 const Vector = require("../../GameStatic/js/maths/vector");
+const CustomForce = require("./customForce");
 
 class MovableBody {
 
@@ -41,6 +42,8 @@ class MovableBody {
 
         this.rubberPoints = [];
 
+        this.customForces = []; // array of CustomForce objects
+
         this.isRotRubber = false;
         this.rotRubberStrength = 0;
 
@@ -61,11 +64,13 @@ class MovableBody {
 
         this.onNewContact = [];
 
+        this.alternativePlayerIntersectionHandlers = new Map(); // <id, function({MovableBody} intersectedBody, {Intersection[]} intersections)
         this.shouldUndoLastUpdate = false;
         this.wayOutPriority = 1;
 
         this.isProtagonist = false;
 
+        this.ignoreIntersectionsThisUpdate = [];
         // handlers
         this.onNewIntersectionWithPlayerHandlers = [];
 
@@ -111,6 +116,14 @@ class MovableBody {
         }
     }
 
+    postUpdate() {
+        this.ignoreIntersectionsThisUpdate.length = 0;
+    }
+
+    addIgnoreIntersectionsThisUpdate(id) {
+        this.ignoreIntersectionsThisUpdate.push(id);
+    }
+
     reset() {
         this.spd.x = 0;
         this.spd.y = 0;
@@ -125,6 +138,14 @@ class MovableBody {
         this.onNewIntersectionWithPlayerHandlers.push(handler);
     }
 
+    addAlternativePlayerIntersectionHandler(playerID, handler) {
+        this.alternativePlayerIntersectionHandlers.set(playerID, handler);
+    }
+
+    removeAlternativePlayerIntersectionHandler(playerID) {
+        this.alternativePlayerIntersectionHandlers.delete(playerID);
+    }
+
     setProtagonist() {
         this.isProtagonist = true;
     }
@@ -137,6 +158,22 @@ class MovableBody {
         this.onNewContact.forEach((element) => {
             element();
         });
+    }
+
+    /**
+     * 
+     * @param {CustomForce} customForce 
+     */
+    addCustomForce(customForce) {
+        this.customForces.push(customForce);
+    }
+
+    /**
+     * 
+     * @param {CustomForce} customForce 
+     */
+    removeCustomForce(customForce) {
+        this.customForces = this.customForces.filter(item => item !== customForce);
     }
 
     addOnNewContact(handler) {
@@ -221,11 +258,15 @@ class MovableBody {
             this.resultingForce.incrementBy(Vector.multiply(this.gravity, this.mass));
         }
 
+        this.customForces.forEach((customForce) => {
+            const force = customForce.getUpdatedForce(timeElapsed, this);
+            this.resultingForce.incrementBy(force);
+        });
+
         this.rubberPoints.forEach((currRubberPoint) => {
             var force = currRubberPoint.getForce(this.hitBox.pos, this.rot, this.mass, this.spd, timeElapsed);
             this.resultingForce.incrementBy(force);
             this.resultingRotMoment += this.calcRotMoment(currRubberPoint.getAttackPoint(this.hitBox.pos, this.rot), force);
-
         });
 
         if (this.isRotRubber) {
@@ -281,14 +322,24 @@ class MovableBody {
     checkIntersections(intersectables) {
         var currBody;
         intersectables.forEach(element => {
-            currBody = element.movableBody;
-            if (currBody !== this) {
-                var newIntersections = HitBox.getIntersections(currBody.hitBox, this.hitBox);
-                if (newIntersections !== null && newIntersections.length > 2) {
-                    this.shouldUndoLastUpdate = true;
-                }
-                if (newIntersections != null) {
-                    this.notifyNewIntersection(currBody, newIntersections);
+            if (!this.ignoreIntersectionsThisUpdate.includes(element.id)) {
+                currBody = element.movableBody;
+                if (currBody !== this) {
+                    var newIntersections = HitBox.getIntersections(currBody.hitBox, this.hitBox);
+                    if (newIntersections !== null && newIntersections.length > 2) {
+                        this.shouldUndoLastUpdate = true;
+                    }
+                    if (newIntersections != null) {
+                        if (element.id !== undefined && this.alternativePlayerIntersectionHandlers.has(element.id)) {
+                            this.alternativePlayerIntersectionHandlers.get(element.id)(currBody, newIntersections);
+                            currBody.addIgnoreIntersectionsThisUpdate(this.owner.id);
+                        } else if (this.owner.id !== undefined && currBody.alternativePlayerIntersectionHandlers.has(this.owner.id)) {
+                            currBody.alternativePlayerIntersectionHandlers.get(this.owner.id)(this, newIntersections);
+                            currBody.addIgnoreIntersectionsThisUpdate(this.owner.id);
+                        } else {
+                            this.notifyNewIntersection(currBody, newIntersections);
+                        }
+                    }
                 }
             }
         });
@@ -331,7 +382,7 @@ class MovableBody {
             var time = now - this.singleContactsMap.get(object.bodyId).lastIntersectionTime;
 
             // calc friction:
-            var fricForce = Vector.multiply(Vector.multiply(rel1to2ParrSpd.dirVec, rel1to2ParrSpd.abs/300), -MovableBody.FRICTION_STRENGTH);
+            var fricForce = Vector.multiply(Vector.multiply(rel1to2ParrSpd.dirVec, rel1to2ParrSpd.abs / 300), -MovableBody.FRICTION_STRENGTH);
 
             // calc manual acc (walking):
             var accForce = this.currControlAccForce;
@@ -346,7 +397,7 @@ class MovableBody {
 
         // JUMP
         if (this.wantToJumpOnce || this.wantToJump) {
-            if(this.wantToJumpOnce) {
+            if (this.wantToJumpOnce) {
                 this.wantToJumpOnce = false;
             }
             this.updateLastIntersectionTime(object, this.now, false);
@@ -388,11 +439,11 @@ class MovableBody {
 
     get isContact() {
         var ret = false;
-        this.singleContactsMap.forEach((data)=>{
-            if(this.now - data.lastIntersectionTime > MovableBody.MAX_TIMEDIST_FOR_FRICT) {
+        this.singleContactsMap.forEach((data) => {
+            if (this.now - data.lastIntersectionTime > MovableBody.MAX_TIMEDIST_FOR_FRICT) {
                 this.updateLastIntersectionTime(data.body, data.lastIntersectionTime, false);
             }
-            if(data.isContact) {
+            if (data.isContact) {
                 ret = true;
             }
         });
@@ -407,12 +458,12 @@ class MovableBody {
     checkForNewPlayerIntersection(object, intersectionPoint) {
         if (object.isProtagonist) {
             this.newIntersectionWithPlayer(object, intersectionPoint);
-        } 
+        }
     }
 
     // for body contact management: 
     addNewSingleContact(object, now) {
-        this.singleContactsMap.set(object.bodyId, { body: object, lastIntersectionTime: now , isContact: false});
+        this.singleContactsMap.set(object.bodyId, { body: object, lastIntersectionTime: now, isContact: false });
         //object.singleContactsMap.set(this.bodyId, { body: this, lastIntersectionTime: now, isContact: false});
 
     }
