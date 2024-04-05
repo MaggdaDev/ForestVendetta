@@ -7,8 +7,8 @@ const CustomForce = require("../../physics/customForce");
 
 class FrogTongue extends Projectile {
 
-    static TOP_ANCHOR_Y_OFFSET = 0;
-    static BOT_ANCHOR_Y_OFFSET = 30;
+    static TOP_ANCHOR_Y_OFFSET = -80;
+    static BOT_ANCHOR_Y_OFFSET = -30;
     static TONGUE_SPEED = 1200;
     static MAX_RANGE = 2000;
     static MIN_RANGE = 400;

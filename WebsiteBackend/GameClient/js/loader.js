@@ -27,6 +27,7 @@ class Loader {
         this.scene.load.spritesheet('hotzenplotzUpper', "GameClient/images/hotzenplotzUpper.png", { frameWidth: 50, frameHeight: 50 });
         this.scene.load.spritesheet('hotzenplotzLegs', "GameClient/images/hotzenplotzLegs.png", { frameWidth: 50, frameHeight: 50 });
         this.scene.load.spritesheet('frog', "GameClient/images/mobs/frog.png", { frameWidth: 151, frameHeight: 202 });
+        this.scene.load.spritesheet('frogTongue', "GameClient/images/mobs/frogTongue.png", { frameWidth: 1000, frameHeight: 50 });
     
         // armor sprite
         this.scene.load.spritesheet("FROG_BOOTS_SPRITE", "GameClient/images/armor/FROG_BOOTS_SPRITE.png", { frameWidth: 50, frameHeight: 50 });
